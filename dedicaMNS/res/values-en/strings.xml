@@ -7,4 +7,5 @@
     <string name="remmbemberUserCheckS">Remmember Me</string>    
     <string name="userMNTextS">User Media Net</string>
     <string name="passMNTextS">Password</string>
+    <string name="mnLogoS">MediaNet Logo</string>
 </resources>
