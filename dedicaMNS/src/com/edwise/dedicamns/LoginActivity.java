@@ -3,49 +3,63 @@ package com.edwise.dedicamns;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.edwise.dedicamns.login.ConnectionAsyncTask;
 
 public class LoginActivity extends Activity {
 
     private ProgressDialog pDialog;
-
+    
+    private EditText userLoginEditText;
+    private EditText passLoginEditText;
+    private CheckBox rememberMeCheckBox;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.login);
-
 	Log.d(LoginActivity.class.toString(), "onCreate: Comenzando...");
-
-	// TODO obtener datos anteriores (preferences?)
 	
-	// TODO obtener properties para tema mock
-//	Resources resources = this.getResources();
-//	AssetManager assetManager = resources.getAssets();
-//
-//	// Read from the /assets directory
-//	try {
-//	    InputStream inputStream = assetManager.open("app.properties");
-//	    Properties properties = new Properties();
-//	    properties.load(inputStream);
-//	    System.out.println("The properties are now loaded");
-//	    System.out.println("properties: " + properties);
-//	} catch (IOException e) {
-//	    System.err.println("Failed to open microlog property file");
-//	    e.printStackTrace();
-//	}
+	initFields();
+	chargeSavedData();		
+    }
+
+    private void initFields() {
+	userLoginEditText = (EditText) findViewById(R.id.userMNText);
+	passLoginEditText = (EditText) findViewById(R.id.passMNText);
+	rememberMeCheckBox = (CheckBox) findViewById(R.id.rememberUserCheck);
+    }
+
+    private void chargeSavedData() {
+	SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+	String user = sharedPref.getString("user", null);
+	String pass = sharedPref.getString("pass", null);
+	Boolean remember = sharedPref.getBoolean("remember", false);
+	
+	if (user != null) {
+	    userLoginEditText.setText(user);
+	}
+	if (pass != null) {
+	    passLoginEditText.setText(pass);
+	}
+	rememberMeCheckBox.setChecked(remember);
     }
 
     @Override
@@ -56,36 +70,45 @@ public class LoginActivity extends Activity {
 
     public void doLogin(View view) {
 	Log.d(LoginActivity.class.toString(), "doLogin: Click en conectar...");
-	HashMap<String, String> accessData = new HashMap<String, String>();
 
-	EditText userLoginEditText = (EditText) findViewById(R.id.userMNText);
+	if (checkFieldsFilled()) {	
+	    accesWebWithLoginData();
+	}
+	else {
+	    Toast toast = Toast.makeText(this,
+			"Introduce tu usuario y contraseña de Medianet", Toast.LENGTH_LONG);
+	    toast.setGravity(Gravity.CENTER, 0, 100);
+	    toast.show();
+	    
+	}
+    }
+
+    private void accesWebWithLoginData() {
+	HashMap<String, String> accessData = new HashMap<String, String>();
 	String userLogin = userLoginEditText.getText().toString();
 	accessData.put("user", userLogin); // TODO constantes o enum
-
-	EditText passLoginEditText = (EditText) findViewById(R.id.passMNText);
+      
 	String passLogin = passLoginEditText.getText().toString();
 	accessData.put("pass", passLogin); // TODO constantes o enum
-
-	CheckBox rememberMeCheckBox = (CheckBox) findViewById(R.id.rememberUserCheck);
+      
 	String checked = Boolean.toString(rememberMeCheckBox.isChecked());
 	accessData.put("check", checked); // TODO constantes o enum
-
+      
 	Log.d(LoginActivity.class.toString(),
-		"doLogin: User y pass insertado: " + userLogin + " / "
-			+ passLogin + " / " + checked);
+	"doLogin: User y pass insertado: " + userLogin + " / "
+		+ passLogin + " / " + checked);
+      
+	hideKeyboard();
+      
+	pDialog = ProgressDialog.show(LoginActivity.this, "Vamoooh!",
+	    "Cargando, please, epeate...", true);
+      
+	callConnectionAsyncTask(accessData);
+    }
 
-	
-	// Ocultamos teclado
+    private void hideKeyboard() {
 	InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 	imm.hideSoftInputFromWindow(passLoginEditText.getWindowToken(), 0);
-
-	// TODO guardar datos si el check está puesto, si no, borrarlos si
-	// existen (en el task?)
-	
-	pDialog = ProgressDialog.show(LoginActivity.this, "Vamoooh!",
-		"Cargando, please, epeate...", true);
-
-	callConnectionAsyncTask(accessData);
     }
 
     private void callConnectionAsyncTask(Map<String, String> accessData) {
@@ -101,9 +124,34 @@ public class LoginActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	super.onActivityResult(requestCode, resultCode, data);
-	
-	Log.d(LoginActivity.class.toString(), "onActivityResult: en el onActivity...");
+	Log.d(LoginActivity.class.toString(), "onActivityResult: en el onActivityResult...");
     }
 
-    
+    @Override
+    protected void onDestroy() {
+	super.onStop();
+	Log.d(LoginActivity.class.toString(), "onDestroy: en el onDestroy...");
+	// Borrar preferences si el check está desactivado
+	removeLoginDataIfNeeded();
+    }
+
+    private void removeLoginDataIfNeeded() {
+	if (!rememberMeCheckBox.isChecked()) {
+	    SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+	    sharedPref.edit().clear().commit();
+	    Log.d(LoginActivity.class.toString(), "removeLoginDataIfNeeded: Borrado el sharedPreferences!!");
+	}
+    }
+
+    private boolean checkFieldsFilled() {
+	boolean filled = true;
+	String userLogin = userLoginEditText.getText().toString();    
+	String passLogin = passLoginEditText.getText().toString();
+	
+	if (StringUtils.isBlank(userLogin) || StringUtils.isBlank(passLogin)) {
+	    filled = false;
+	}
+	
+	return filled;
+    }
 }
