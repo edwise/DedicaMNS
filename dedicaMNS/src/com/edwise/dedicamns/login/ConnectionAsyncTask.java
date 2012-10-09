@@ -3,16 +3,23 @@
  */
 package com.edwise.dedicamns.login;
 
+import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
+
+import com.edwise.dedicamns.MonthViewActivity;
+import com.edwise.dedicamns.beans.DayRecord;
+import com.edwise.dedicamns.mocks.DedicaHTMLParserMock;
 
 /**
  * @author edwise
@@ -71,6 +78,10 @@ public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer,
 	    this.startNextActivity();
 	}    
 	
+	closeDialog();
+    }
+
+    private void closeDialog() {
 	pDialog.dismiss();
 	pDialog = null;
     }
@@ -82,10 +93,23 @@ public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer,
 
     
     private void startNextActivity() {
-	// TODO esto es un mock, que vaya a la pantalla de lista
+	// TODO realizar la conexión, preparar un mock que de ok o algo así...
 	Toast toast = Toast.makeText(this.loginActivity,
 		"Conectado!", Toast.LENGTH_LONG);
 	toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0, 50);
 	toast.show();
+	
+	// TODO lanza la activity principal (ahora una de consulta, luego ya veremos)
+	launchMainActivity();
+    }
+    
+    private void launchMainActivity() {
+	Intent intent = new Intent(this.loginActivity, MonthViewActivity.class);
+	
+	// TODO desmockear
+	List<DayRecord> listDays = DedicaHTMLParserMock.getListFromHTML();
+	
+	intent.putExtra("dayList", (Serializable)listDays);
+	this.loginActivity.startActivity(intent);
     }
 }

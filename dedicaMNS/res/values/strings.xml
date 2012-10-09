@@ -1,11 +1,14 @@
 <resources>
+
     <string name="app_name">Dedica MNS</string>
     <string name="menu_settings">Ajustes</string>
     <string name="title_activity_login">Dedica MNS</string>
-    
     <string name="connectButtonS">Conectar</string>
-    <string name="remmbemberUserCheckS">Recordarme</string>    
+    <string name="remmbemberUserCheckS">Recordarme</string>
     <string name="userMNTextS">Usuario Media Net</string>
     <string name="passMNTextS">Contraseña</string>
     <string name="mnLogoS">Logo MediaNet</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_month_view">MonthViewActivity</string>
+
 </resources>
