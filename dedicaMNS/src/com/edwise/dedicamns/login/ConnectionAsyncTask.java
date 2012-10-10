@@ -25,11 +25,12 @@ import com.edwise.dedicamns.mocks.DedicaHTMLParserMock;
  * @author edwise
  * 
  */
-public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer, Integer> {
-    
+public class ConnectionAsyncTask extends
+	AsyncTask<Map<String, String>, Integer, Integer> {
+
     private ProgressDialog pDialog;
     private Activity loginActivity;
-    
+
     public ConnectionAsyncTask(Activity activity, ProgressDialog pDialog) {
 	this.loginActivity = activity;
 	this.pDialog = pDialog;
@@ -37,47 +38,53 @@ public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer,
 
     @Override
     protected Integer doInBackground(Map<String, String>... data) {
-	Log.d(ConnectionAsyncTask.class.toString(), "doInBackground: Comenzando asyncTask...");
+	Log.d(ConnectionAsyncTask.class.toString(),
+		"doInBackground: Comenzando asyncTask...");
 	Map<String, String> dataLogin = data[0];
 	// TODO Guardar el sharedpreferences si está el check, si no borrarlo!
 	saveSharedPreferences(dataLogin);
-	
+
 	// TODO conexión real
 	try {
 	    for (int i = 0; i < 3; i++) {
 		Thread.sleep(1000);
-		publishProgress(i+1);
+		publishProgress(i + 1);
 	    }
 	} catch (InterruptedException e) {
-	    Log.e(ConnectionAsyncTask.class.toString(), "doInBackground: Error en Thread.sleep()...", e);
+	    Log.e(ConnectionAsyncTask.class.toString(),
+		    "doInBackground: Error en Thread.sleep()...", e);
 	    e.printStackTrace();
 	}
-	
+
 	return 1; // TODO enum con tipos de retorno, errores, etc
     }
 
     private void saveSharedPreferences(Map<String, String> dataLogin) {
-	SharedPreferences sharedPref = loginActivity.getPreferences(Context.MODE_PRIVATE);
+	SharedPreferences sharedPref = loginActivity
+		.getPreferences(Context.MODE_PRIVATE);
 	if (dataLogin.get("check").equals("true")) { // Guardamos todo
 	    SharedPreferences.Editor editor = sharedPref.edit();
-	    editor.putString("user", dataLogin.get("user")); // TODO constantes y demás!!
+	    editor.putString("user", dataLogin.get("user")); // TODO constantes
+							     // y demás!!
 	    editor.putString("pass", dataLogin.get("pass"));
-	    editor.putBoolean("remember", Boolean.valueOf(dataLogin.get("check")));
+	    editor.putBoolean("remember",
+		    Boolean.valueOf(dataLogin.get("check")));
 	    editor.commit();
-	}
-	else { // borramos todo
-	    sharedPref.edit().clear().commit();	    
+	} else { // borramos todo
+	    sharedPref.edit().clear().commit();
 	}
     }
 
     @Override
     protected void onPostExecute(Integer result) {
-	Log.d(ConnectionAsyncTask.class.toString(), "onPostExecute: Finalizando asyncTask...");	
-	
+	Log.d(ConnectionAsyncTask.class.toString(),
+		"onPostExecute: Finalizando asyncTask...");
+
+	// TODO realizar la conexión, preparar un mock que de ok o algo así...
 	if (true) { // TODO comprobaciones de resultado
 	    this.startNextActivity();
-	}    
-	
+	}
+
 	closeDialog();
     }
 
@@ -88,28 +95,32 @@ public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer,
 
     @Override
     protected void onProgressUpdate(Integer... values) {
-	Log.d(ConnectionAsyncTask.class.toString(), "onProgressUpdate: Actualizando progreso...");
+	Log.d(ConnectionAsyncTask.class.toString(),
+		"onProgressUpdate: Actualizando progreso...");
     }
 
-    
     private void startNextActivity() {
-	// TODO realizar la conexión, preparar un mock que de ok o algo así...
-	Toast toast = Toast.makeText(this.loginActivity,
-		"Conectado!", Toast.LENGTH_LONG);
-	toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0, 50);
-	toast.show();
-	
-	// TODO lanza la activity principal (ahora una de consulta, luego ya veremos)
-	launchMainActivity();
-    }
-    
-    private void launchMainActivity() {
+	// TODO lanza la activity principal (ahora una de consulta, luego ya
+	// veremos)
 	Intent intent = new Intent(this.loginActivity, MonthViewActivity.class);
-	
+
 	// TODO desmockear
 	List<DayRecord> listDays = DedicaHTMLParserMock.getListFromHTML();
-	
-	intent.putExtra("dayList", (Serializable)listDays);
+
+	intent.putExtra("dayList", (Serializable) listDays);
 	this.loginActivity.startActivity(intent);
+	this.loginActivity.finish();
+
+	showToastConnected();
+
     }
+
+    private void showToastConnected() {
+	Toast toast = Toast.makeText(this.loginActivity, "Conectado!",
+		Toast.LENGTH_LONG);
+	toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM,
+		0, 20);
+	toast.show();
+    }
+
 }

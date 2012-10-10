@@ -9,6 +9,7 @@
     <string name="passMNTextS">Contraseña</string>
     <string name="mnLogoS">Logo MediaNet</string>
     <string name="hello_world">Hello world!</string>
-    <string name="title_activity_month_view">MonthViewActivity</string>
+    <string name="title_activity_month_view">Listado mes</string>
+    <string name="title_activity_detail_day">Detalle día</string>
 
 </resources>

@@ -23,6 +23,10 @@
         <activity
             android:name=".MonthViewActivity"
             android:label="@string/title_activity_month_view" />
+        <activity
+            android:name=".DetailDayActivity"
+            android:label="@string/title_activity_detail_day" >
+        </activity>
     </application>
 
 </manifest>
