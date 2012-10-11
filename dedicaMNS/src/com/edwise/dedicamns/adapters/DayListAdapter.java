@@ -2,7 +2,10 @@ package com.edwise.dedicamns.adapters;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import android.app.Activity;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +14,7 @@ import android.widget.TextView;
 
 import com.edwise.dedicamns.R;
 import com.edwise.dedicamns.beans.DayRecord;
+import com.edwise.dedicamns.utils.DayUtils;
 
 public class DayListAdapter extends ArrayAdapter<DayRecord> {
     private final Activity context;
@@ -46,10 +50,22 @@ public class DayListAdapter extends ArrayAdapter<DayRecord> {
 
 	ViewHolder holder = (ViewHolder) rowView.getTag();
 	DayRecord record = days.get(position);
-	holder.dayNum.setText(record.getDayNum() + "");
+	holder.dayNum.setText(String.valueOf(record.getDayNum()));
 	holder.dayName.setText(record.getDayName());
 	holder.hours.setText(record.getHours());
 	holder.projectId.setText(record.getProjectId());
+	
+	if (DayUtils.isWeekend(record.getDayName())) {
+	    rowView.setBackgroundColor(Color.rgb(135, 206, 250)); // Light Sky Blue 	
+	}
+	else {
+	    if (StringUtils.isBlank(record.getHours())) {
+		rowView.setBackgroundColor(Color.rgb(240, 255, 255)); // Azure
+	    }
+	    else {
+		rowView.setBackgroundColor(Color.rgb(224, 255, 255)); // Light Cyan
+	    }
+	}
 
 	return rowView;
     }

@@ -11,8 +11,9 @@
         <TextView
             android:id="@+id/monthAndYear"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="45dp"
             android:gravity="center"
+            android:background="#d3d3d3"
             android:text="Dedicaciones Octubre 2012"            
             android:textSize="22sp" />
     </RelativeLayout>
@@ -21,6 +22,7 @@
         android:id="@+id/listV_main"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/monthInfo" />
+        android:layout_below="@+id/monthInfo"
+         />
 
 </RelativeLayout>

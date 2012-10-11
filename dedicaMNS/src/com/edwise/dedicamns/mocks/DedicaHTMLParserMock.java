@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.edwise.dedicamns.beans.DayRecord;
+import com.edwise.dedicamns.utils.DayUtils;
 
 public class DedicaHTMLParserMock {
 
@@ -21,7 +22,7 @@ public class DedicaHTMLParserMock {
 	    dayRecord.setDayNum(i);
 	    dayRecord.setDayName(generateDayName(i));
 
-	    if (i < 10 && !isWeekend(dayRecord.getDayName())) {
+	    if (i < 10 && !DayUtils.isWeekend(dayRecord.getDayName())) {
 		dayRecord.setHours("8:30");
 		dayRecord.setProjectId("BBVA58");
 	    }
@@ -49,8 +50,5 @@ public class DedicaHTMLParserMock {
 
 	return dayName;
     }
-
-    private static boolean isWeekend(String dayName) {
-	return dayName.equals("Domingo") || dayName.equals("Sabado");
-    }
+    
 }
