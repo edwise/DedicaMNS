@@ -10,65 +10,115 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:gravity="center"
         android:ems="14"
+        android:gravity="center"
         android:textSize="28sp" >
-
     </TextView>
 
-    <EditText
-        android:id="@+id/detailHoursEditText"
-        android:layout_width="wrap_content"
+    <TableLayout
+        android:id="@+id/mainTable"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/detailDayInfoTextView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
-        android:ems="10" >
+        android:layout_marginLeft="1dip"
+        android:layout_marginRight="1dip"
+        android:layout_marginTop="15dip"
+        android:paddingLeft="2dip"
+        android:paddingRight="2dip"
+        android:shrinkColumns="1"
+        android:stretchColumns="1" >
 
-        <requestFocus />
-    </EditText>
+        <TableRow>
 
-    <EditText
-        android:id="@+id/detailProjectEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/detailHoursEditText"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:ems="10" />
+            <TextView
+                android:id="@+id/detailHoursTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Horas: "
+                android:textSize="16sp" >
+            </TextView>
 
-    <EditText
-        android:id="@+id/detailSubprojectEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/detailProjectEditText"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:ems="10" />
+            <EditText
+                android:id="@+id/detailHoursEditText"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp" 
+                android:inputType="time">
+            </EditText>
+        </TableRow>
 
-    <EditText
-        android:id="@+id/detailTaskEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/detailSubprojectEditText"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:ems="10" />
+        <TableRow>
+
+            <TextView
+                android:id="@+id/detailProjectTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Proyecto: "
+                android:textSize="16sp" >
+            </TextView>
+
+            <EditText
+                android:id="@+id/detailProjectEditText"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp" 
+                android:inputType="text" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/detailSubprojectTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Subproyecto: "
+                android:textSize="16sp" >
+            </TextView>
+
+            <EditText
+                android:id="@+id/detailSubprojectEditText"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp" 
+                android:inputType="text" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/detailTaskTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Tarea: "
+                android:textSize="16sp" >
+            </TextView>
+
+            <EditText
+                android:id="@+id/detailTaskEditText"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp" 
+                android:inputType="text" />
+        </TableRow>
+    </TableLayout>
 
     <LinearLayout
         android:id="@+id/linearLayoutButtons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/detailTaskEditText"
+        android:layout_below="@+id/mainTable"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:orientation="horizontal" >
+        android:layout_marginTop="30dp" >
 
         <Button
             android:id="@+id/detailSaveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="15dp"            
+            android:layout_marginRight="15dp"
             android:text="Guardar" />
 
         <Button
