@@ -100,12 +100,13 @@ public class ConnectionAsyncTask extends
     }
 
     private void startNextActivity() {
+	DedicaHTMLParserMock parser = DedicaHTMLParserMock.getInstance();
 	// TODO lanza la activity principal (ahora una de consulta, luego ya
 	// veremos)
 	Intent intent = new Intent(this.loginActivity, MonthViewActivity.class);
 
 	// TODO desmockear
-	List<DayRecord> listDays = DedicaHTMLParserMock.getListFromHTML();
+	List<DayRecord> listDays = parser.getListFromHTML();
 
 	intent.putExtra("dayList", (Serializable) listDays);
 	this.loginActivity.startActivity(intent);

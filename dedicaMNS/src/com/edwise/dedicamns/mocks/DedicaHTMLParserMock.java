@@ -6,9 +6,24 @@ import java.util.List;
 import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.utils.DayUtils;
 
+/**
+ * Mock para obtención y parseo de los html obtenidos.
+ * 
+ * @author edwise
+ *
+ */
 public class DedicaHTMLParserMock {
+    
+    private static DedicaHTMLParserMock htmlParser;
+    
+    public static DedicaHTMLParserMock getInstance() {
+	if (htmlParser == null) {
+	    htmlParser = new DedicaHTMLParserMock();
+	}
+	return htmlParser;
+    }
 
-    public static List<DayRecord> getListFromHTML() {
+    public List<DayRecord> getListFromHTML() {
 	List<DayRecord> list = new ArrayList<DayRecord>();
 
 	fillListMock(list);
@@ -16,7 +31,7 @@ public class DedicaHTMLParserMock {
 	return list;
     }
 
-    private static void fillListMock(List<DayRecord> list) {
+    private void fillListMock(List<DayRecord> list) {
 	for (int i = 1; i < 31; i++) {
 	    DayRecord dayRecord = new DayRecord();
 	    dayRecord.setDayNum(i);
@@ -34,7 +49,7 @@ public class DedicaHTMLParserMock {
     final static String[] dayNames = { "Lunes", "Martes", "Miercoles",
 	    "Jueves", "Viernes", "Sabado", "Domingo" };
 
-    private static String generateDayName(int i) {
+    private String generateDayName(int i) {
 	String dayName = null;
 
 	if (i <= 7) {
@@ -49,6 +64,22 @@ public class DedicaHTMLParserMock {
 	}
 
 	return dayName;
+    }
+    
+    public boolean saveDay(DayRecord dayRecord) {
+	boolean saved = false;
+	
+	saved = true;
+	
+	return saved;
+    }
+    
+    public boolean removeDay(DayRecord dayRecord) {
+	boolean removed = false;
+	
+	removed = true;
+	
+	return removed;
     }
     
 }
