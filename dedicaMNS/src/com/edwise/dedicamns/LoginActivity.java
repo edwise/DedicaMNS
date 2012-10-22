@@ -100,8 +100,8 @@ public class LoginActivity extends Activity {
       
 	hideKeyboard();
       
-	pDialog = ProgressDialog.show(LoginActivity.this, "Vamoooh!",
-	    "Cargando, please, epeate...", true);
+	pDialog = ProgressDialog.show(LoginActivity.this, "Conectando...",
+	    "Conexión en progreso, por favor, espera", true);
       
 	callConnectionAsyncTask(accessData);
     }

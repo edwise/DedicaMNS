@@ -38,6 +38,7 @@ public class MonthViewActivity extends Activity {
 			DetailDayActivity.class);
 		intent.putExtra("dayRecord", dayRecord);
 		startActivity(intent);
+		finish();
 	    }
 
 	});

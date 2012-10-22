@@ -10,12 +10,12 @@ import com.edwise.dedicamns.utils.DayUtils;
  * Mock para obtención y parseo de los html obtenidos.
  * 
  * @author edwise
- *
+ * 
  */
 public class DedicaHTMLParserMock {
-    
+
     private static DedicaHTMLParserMock htmlParser;
-    
+
     public static DedicaHTMLParserMock getInstance() {
 	if (htmlParser == null) {
 	    htmlParser = new DedicaHTMLParserMock();
@@ -65,21 +65,33 @@ public class DedicaHTMLParserMock {
 
 	return dayName;
     }
-    
+
     public boolean saveDay(DayRecord dayRecord) {
 	boolean saved = false;
-	
+
 	saved = true;
-	
+
 	return saved;
     }
-    
+
     public boolean removeDay(DayRecord dayRecord) {
 	boolean removed = false;
-	
+
 	removed = true;
-	
+
 	return removed;
     }
-    
+
+    public List<String> getArrayProjects() {
+	List<String> arrayProjects = new ArrayList<String>();
+
+	arrayProjects.add("BBVA58");
+	arrayProjects.add("Educared09");
+	arrayProjects.add("BBVA68");
+	arrayProjects.add("NOHACERNIELHUEVO32");
+	arrayProjects.add("ISBAN12");
+
+	return arrayProjects;
+    }
+
 }

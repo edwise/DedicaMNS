@@ -59,12 +59,12 @@
                 android:textSize="16sp" >
             </TextView>
 
-            <EditText
-                android:id="@+id/detailProjectEditText"
+            <Spinner
+                android:id="@+id/detailProjectSpinner"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp" 
-                android:inputType="text" />
+                android:layout_marginRight="5dp"  />
+
         </TableRow>
 
         <TableRow>
