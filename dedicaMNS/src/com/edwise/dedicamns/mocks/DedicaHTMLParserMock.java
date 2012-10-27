@@ -88,10 +88,27 @@ public class DedicaHTMLParserMock {
 	arrayProjects.add("BBVA58");
 	arrayProjects.add("Educared09");
 	arrayProjects.add("BBVA68");
-	arrayProjects.add("NOHACERNIELHUEVO32");
+	arrayProjects.add("NIELHUEVO32");
 	arrayProjects.add("ISBAN12");
 
 	return arrayProjects;
+    }
+
+    public List<String> getArraySubProjects(Integer projectId) {
+	List<String> arraySubProjects = new ArrayList<String>();
+	switch (projectId) {
+	case 3:
+	    arraySubProjects.add("0 - Sin cuenta");
+	    break;
+
+	default:
+	    arraySubProjects.add("1 - Tarea mierda");
+	    arraySubProjects.add("2 - Marronacos");
+	    arraySubProjects.add("3 - Calentar silla");
+	    break;
+	}
+
+	return arraySubProjects;
     }
 
 }

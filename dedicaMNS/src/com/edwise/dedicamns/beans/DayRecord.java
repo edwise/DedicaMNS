@@ -16,6 +16,8 @@ public class DayRecord implements Serializable {
     private Boolean isWeekend;
     private Boolean isHoliday;
 
+    private boolean toRemove;
+
     public int getDayNum() {
 	return dayNum;
     }
@@ -108,6 +110,12 @@ public class DayRecord implements Serializable {
 	return 0;
     }
 
-//   º
+    public boolean isToRemove() {
+	return toRemove;
+    }
+
+    public void setToRemove(boolean toRemove) {
+	this.toRemove = toRemove;
+    }
 
 }

@@ -1,6 +1,6 @@
 package com.edwise.dedicamns;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -41,7 +41,7 @@ public class DetailDayActivity extends Activity {
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.detail_day);
 	
-	List<String> spinnerArray = DedicaHTMLParserMock.getInstance().getArrayProjects();
+	List<String> projectsArray = DedicaHTMLParserMock.getInstance().getArrayProjects();
 
 	this.dayRecord = (DayRecord) getIntent().getSerializableExtra(
 		"dayRecord");
@@ -51,28 +51,50 @@ public class DetailDayActivity extends Activity {
 	    EditText text = (EditText) findViewById(R.id.detailHoursEditText);
 	    text.setText(dayRecord.getHours());
 	    
-	    Spinner spinner = (Spinner) findViewById(R.id.detailProjectSpinner);
+	    Spinner projectSpinner = (Spinner) findViewById(R.id.detailProjectSpinner);
 	    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-		        android.R.layout.simple_spinner_dropdown_item,
-		            spinnerArray);
+		        android.R.layout.simple_spinner_item,
+		            projectsArray);
 	    // Specify the layout to use when the list of choices appears
-	    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-	    spinner.setAdapter(adapter);
-	    spinner.setSelection(3); // TODO dayRecord.getProjectId()
-	    
-	    spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+	    //adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+	    projectSpinner.setAdapter(adapter);
+	    projectSpinner.setSelection(3); // TODO dayRecord.getProjectId()
+	    projectSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 		public void onItemSelected(AdapterView<?> parent, View view,
 			int pos, long id) {
 		    // TODO obtener el seleccionado con parent.getItemAtPosition(pos)
 		}
-
+		
 		public void onNothingSelected(AdapterView<?> parent) {
 		    // TODO Auto-generated method stub
 		}
 	    });
 	    
-	    text = (EditText) findViewById(R.id.detailSubprojectEditText);
-	    text.setText(dayRecord.getSubProject());
+	    List<String> subProjectArray  = null;
+	    if (dayRecord.getProjectId() != null) {
+		subProjectArray = DedicaHTMLParserMock.getInstance().getArraySubProjects(3);// TODO dayRecord.getProjectId()
+	    }
+	    else {
+		subProjectArray = new ArrayList<String>();		
+	    }
+	    // Cargar el combo de subproyectos
+	    Spinner subProjectSpinner = (Spinner) findViewById(R.id.detailSubprojectSpinner);
+	    ArrayAdapter<String> subProjectAdapter = new ArrayAdapter<String>(
+		    this, android.R.layout.simple_spinner_item, subProjectArray);
+	    subProjectSpinner.setAdapter(subProjectAdapter);
+	    subProjectSpinner.setSelection(0); // TODO // dayRecord.getSubProjectId()
+	    subProjectSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+		public void onItemSelected(AdapterView<?> parent, View view,
+			int pos, long id) {
+		    // TODO obtener el seleccionado con parent.getItemAtPosition(pos)
+		}
+		
+		public void onNothingSelected(AdapterView<?> parent) {
+		    // TODO Auto-generated method stub
+		}
+	    });
+	    
+	    
 	    text = (EditText) findViewById(R.id.detailTaskEditText);
 	    text.setText(dayRecord.getTask());
 	} else {
@@ -109,6 +131,16 @@ public class DetailDayActivity extends Activity {
 	pDialog = ProgressDialog.show(this, messageDialog,
 		"Por favor, espera...", true);
     }
+    
+    @Override
+    public void onBackPressed() {
+	Log.d(DetailDayActivity.class.toString(), "onBackPressed");
+	super.onBackPressed();
+	
+	Intent returnIntent = new Intent();
+	setResult(RESULT_CANCELED, returnIntent);        
+	finish();
+    }
 
     private class SaveRemoveDayAsyncTask extends
 	    AsyncTask<DetailDayActionEnum, Integer, Integer> {
@@ -128,10 +160,12 @@ public class DetailDayActivity extends Activity {
 	    boolean ok = false;
 	    switch (this.action) {
 	    case SAVE:
+		// TODO obtener los datos de los campos, y meterlos en dayRecord
 		ok = parser.saveDay(dayRecord);
 		break;
 
 	    case REMOVE:
+		dayRecord.setToRemove(true);
 		ok = parser.removeDay(dayRecord);
 		break;
 	    default:
@@ -144,10 +178,15 @@ public class DetailDayActivity extends Activity {
 	@Override
 	protected void onPostExecute(Integer result) {
 	    Log.d(SaveRemoveDayAsyncTask.class.toString(), "onPostExecute...");
-
-	    this.startMonthActivity();
-
-	    this.closeDialog();
+	    
+	    if (result == 1) {
+		this.returnMonthActivity();
+		this.closeDialog();
+	    }
+	    else {
+		this.closeDialog();
+		showToastMessage("Error de la web de dedicaciones");
+	    }
 	}
 
 	private void closeDialog() {
@@ -163,23 +202,19 @@ public class DetailDayActivity extends Activity {
 	    super.onProgressUpdate(values);
 	}
 
-	private void startMonthActivity() {
-	    Intent intent = new Intent(this.activity, MonthViewActivity.class);
-
-	    // TODO revisar si volver a obtener esto o que hacer...
-	    List<DayRecord> listDays = DedicaHTMLParserMock.getInstance()
-		    .getListFromHTML();
-
-	    intent.putExtra("dayList", (Serializable) listDays);
-	    this.activity.startActivity(intent);
-	    this.activity.finish();
-
+	private void returnMonthActivity() {
 	    String message = MESSAGE_SAVE_OK;
 	    if (this.action == DetailDayActionEnum.REMOVE) {
 		message = MESSAGE_REMOVE_OK;
 	    }
+	    
+	    Intent returnIntent = new Intent();
+	    returnIntent.putExtra("dayRecordModif", dayRecord);
+	    setResult(RESULT_OK, returnIntent);     
 
 	    showToastMessage(message);
+	    
+	    finish();
 	}
 
 	private void showToastMessage(String message) {
