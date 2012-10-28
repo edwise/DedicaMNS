@@ -23,7 +23,7 @@
         android:paddingTop="9sp"
         android:paddingLeft="6sp"
         android:text="Miercoles"
-        android:textSize="16dp" >
+        android:textSize="14dp" >
     </TextView>
 
     <TextView
@@ -34,7 +34,7 @@
         android:gravity="center_vertical|right"
         android:paddingTop="9sp"        
         android:text="BBVA68"
-        android:textSize="18dp" >
+        android:textSize="16dp" >
     </TextView>
 
     <TextView

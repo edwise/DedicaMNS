@@ -4,6 +4,11 @@ import java.io.Serializable;
 
 public class DayRecord implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -749246389856673135L;
+    
     private int dayNum;
     private String dayName;
     private String hours;
@@ -118,4 +123,17 @@ public class DayRecord implements Serializable {
 	this.toRemove = toRemove;
     }
 
+    public void clearDay() {
+	this.hours = null;
+	this.projectId = null;
+	this.subProject = null;
+	this.task = null;
+    }
+    
+    public void copyDayData(DayRecord dayRecord) {
+	this.hours =  dayRecord.getHours();
+	this.projectId = dayRecord.getProjectId();
+	this.subProject = dayRecord.getSubProject();
+	this.task = dayRecord.getTask();
+    }
 }

@@ -55,8 +55,6 @@ public class DetailDayActivity extends Activity {
 	    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 		        android.R.layout.simple_spinner_item,
 		            projectsArray);
-	    // Specify the layout to use when the list of choices appears
-	    //adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 	    projectSpinner.setAdapter(adapter);
 	    projectSpinner.setSelection(3); // TODO dayRecord.getProjectId()
 	    projectSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -161,6 +159,7 @@ public class DetailDayActivity extends Activity {
 	    switch (this.action) {
 	    case SAVE:
 		// TODO obtener los datos de los campos, y meterlos en dayRecord
+		dayRecord.setProjectId("CHANGED!");
 		ok = parser.saveDay(dayRecord);
 		break;
 
