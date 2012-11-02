@@ -1,7 +1,8 @@
 package com.edwise.dedicamns;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 
 import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.mocks.DedicaHTMLParserMock;
+import com.edwise.dedicamns.utils.Time24HoursValidator;
 
 public class DetailDayActivity extends Activity {
     private static final String MESSAGE_SAVE_OK = "Guardado registro de horas correctamente";
@@ -34,83 +36,121 @@ public class DetailDayActivity extends Activity {
 
     private DayRecord dayRecord = null;
     private ProgressDialog pDialog = null;
-
+    
+    private TextView dayNumTextView = null;
+    private EditText hoursEditText = null;
+    private Spinner projectSpinner = null;
+    private Spinner subProjectSpinner = null;
+    private EditText taskEditText = null;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
 	Log.d(DetailDayActivity.class.toString(), "onCreate");
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.detail_day);
 	
-	List<String> projectsArray = DedicaHTMLParserMock.getInstance().getArrayProjects();
 
 	this.dayRecord = (DayRecord) getIntent().getSerializableExtra(
 		"dayRecord");
 	if (dayRecord != null) {
-	    TextView view = (TextView) findViewById(R.id.detailDayInfoTextView);
-	    view.setText(dayRecord.getDayNum() + " - " + dayRecord.getDayName());
-	    EditText text = (EditText) findViewById(R.id.detailHoursEditText);
-	    text.setText(dayRecord.getHours());
+	    dayNumTextView = (TextView) findViewById(R.id.detailDayInfoTextView);
+	    dayNumTextView.setText(dayRecord.getDayNum() + " - " + dayRecord.getDayName());
+	    hoursEditText = (EditText) findViewById(R.id.detailHoursEditText);
+	    hoursEditText.setText(dayRecord.getHours());
 	    
-	    Spinner projectSpinner = (Spinner) findViewById(R.id.detailProjectSpinner);
-	    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-		        android.R.layout.simple_spinner_item,
-		            projectsArray);
-	    projectSpinner.setAdapter(adapter);
-	    projectSpinner.setSelection(3); // TODO dayRecord.getProjectId()
-	    projectSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-		public void onItemSelected(AdapterView<?> parent, View view,
-			int pos, long id) {
-		    // TODO obtener el seleccionado con parent.getItemAtPosition(pos)
-		}
-		
-		public void onNothingSelected(AdapterView<?> parent) {
-		    // TODO Auto-generated method stub
-		}
-	    });
-	    
-	    List<String> subProjectArray  = null;
-	    if (dayRecord.getProjectId() != null) {
-		subProjectArray = DedicaHTMLParserMock.getInstance().getArraySubProjects(3);// TODO dayRecord.getProjectId()
+	    linkProjectSpinner();	
+	    if (subProjectSpinner == null) {  // Por si el onItemSelected del otro se ejecuta antes, no lo vuelvo a hacer...
+		linkSubProjectSpinner((String)this.projectSpinner.getSelectedItem());
 	    }
-	    else {
-		subProjectArray = new ArrayList<String>();		
-	    }
-	    // Cargar el combo de subproyectos
-	    Spinner subProjectSpinner = (Spinner) findViewById(R.id.detailSubprojectSpinner);
-	    ArrayAdapter<String> subProjectAdapter = new ArrayAdapter<String>(
-		    this, android.R.layout.simple_spinner_item, subProjectArray);
-	    subProjectSpinner.setAdapter(subProjectAdapter);
-	    subProjectSpinner.setSelection(0); // TODO // dayRecord.getSubProjectId()
-	    subProjectSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-		public void onItemSelected(AdapterView<?> parent, View view,
-			int pos, long id) {
-		    // TODO obtener el seleccionado con parent.getItemAtPosition(pos)
-		}
-		
-		public void onNothingSelected(AdapterView<?> parent) {
-		    // TODO Auto-generated method stub
-		}
-	    });
 	    
-	    
-	    text = (EditText) findViewById(R.id.detailTaskEditText);
-	    text.setText(dayRecord.getTask());
+	    taskEditText = (EditText) findViewById(R.id.detailTaskEditText);
+	    taskEditText.setText(dayRecord.getTask());
 	} else {
 	    dayRecord = new DayRecord();
 	}
     }
 
+    private void linkProjectSpinner() {
+	List<String> projectsArray = DedicaHTMLParserMock.getInstance().getArrayProjects();
+	projectSpinner = (Spinner) findViewById(R.id.detailProjectSpinner);
+	ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+	        android.R.layout.simple_spinner_item,
+	            projectsArray);
+	projectSpinner.setAdapter(adapter);
+	if (StringUtils.isNotBlank(dayRecord.getProjectId())) {
+	    int spinnerPosition = adapter.getPosition(dayRecord.getProjectId());
+	    projectSpinner.setSelection(spinnerPosition);
+	}
+	projectSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+	    public void onItemSelected(AdapterView<?> parent, View view,
+		    int pos, long id) {
+		linkSubProjectSpinner((String)parent.getItemAtPosition(pos));
+	    }
+
+	    public void onNothingSelected(AdapterView<?> parent) {
+	    }
+
+	});
+    }
+    
+    private void linkSubProjectSpinner(String projectSelected) {
+	List<String> subProjectArray = null;
+	    subProjectArray = DedicaHTMLParserMock.getInstance()
+		    .getArraySubProjects(projectSelected);
+	// Cargar el combo de subproyectos
+	if (subProjectSpinner == null) {
+	    subProjectSpinner = (Spinner) findViewById(R.id.detailSubprojectSpinner);
+	}
+	ArrayAdapter<String> subProjectAdapter = new ArrayAdapter<String>(
+	    this, android.R.layout.simple_spinner_item, subProjectArray);
+	subProjectSpinner.setAdapter(subProjectAdapter);
+	subProjectSpinner.setSelection(0); // TODO dayRecord.getSubProjectId()
+	subProjectSpinner
+		.setOnItemSelectedListener(new OnItemSelectedListener() {
+		    public void onItemSelected(AdapterView<?> parent,
+			    View view, int pos, long id) {			
+		    }
+
+		    public void onNothingSelected(AdapterView<?> parent) {
+		    }
+		});
+    }
+
     public void doSaveDay(View view) {
 	Log.d(DetailDayActivity.class.toString(), "doSaveDay");
 
-	// TODO rellenar el dayRecord con los nuevos datos. Ojo, validaciones!
-	showDialog(DetailDayActionEnum.SAVE);
-
-	AsyncTask<DetailDayActionEnum, Integer, Integer> connectionAsyncTask = new SaveRemoveDayAsyncTask(
-		this);
-	connectionAsyncTask.execute(DetailDayActionEnum.SAVE);
+	if (!Time24HoursValidator.validateTime(hoursEditText.getText().toString().trim())) {
+	    showToastMessage("El formato de horas es incorrecto");
+	}
+	else if (!validateSpinnerProjectSelected()) {
+	    showToastMessage("Debe seleccionar algún proyecto");
+	}
+	else {
+	    showDialog(DetailDayActionEnum.SAVE);
+	    fillDayRecord();	    
+	    AsyncTask<DetailDayActionEnum, Integer, Integer> connectionAsyncTask = new SaveRemoveDayAsyncTask(
+		    this);
+	    connectionAsyncTask.execute(DetailDayActionEnum.SAVE);
+	}
     }
-
+    
+    private void showToastMessage(String message) {
+	Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+	toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 20);
+	toast.show();
+    }
+    
+    private boolean validateSpinnerProjectSelected() {
+	return projectSpinner.getSelectedItemPosition() != 0;
+    }
+    
+    private void fillDayRecord() {
+	this.dayRecord.setHours(hoursEditText.getText().toString().trim());
+	this.dayRecord.setProjectId((String)this.projectSpinner.getSelectedItem());
+	this.dayRecord.setSubProject((String)this.subProjectSpinner.getSelectedItem());
+	this.dayRecord.setTask(this.taskEditText.getText().toString().trim());
+    }
+        
     public void doRemoveDay(View view) {
 	Log.d(DetailDayActivity.class.toString(), "doRemoveDay");
 
@@ -158,8 +198,6 @@ public class DetailDayActivity extends Activity {
 	    boolean ok = false;
 	    switch (this.action) {
 	    case SAVE:
-		// TODO obtener los datos de los campos, y meterlos en dayRecord
-		dayRecord.setProjectId("CHANGED!");
 		ok = parser.saveDay(dayRecord);
 		break;
 

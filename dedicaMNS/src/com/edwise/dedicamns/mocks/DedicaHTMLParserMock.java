@@ -85,6 +85,7 @@ public class DedicaHTMLParserMock {
     public List<String> getArrayProjects() {
 	List<String> arrayProjects = new ArrayList<String>();
 
+	arrayProjects.add("Selecciona proyecto...");
 	arrayProjects.add("BBVA58");
 	arrayProjects.add("Educared09");
 	arrayProjects.add("BBVA68");
@@ -94,18 +95,14 @@ public class DedicaHTMLParserMock {
 	return arrayProjects;
     }
 
-    public List<String> getArraySubProjects(Integer projectId) {
+    public List<String> getArraySubProjects(String projectId) {
 	List<String> arraySubProjects = new ArrayList<String>();
-	switch (projectId) {
-	case 3:
-	    arraySubProjects.add("0 - Sin cuenta");
-	    break;
-
-	default:
+	if (projectId != null && projectId.equals("BBVA58")) {
 	    arraySubProjects.add("1 - Tarea mierda");
 	    arraySubProjects.add("2 - Marronacos");
 	    arraySubProjects.add("3 - Calentar silla");
-	    break;
+	} else {
+	    arraySubProjects.add("0 - Sin cuenta");
 	}
 
 	return arraySubProjects;
