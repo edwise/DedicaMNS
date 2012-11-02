@@ -27,6 +27,10 @@
             android:name=".DetailDayActivity"
             android:label="@string/title_activity_detail_day" >
         </activity>
+        <activity
+            android:name=".MainMenuActivity"
+            android:label="@string/title_activity_main_menu" >            
+        </activity>
     </application>
 
 </manifest>

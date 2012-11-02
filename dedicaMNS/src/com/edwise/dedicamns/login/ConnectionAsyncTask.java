@@ -3,8 +3,6 @@
  */
 package com.edwise.dedicamns.login;
 
-import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
@@ -17,8 +15,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
-import com.edwise.dedicamns.MonthViewActivity;
-import com.edwise.dedicamns.beans.DayRecord;
+import com.edwise.dedicamns.MainMenuActivity;
 import com.edwise.dedicamns.mocks.DedicaHTMLParserMock;
 
 /**
@@ -41,22 +38,10 @@ public class ConnectionAsyncTask extends
 	Log.d(ConnectionAsyncTask.class.toString(),
 		"doInBackground: Comenzando asyncTask...");
 	Map<String, String> dataLogin = data[0];
-	// TODO Guardar el sharedpreferences si está el check, si no borrarlo!
 	saveSharedPreferences(dataLogin);
 
 	// TODO conexión real
-	try {
-	    for (int i = 0; i < 3; i++) {
-		Thread.sleep(1000);
-		publishProgress(i + 1);
-	    }
-	} catch (InterruptedException e) {
-	    Log.e(ConnectionAsyncTask.class.toString(),
-		    "doInBackground: Error en Thread.sleep()...", e);
-	    e.printStackTrace();
-	}
-
-	return 1; // TODO enum con tipos de retorno, errores, etc
+	return DedicaHTMLParserMock.getInstance().connectWeb(); // TODO enum con tipos de retorno, errores, etc
     }
 
     private void saveSharedPreferences(Map<String, String> dataLogin) {
@@ -81,8 +66,11 @@ public class ConnectionAsyncTask extends
 		"onPostExecute: Finalizando asyncTask...");
 
 	// TODO realizar la conexión, preparar un mock que de ok o algo así...
-	if (true) { // TODO comprobaciones de resultado
+	if (result == 200) { // TODO comprobaciones de resultado y constantes!
 	    this.startNextActivity();
+	}
+	else {
+	    showToastErrorConnection();
 	}
 
 	closeDialog();
@@ -100,15 +88,8 @@ public class ConnectionAsyncTask extends
     }
 
     private void startNextActivity() {
-	DedicaHTMLParserMock parser = DedicaHTMLParserMock.getInstance();
-	// TODO lanza la activity principal (ahora una de consulta, luego ya
-	// veremos)
-	Intent intent = new Intent(this.loginActivity, MonthViewActivity.class);
-
-	// TODO desmockear
-	List<DayRecord> listDays = parser.getListFromHTML();
-
-	intent.putExtra("dayList", (Serializable) listDays);
+	Intent intent = new Intent(this.loginActivity, MainMenuActivity.class);
+	
 	this.loginActivity.startActivity(intent);
 	this.loginActivity.finish();
 
@@ -118,6 +99,14 @@ public class ConnectionAsyncTask extends
 
     private void showToastConnected() {
 	Toast toast = Toast.makeText(this.loginActivity, "Conectado!",
+		Toast.LENGTH_LONG);
+	toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM,
+		0, 20);
+	toast.show();
+    }
+    
+    private void showToastErrorConnection() {
+	Toast toast = Toast.makeText(this.loginActivity, "Error en la conexión!",
 		Toast.LENGTH_LONG);
 	toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM,
 		0, 20);

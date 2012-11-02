@@ -3,6 +3,8 @@ package com.edwise.dedicamns.mocks;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
+
 import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.utils.DayUtils;
 
@@ -21,6 +23,21 @@ public class DedicaHTMLParserMock {
 	    htmlParser = new DedicaHTMLParserMock();
 	}
 	return htmlParser;
+    }
+    
+    public Integer connectWeb() {
+	try {
+	    for (int i = 0; i < 3; i++) {
+		Thread.sleep(1000);
+//		publishProgress(i + 1);
+	    }
+	} catch (InterruptedException e) {
+	    Log.e(DedicaHTMLParserMock.class.toString(),
+		    "connectWeb: Error en Thread.sleep()...", e);
+	    e.printStackTrace();
+	}
+	
+	return 200;
     }
 
     public List<DayRecord> getListFromHTML() {

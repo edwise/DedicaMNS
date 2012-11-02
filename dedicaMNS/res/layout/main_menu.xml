@@ -1,0 +1,52 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageButton
+        android:id="@+id/imageButtonListMonth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/calendar_img"
+        android:onClick="doShowListMonth" />
+
+    <TextView
+        android:id="@+id/ListMonthTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageButtonListMonth"
+        android:layout_centerHorizontal="true"
+        android:text="Consulta e imputación por día" />
+
+    <ImageButton
+        android:id="@+id/imageButtonBatch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ListMonthTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:src="@android:drawable/ic_menu_send"
+         />
+
+    <TextView
+        android:id="@+id/BatchTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageButtonBatch"
+        android:layout_centerHorizontal="true"
+        android:text="Imputación batch mensual" />
+
+    <Button
+        android:id="@+id/logoutButton"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="25dp"
+        android:layout_toLeftOf="@+id/imageButtonListMonth"
+        android:text="LogOut" />
+
+</RelativeLayout>
