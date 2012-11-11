@@ -2,9 +2,11 @@ package com.edwise.dedicamns.mocks;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import android.util.Log;
 
+import com.edwise.dedicamns.beans.BatchDataBean;
 import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.utils.DayUtils;
 
@@ -27,13 +29,10 @@ public class DedicaHTMLParserMock {
     
     public Integer connectWeb() {
 	try {
-	    for (int i = 0; i < 3; i++) {
-		Thread.sleep(1000);
-//		publishProgress(i + 1);
-	    }
+	    TimeUnit.SECONDS.sleep(3);
 	} catch (InterruptedException e) {
 	    Log.e(DedicaHTMLParserMock.class.toString(),
-		    "connectWeb: Error en Thread.sleep()...", e);
+		    "connectWeb: Error en TimeUnit...", e);
 	    e.printStackTrace();
 	}
 	
@@ -109,10 +108,13 @@ public class DedicaHTMLParserMock {
 	arrayProjects.add("NIELHUEVO32");
 	arrayProjects.add("ISBAN12");
 
+	// TODO llamar aquí a un cacheador de subrpoyectos??
+	
 	return arrayProjects;
     }
 
     public List<String> getArraySubProjects(String projectId) {
+	// TODO habrá que hacer una carga en algún lado con todos los subproyectos, y luego de ahi sacar los que sean...
 	List<String> arraySubProjects = new ArrayList<String>();
 	if (projectId != null && projectId.equals("BBVA58")) {
 	    arraySubProjects.add("1 - Tarea mierda");
@@ -125,4 +127,28 @@ public class DedicaHTMLParserMock {
 	return arraySubProjects;
     }
 
+    public List<String> getMonths() {
+	List<String> months = new ArrayList<String>();
+
+	months.add("Octubre 2012");
+	months.add("Noviembre 2012");
+	months.add("Diciembre 2012");
+	months.add("Enero 2013");
+	
+	return months;
+    }
+    
+    public int proccesBatch(BatchDataBean batchData) {
+	// TODO procesado de batch: obtener web del mes, e ir imputando cada dia con los datos pasados
+	try {
+	    TimeUnit.SECONDS.sleep(5);
+	} catch (InterruptedException e) {
+	    Log.e(DedicaHTMLParserMock.class.toString(),
+		    "proccesBatch: Error en TimeUnit...", e);
+	    e.printStackTrace();
+	}
+	
+	return 1;
+    }
+    
 }

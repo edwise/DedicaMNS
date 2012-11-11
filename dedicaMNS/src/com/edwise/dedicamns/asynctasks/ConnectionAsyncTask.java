@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.edwise.dedicamns.login;
+package com.edwise.dedicamns.asynctasks;
 
 import java.util.Map;
 

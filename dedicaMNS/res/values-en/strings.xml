@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Dedica MNS</string>
     <string name="menu_settings">Settings</string>
+    <string name="menu_logout">Logout</string>
+    
     <string name="title_activity_login">Dedica MNS</string>
     
     <string name="connectButtonS">Connect</string>

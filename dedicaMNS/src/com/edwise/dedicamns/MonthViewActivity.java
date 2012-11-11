@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -18,9 +19,9 @@ import com.edwise.dedicamns.adapters.DayListAdapter;
 import com.edwise.dedicamns.beans.DayRecord;
 
 public class MonthViewActivity extends Activity {
-    
+
     static final int DAY_REQUEST = 0;
-    
+
     private ListView listView = null;
     private List<DayRecord> listDayRecord = null;
     private Parcelable listState = null;
@@ -31,37 +32,39 @@ public class MonthViewActivity extends Activity {
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.month_view);
 
-	listDayRecord = (List<DayRecord>) getIntent()
-		.getSerializableExtra("dayList");
+	listDayRecord = (List<DayRecord>) getIntent().getSerializableExtra("dayList");
 	// TODO comprobacion antes de si viene el dato
 
 	listView = (ListView) findViewById(R.id.listV_main);
 	listView.setAdapter(new DayListAdapter(this, listDayRecord));
 
 	listView.setOnItemClickListener(new OnItemClickListener() {
-	    public void onItemClick(AdapterView<?> adapterView, View view,
-		    int position, long id) {
+	    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 		listState = listView.onSaveInstanceState();
-		
+
 		DayRecord dayRecord = (DayRecord) listView.getItemAtPosition(position);
-		Intent intent = new Intent(MonthViewActivity.this,
-			DetailDayActivity.class);
+		Intent intent = new Intent(MonthViewActivity.this, DetailDayActivity.class);
 		intent.putExtra("dayRecord", dayRecord);
 		startActivityForResult(intent, DAY_REQUEST);
 	    }
 
 	});
     }
-    
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+	getMenuInflater().inflate(R.menu.main_menu, menu);
+	return true;
+    }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	Log.d(MonthViewActivity.class.toString(), "onActivityResult...");
-	
+
 	if (requestCode == DAY_REQUEST) {
 	    if (resultCode == RESULT_OK) {
 		DayRecord dayRecord = (DayRecord) data.getSerializableExtra("dayRecordModif");
 		this.reDrawList(dayRecord);
-	    }
-	    else {
+	    } else {
 		// TODO hacer algo??
 		this.showToastMessage("Nada!!");
 	    }
@@ -73,10 +76,10 @@ public class MonthViewActivity extends Activity {
 	toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER, 0, -10);
 	toast.show();
     }
-    
+
     private void reDrawList(DayRecord dayRecord) {
 	// Repintar toda la lista, cambiando el dia que ha cambiado
-	changeDayRecordInList(dayRecord);	
+	changeDayRecordInList(dayRecord);
 	listView.setAdapter(new DayListAdapter(this, listDayRecord));
 	listView.onRestoreInstanceState(listState);
 
@@ -84,19 +87,16 @@ public class MonthViewActivity extends Activity {
     }
 
     private void changeDayRecordInList(DayRecord dayRecord) {
-	for (DayRecord oldDayRecord: listDayRecord) {
+	for (DayRecord oldDayRecord : listDayRecord) {
 	    if (oldDayRecord.getDayNum() == dayRecord.getDayNum()) {
 		if (dayRecord.isToRemove()) {
 		    oldDayRecord.clearDay();
-		}
-		else {
+		} else {
 		    oldDayRecord.copyDayData(dayRecord);
 		}
 		break;
 	    }
 	}
     }
-
-        
 
 }

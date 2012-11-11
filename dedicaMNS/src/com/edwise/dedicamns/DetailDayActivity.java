@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -36,33 +37,33 @@ public class DetailDayActivity extends Activity {
 
     private DayRecord dayRecord = null;
     private ProgressDialog pDialog = null;
-    
+
     private TextView dayNumTextView = null;
     private EditText hoursEditText = null;
     private Spinner projectSpinner = null;
     private Spinner subProjectSpinner = null;
     private EditText taskEditText = null;
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 	Log.d(DetailDayActivity.class.toString(), "onCreate");
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.detail_day);
-	
 
-	this.dayRecord = (DayRecord) getIntent().getSerializableExtra(
-		"dayRecord");
+	this.dayRecord = (DayRecord) getIntent().getSerializableExtra("dayRecord");
 	if (dayRecord != null) {
 	    dayNumTextView = (TextView) findViewById(R.id.detailDayInfoTextView);
 	    dayNumTextView.setText(dayRecord.getDayNum() + " - " + dayRecord.getDayName());
 	    hoursEditText = (EditText) findViewById(R.id.detailHoursEditText);
 	    hoursEditText.setText(dayRecord.getHours());
-	    
-	    linkProjectSpinner();	
-	    if (subProjectSpinner == null) {  // Por si el onItemSelected del otro se ejecuta antes, no lo vuelvo a hacer...
-		linkSubProjectSpinner((String)this.projectSpinner.getSelectedItem());
+
+	    linkProjectSpinner();
+	    if (subProjectSpinner == null) { // Por si el onItemSelected del
+					     // otro se ejecuta antes, no lo
+					     // vuelvo a hacer...
+		linkSubProjectSpinner((String) this.projectSpinner.getSelectedItem());
 	    }
-	    
+
 	    taskEditText = (EditText) findViewById(R.id.detailTaskEditText);
 	    taskEditText.setText(dayRecord.getTask());
 	} else {
@@ -70,21 +71,26 @@ public class DetailDayActivity extends Activity {
 	}
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+	getMenuInflater().inflate(R.menu.main_menu, menu);
+	return true;
+    }
+
     private void linkProjectSpinner() {
+	// TODO mirar obtener el listado de proyectos y subproyectos antes!!
 	List<String> projectsArray = DedicaHTMLParserMock.getInstance().getArrayProjects();
 	projectSpinner = (Spinner) findViewById(R.id.detailProjectSpinner);
-	ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-	        android.R.layout.simple_spinner_item,
-	            projectsArray);
+	ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
+		projectsArray);
 	projectSpinner.setAdapter(adapter);
 	if (StringUtils.isNotBlank(dayRecord.getProjectId())) {
 	    int spinnerPosition = adapter.getPosition(dayRecord.getProjectId());
 	    projectSpinner.setSelection(spinnerPosition);
 	}
 	projectSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-	    public void onItemSelected(AdapterView<?> parent, View view,
-		    int pos, long id) {
-		linkSubProjectSpinner((String)parent.getItemAtPosition(pos));
+	    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+		linkSubProjectSpinner((String) parent.getItemAtPosition(pos));
 	    }
 
 	    public void onNothingSelected(AdapterView<?> parent) {
@@ -92,28 +98,25 @@ public class DetailDayActivity extends Activity {
 
 	});
     }
-    
+
     private void linkSubProjectSpinner(String projectSelected) {
 	List<String> subProjectArray = null;
-	    subProjectArray = DedicaHTMLParserMock.getInstance()
-		    .getArraySubProjects(projectSelected);
+	subProjectArray = DedicaHTMLParserMock.getInstance().getArraySubProjects(projectSelected);
 	// Cargar el combo de subproyectos
 	if (subProjectSpinner == null) {
 	    subProjectSpinner = (Spinner) findViewById(R.id.detailSubprojectSpinner);
 	}
-	ArrayAdapter<String> subProjectAdapter = new ArrayAdapter<String>(
-	    this, android.R.layout.simple_spinner_item, subProjectArray);
+	ArrayAdapter<String> subProjectAdapter = new ArrayAdapter<String>(this,
+		android.R.layout.simple_spinner_item, subProjectArray);
 	subProjectSpinner.setAdapter(subProjectAdapter);
 	subProjectSpinner.setSelection(0); // TODO dayRecord.getSubProjectId()
-	subProjectSpinner
-		.setOnItemSelectedListener(new OnItemSelectedListener() {
-		    public void onItemSelected(AdapterView<?> parent,
-			    View view, int pos, long id) {			
-		    }
+	subProjectSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+	    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+	    }
 
-		    public void onNothingSelected(AdapterView<?> parent) {
-		    }
-		});
+	    public void onNothingSelected(AdapterView<?> parent) {
+	    }
+	});
     }
 
     public void doSaveDay(View view) {
@@ -121,36 +124,34 @@ public class DetailDayActivity extends Activity {
 
 	if (!Time24HoursValidator.validateTime(hoursEditText.getText().toString().trim())) {
 	    showToastMessage("El formato de horas es incorrecto");
-	}
-	else if (!validateSpinnerProjectSelected()) {
+	} else if (!validateSpinnerProjectSelected()) {
 	    showToastMessage("Debe seleccionar algún proyecto");
-	}
-	else {
+	} else {
 	    showDialog(DetailDayActionEnum.SAVE);
-	    fillDayRecord();	    
+	    fillDayRecord();
 	    AsyncTask<DetailDayActionEnum, Integer, Integer> connectionAsyncTask = new SaveRemoveDayAsyncTask(
 		    this);
 	    connectionAsyncTask.execute(DetailDayActionEnum.SAVE);
 	}
     }
-    
+
     private void showToastMessage(String message) {
 	Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
 	toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 20);
 	toast.show();
     }
-    
+
     private boolean validateSpinnerProjectSelected() {
 	return projectSpinner.getSelectedItemPosition() != 0;
     }
-    
+
     private void fillDayRecord() {
 	this.dayRecord.setHours(hoursEditText.getText().toString().trim());
-	this.dayRecord.setProjectId((String)this.projectSpinner.getSelectedItem());
-	this.dayRecord.setSubProject((String)this.subProjectSpinner.getSelectedItem());
+	this.dayRecord.setProjectId((String) this.projectSpinner.getSelectedItem());
+	this.dayRecord.setSubProject((String) this.subProjectSpinner.getSelectedItem());
 	this.dayRecord.setTask(this.taskEditText.getText().toString().trim());
     }
-        
+
     public void doRemoveDay(View view) {
 	Log.d(DetailDayActivity.class.toString(), "doRemoveDay");
 
@@ -166,22 +167,20 @@ public class DetailDayActivity extends Activity {
 	if (actionEnum == DetailDayActionEnum.REMOVE) {
 	    messageDialog = DIALOG_REMOVING;
 	}
-	pDialog = ProgressDialog.show(this, messageDialog,
-		"Por favor, espera...", true);
+	pDialog = ProgressDialog.show(this, messageDialog, "Por favor, espera...", true);
     }
-    
+
     @Override
     public void onBackPressed() {
 	Log.d(DetailDayActivity.class.toString(), "onBackPressed");
 	super.onBackPressed();
-	
+
 	Intent returnIntent = new Intent();
-	setResult(RESULT_CANCELED, returnIntent);        
+	setResult(RESULT_CANCELED, returnIntent);
 	finish();
     }
 
-    private class SaveRemoveDayAsyncTask extends
-	    AsyncTask<DetailDayActionEnum, Integer, Integer> {
+    private class SaveRemoveDayAsyncTask extends AsyncTask<DetailDayActionEnum, Integer, Integer> {
 
 	private Activity activity;
 	private DetailDayActionEnum action;
@@ -215,12 +214,11 @@ public class DetailDayActivity extends Activity {
 	@Override
 	protected void onPostExecute(Integer result) {
 	    Log.d(SaveRemoveDayAsyncTask.class.toString(), "onPostExecute...");
-	    
+
 	    if (result == 1) {
 		this.returnMonthActivity();
 		this.closeDialog();
-	    }
-	    else {
+	    } else {
 		this.closeDialog();
 		showToastMessage("Error de la web de dedicaciones");
 	    }
@@ -233,8 +231,7 @@ public class DetailDayActivity extends Activity {
 
 	@Override
 	protected void onProgressUpdate(Integer... values) {
-	    Log.d(SaveRemoveDayAsyncTask.class.toString(),
-		    "onProgressUpdate...");
+	    Log.d(SaveRemoveDayAsyncTask.class.toString(), "onProgressUpdate...");
 
 	    super.onProgressUpdate(values);
 	}
@@ -244,19 +241,18 @@ public class DetailDayActivity extends Activity {
 	    if (this.action == DetailDayActionEnum.REMOVE) {
 		message = MESSAGE_REMOVE_OK;
 	    }
-	    
+
 	    Intent returnIntent = new Intent();
 	    returnIntent.putExtra("dayRecordModif", dayRecord);
-	    setResult(RESULT_OK, returnIntent);     
+	    setResult(RESULT_OK, returnIntent);
 
 	    showToastMessage(message);
-	    
+
 	    finish();
 	}
 
 	private void showToastMessage(String message) {
-	    Toast toast = Toast.makeText(this.activity, message,
-		    Toast.LENGTH_LONG);
+	    Toast toast = Toast.makeText(this.activity, message, Toast.LENGTH_LONG);
 	    toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 20);
 	    toast.show();
 	}

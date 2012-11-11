@@ -1,0 +1,153 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/titleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:ems="14"
+        android:gravity="center"
+        android:text="Imputación en Batch"
+        android:textSize="28sp" >
+    </TextView>
+
+    <TableLayout
+        android:id="@+id/batchMenuTable"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/titleTextView"
+        android:layout_marginLeft="1dip"
+        android:layout_marginRight="1dip"
+        android:layout_marginTop="15dip"
+        android:paddingLeft="2dip"
+        android:paddingRight="2dip"
+        android:shrinkColumns="1"
+        android:stretchColumns="1" >
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/batchMonthsTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Mes: "
+                android:textSize="14sp" >
+            </TextView>
+
+            <Spinner
+                android:id="@+id/batchMonthsSpinner"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:textSize="8sp" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/batchProjectTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Proyecto: "
+                android:textSize="14sp" >
+            </TextView>
+
+            <Spinner
+                android:id="@+id/batchProjectSpinner"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:textSize="8sp" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/batchSubprojectTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Subproyecto: "
+                android:textSize="14sp" >
+            </TextView>
+
+            <Spinner
+                android:id="@+id/batchSubprojectSpinner"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:textSize="8sp" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/batchTaskTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Tarea: "
+                android:textSize="14sp" >
+            </TextView>
+
+            <EditText
+                android:id="@+id/batchTaskEditText"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:inputType="text" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/batchTypeHourTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Tipo horario: "
+                android:textSize="14sp" >
+            </TextView>
+
+            <Spinner
+                android:id="@+id/batchTypeHourSpinner"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:textSize="8sp" />
+        </TableRow>
+    </TableLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutBatchButtons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/batchMenuTable"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp" >
+
+        <Button
+            android:id="@+id/batchSaveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
+            android:onClick="doLaunchBatch"
+            android:text="Imputar" />
+
+        <Button
+            android:id="@+id/batchRemoveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:onClick="doBack"
+            android:text="Cancelar" />
+    </LinearLayout>
+
+</RelativeLayout>

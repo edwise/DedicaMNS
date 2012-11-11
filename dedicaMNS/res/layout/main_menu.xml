@@ -10,8 +10,8 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
-        android:src="@drawable/calendar_img"
-        android:onClick="doShowListMonth" />
+        android:onClick="doShowListMonth"
+        android:src="@drawable/calendar_img" />
 
     <TextView
         android:id="@+id/ListMonthTextView"
@@ -28,8 +28,8 @@
         android:layout_below="@+id/ListMonthTextView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
-        android:src="@android:drawable/ic_menu_send"
-         />
+        android:onClick="doShowBatchMenu"
+        android:src="@drawable/batch_img" />
 
     <TextView
         android:id="@+id/BatchTextView"
@@ -38,15 +38,5 @@
         android:layout_below="@+id/imageButtonBatch"
         android:layout_centerHorizontal="true"
         android:text="Imputación batch mensual" />
-
-    <Button
-        android:id="@+id/logoutButton"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="25dp"
-        android:layout_toLeftOf="@+id/imageButtonListMonth"
-        android:text="LogOut" />
 
 </RelativeLayout>

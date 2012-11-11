@@ -14,31 +14,30 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.edwise.dedicamns.login.ConnectionAsyncTask;
+import com.edwise.dedicamns.asynctasks.ConnectionAsyncTask;
 
 public class LoginActivity extends Activity {
 
     private ProgressDialog pDialog;
-    
+
     private EditText userLoginEditText;
     private EditText passLoginEditText;
     private CheckBox rememberMeCheckBox;
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.login);
 	Log.d(LoginActivity.class.toString(), "onCreate: Comenzando...");
-	
+
 	initFields();
-	chargeSavedData();		
+	chargeSavedData();
     }
 
     private void initFields() {
@@ -52,7 +51,7 @@ public class LoginActivity extends Activity {
 	String user = sharedPref.getString("user", null);
 	String pass = sharedPref.getString("pass", null);
 	Boolean remember = sharedPref.getBoolean("remember", false);
-	
+
 	if (user != null) {
 	    userLoginEditText.setText(user);
 	}
@@ -62,24 +61,17 @@ public class LoginActivity extends Activity {
 	rememberMeCheckBox.setChecked(remember);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-	getMenuInflater().inflate(R.menu.login, menu);
-	return true;
-    }
-
     public void doLogin(View view) {
 	Log.d(LoginActivity.class.toString(), "doLogin: Click en conectar...");
 
-	if (checkFieldsFilled()) {	
+	if (checkFieldsFilled()) {
 	    accesWebWithLoginData();
-	}
-	else {
-	    Toast toast = Toast.makeText(this,
-			"Introduce tu usuario y contraseña de Medianet", Toast.LENGTH_LONG);
+	} else {
+	    Toast toast = Toast.makeText(this, "Introduce tu usuario y contraseña de Medianet",
+		    Toast.LENGTH_LONG);
 	    toast.setGravity(Gravity.CENTER, 0, 100);
 	    toast.show();
-	    
+
 	}
     }
 
@@ -87,22 +79,21 @@ public class LoginActivity extends Activity {
 	HashMap<String, String> accessData = new HashMap<String, String>();
 	String userLogin = userLoginEditText.getText().toString();
 	accessData.put("user", userLogin); // TODO constantes o enum
-      
+
 	String passLogin = passLoginEditText.getText().toString();
 	accessData.put("pass", passLogin); // TODO constantes o enum
-      
+
 	String checked = Boolean.toString(rememberMeCheckBox.isChecked());
 	accessData.put("check", checked); // TODO constantes o enum
-      
-	Log.d(LoginActivity.class.toString(),
-	"doLogin: User y pass insertado: " + userLogin + " / "
+
+	Log.d(LoginActivity.class.toString(), "doLogin: User y pass insertado: " + userLogin + " / "
 		+ passLogin + " / " + checked);
-      
+
 	hideKeyboard();
-      
+
 	pDialog = ProgressDialog.show(LoginActivity.this, "Conectando...",
-	    "Conexión en progreso, por favor, espera", true);
-      
+		"Conexión en progreso, por favor, espera", true);
+
 	callConnectionAsyncTask(accessData);
     }
 
@@ -112,12 +103,11 @@ public class LoginActivity extends Activity {
     }
 
     private void callConnectionAsyncTask(Map<String, String> accessData) {
-	Log.d(LoginActivity.class.toString(),
-		"callConnectionAsyncTask: Llamada al asyncTask...");
+	Log.d(LoginActivity.class.toString(), "callConnectionAsyncTask: Llamada al asyncTask...");
 
 	// TODO ver como hacer este new en un factory, para meter un mock...
-	AsyncTask<Map<String, String>, Integer, Integer> connectionAsyncTask = new ConnectionAsyncTask(
-		this, this.pDialog);
+	AsyncTask<Map<String, String>, Integer, Integer> connectionAsyncTask = new ConnectionAsyncTask(this,
+		this.pDialog);
 	connectionAsyncTask.execute(accessData);
     }
 
@@ -145,13 +135,13 @@ public class LoginActivity extends Activity {
 
     private boolean checkFieldsFilled() {
 	boolean filled = true;
-	String userLogin = userLoginEditText.getText().toString();    
+	String userLogin = userLoginEditText.getText().toString();
 	String passLogin = passLoginEditText.getText().toString();
-	
+
 	if (StringUtils.isBlank(userLogin) || StringUtils.isBlank(passLogin)) {
 	    filled = false;
 	}
-	
+
 	return filled;
     }
 }
