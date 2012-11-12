@@ -1,7 +1,7 @@
 <resources>
 
     <string name="app_name">Dedica MNS</string>
-    <string name="menu_settings">Ajustes</string>
+    <string name="menu_about_us">Acerca De</string>
     <string name="menu_logout">Logout</string>
     
     <string name="title_activity_login">Dedica MNS</string>
@@ -14,6 +14,6 @@
     <string name="title_activity_month_view">Listado mes</string>
     <string name="title_activity_detail_day">Detalle día</string>
     <string name="title_activity_main_menu">Dedica MNS</string>
-    <string name="title_activity_batch_menu">BatchMenuActivity</string>
+    <string name="title_activity_batch_menu">Dedica MNS</string>
 
 </resources>

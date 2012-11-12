@@ -14,6 +14,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
@@ -21,6 +23,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.edwise.dedicamns.asynctasks.ConnectionAsyncTask;
+import com.edwise.dedicamns.menu.MenuUtils;
 
 public class LoginActivity extends Activity {
 
@@ -37,7 +40,9 @@ public class LoginActivity extends Activity {
 	Log.d(LoginActivity.class.toString(), "onCreate: Comenzando...");
 
 	initFields();
-	chargeSavedData();
+	if (!checkIfLogout()) {
+	    chargeSavedData();
+	}
     }
 
     private void initFields() {
@@ -59,6 +64,30 @@ public class LoginActivity extends Activity {
 	    passLoginEditText.setText(pass);
 	}
 	rememberMeCheckBox.setChecked(remember);
+    }
+
+    private boolean checkIfLogout() {
+	return getIntent().getBooleanExtra("isLogout", false);
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+	getMenuInflater().inflate(R.menu.login_menu, menu);
+	return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+	boolean returned = false;
+	switch (item.getItemId()) {
+	case R.id.menu_about_us:
+	    // TODO llamada a acerca de, en clase generica para todos.
+	    returned = true;
+	default:
+	    returned = super.onOptionsItemSelected(item);
+	}
+
+	return returned;
     }
 
     public void doLogin(View view) {
@@ -102,6 +131,7 @@ public class LoginActivity extends Activity {
 	imm.hideSoftInputFromWindow(passLoginEditText.getWindowToken(), 0);
     }
 
+    @SuppressWarnings("unchecked")
     private void callConnectionAsyncTask(Map<String, String> accessData) {
 	Log.d(LoginActivity.class.toString(), "callConnectionAsyncTask: Llamada al asyncTask...");
 
@@ -125,11 +155,17 @@ public class LoginActivity extends Activity {
 	removeLoginDataIfNeeded();
     }
 
+    @Override
+    public void onBackPressed() {
+	moveTaskToBack(true);
+	super.onBackPressed();
+    }
+
     private void removeLoginDataIfNeeded() {
 	if (!rememberMeCheckBox.isChecked()) {
 	    SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
 	    sharedPref.edit().clear().commit();
-	    Log.d(LoginActivity.class.toString(), "removeLoginDataIfNeeded: Borrado el sharedPreferences!!");
+	    Log.d(LoginActivity.class.toString(), "removeLoginDataIfNeeded: Borrado el sharedPreferences!");
 	}
     }
 

@@ -9,6 +9,7 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import com.edwise.dedicamns.adapters.DayListAdapter;
 import com.edwise.dedicamns.beans.DayRecord;
+import com.edwise.dedicamns.menu.MenuUtils;
 
 public class MonthViewActivity extends Activity {
 
@@ -55,6 +57,23 @@ public class MonthViewActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
 	getMenuInflater().inflate(R.menu.main_menu, menu);
 	return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+	boolean returned = false;
+	switch (item.getItemId()) {
+	case R.id.menu_logout:
+	    MenuUtils.doLogout(this);
+	    returned = true;
+	case R.id.menu_about_us:
+	    // TODO llamada a acerca de, en clase generica para todos.
+	    returned = true;
+	default:
+	    returned = super.onOptionsItemSelected(item);
+	}
+
+	return returned;
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

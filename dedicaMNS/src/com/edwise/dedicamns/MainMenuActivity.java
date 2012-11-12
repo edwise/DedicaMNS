@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.edwise.dedicamns.asynctasks.MonthListAsyncTask;
+import com.edwise.dedicamns.menu.MenuUtils;
 import com.edwise.dedicamns.mocks.DedicaHTMLParserMock;
 
 public class MainMenuActivity extends Activity {
@@ -28,8 +29,6 @@ public class MainMenuActivity extends Activity {
 	setContentView(R.layout.main_menu);
     }
 
-    // TODO metodo al proceso batch
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 	getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -41,10 +40,10 @@ public class MainMenuActivity extends Activity {
 	boolean returned = false;
 	switch (item.getItemId()) {
 	case R.id.menu_logout:
-	    // TODO llamada a loginactivity, desactivando y borrando datos. (en clase generica para todos)
+	    MenuUtils.doLogout(this);
 	    returned = true;
-	case R.id.menu_settings:
-	    // TODO llamada a settings, en clase generica para todos.
+	case R.id.menu_about_us:
+	    // TODO llamada a acerca de, en clase generica para todos.
 	    returned = true;
 	default:
 	    returned = super.onOptionsItemSelected(item);

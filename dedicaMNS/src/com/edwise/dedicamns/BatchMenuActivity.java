@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 
 import com.edwise.dedicamns.asynctasks.MonthListAsyncTask;
 import com.edwise.dedicamns.beans.BatchDataBean;
+import com.edwise.dedicamns.menu.MenuUtils;
 import com.edwise.dedicamns.mocks.DedicaHTMLParserMock;
 
 public class BatchMenuActivity extends Activity {
@@ -126,21 +128,58 @@ public class BatchMenuActivity extends Activity {
 	return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+	boolean returned = false;
+	switch (item.getItemId()) {
+	case R.id.menu_logout:
+	    MenuUtils.doLogout(this);
+	    returned = true;
+	case R.id.menu_about_us:
+	    // TODO llamada a acerca de, en clase generica para todos.
+	    returned = true;
+	default:
+	    returned = super.onOptionsItemSelected(item);
+	}
+
+	return returned;
+    }
+
     public void doLaunchBatch(View view) {
 	Log.d(BatchMenuActivity.class.toString(), "doLaunchBatch");
 
 	if (!validateSpinnerProjectSelected()) {
 	    showToastMessage("Debe seleccionar algún proyecto");
 	} else {
-	    showDialog();
-	    BatchDataBean batchData = fillDataBean();
-	    AsyncTask<BatchDataBean, Integer, Integer> batchTask = new BatchAsyncTask(this);
-	    batchTask.execute(batchData);
+	    launchBatchProcessWithAlertDialog();
 	}
     }
 
     private boolean validateSpinnerProjectSelected() {
 	return projectSpinner.getSelectedItemPosition() != 0;
+    }
+
+    private void launchBatchProcessWithAlertDialog() {
+	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+	alertDialogBuilder.setTitle("Se va a ejecutar el proceso de imputación");
+	alertDialogBuilder.setMessage("¿Continuar?");
+	alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+	    public void onClick(DialogInterface dialog, int which) {
+		launchBatchProcess();
+	    }
+	});
+	alertDialogBuilder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+	    public void onClick(DialogInterface dialog, int which) {
+	    }
+	});
+	alertDialogBuilder.show();
+    }
+
+    private void launchBatchProcess() {
+	showDialog();
+	BatchDataBean batchData = fillDataBean();
+	AsyncTask<BatchDataBean, Integer, Integer> batchTask = new BatchAsyncTask(this);
+	batchTask.execute(batchData);
     }
 
     private void showToastMessage(String message) {
@@ -171,7 +210,7 @@ public class BatchMenuActivity extends Activity {
 
     private void launchMonthActivity() {
 	Log.d(BatchMenuActivity.class.toString(), "launchMonthActivity");
-	
+
 	showDialog("Obteniendo datos del mes");
 	AsyncTask<Integer, Integer, Integer> monthListAsyncTask = new MonthListAsyncTask(this, pDialog);
 	monthListAsyncTask.execute(1);
@@ -224,7 +263,7 @@ public class BatchMenuActivity extends Activity {
 	    alertDialogBuilder.setMessage("¿Desea ver el listado mensual de horas imputadas?");
 	    alertDialogBuilder.setPositiveButton("SI", new DialogInterface.OnClickListener() {
 		public void onClick(DialogInterface dialog, int which) {
-		    launchMonthActivity();		    
+		    launchMonthActivity();
 		}
 	    });
 	    alertDialogBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -238,10 +277,10 @@ public class BatchMenuActivity extends Activity {
 	@Override
 	protected void onProgressUpdate(Integer... values) {
 	    Log.d(BatchAsyncTask.class.toString(), "onProgressUpdate...");
-	    // TODO intentar actualizar esto...	    
+	    // TODO intentar actualizar esto...
 	    super.onProgressUpdate(values);
 	}
-	
+
 	private void showToastMessage(String message) {
 	    Toast toast = Toast.makeText(this.activity, message, Toast.LENGTH_LONG);
 	    toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 20);
