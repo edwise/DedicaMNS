@@ -23,7 +23,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.edwise.dedicamns.asynctasks.ConnectionAsyncTask;
-import com.edwise.dedicamns.menu.MenuUtils;
+import com.edwise.dedicamns.connections.ConnectionFacade;
 
 public class LoginActivity extends Activity {
 
@@ -41,7 +41,8 @@ public class LoginActivity extends Activity {
 
 	initFields();
 	if (!checkIfLogout()) {
-	    chargeSavedData();
+	    chargeSavedData();	    
+	    ConnectionFacade.createWebConnection(this);
 	}
     }
 
@@ -92,6 +93,7 @@ public class LoginActivity extends Activity {
 
     public void doLogin(View view) {
 	Log.d(LoginActivity.class.toString(), "doLogin: Click en conectar...");
+	// TODO pasar todos los activity.class.toString() a un static...
 
 	if (checkFieldsFilled()) {
 	    accesWebWithLoginData();
@@ -135,7 +137,6 @@ public class LoginActivity extends Activity {
     private void callConnectionAsyncTask(Map<String, String> accessData) {
 	Log.d(LoginActivity.class.toString(), "callConnectionAsyncTask: Llamada al asyncTask...");
 
-	// TODO ver como hacer este new en un factory, para meter un mock...
 	AsyncTask<Map<String, String>, Integer, Integer> connectionAsyncTask = new ConnectionAsyncTask(this,
 		this.pDialog);
 	connectionAsyncTask.execute(accessData);

@@ -16,44 +16,46 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 import com.edwise.dedicamns.MainMenuActivity;
-import com.edwise.dedicamns.mocks.DedicaHTMLParserMock;
+import com.edwise.dedicamns.connections.ConnectionFacade;
 
 /**
  * @author edwise
  * 
  */
-public class ConnectionAsyncTask extends
-	AsyncTask<Map<String, String>, Integer, Integer> {
+public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer, Integer> {
 
     private ProgressDialog pDialog;
-    private Activity loginActivity;
+    private Activity activity;
 
     public ConnectionAsyncTask(Activity activity, ProgressDialog pDialog) {
-	this.loginActivity = activity;
+	this.activity = activity;
 	this.pDialog = pDialog;
     }
 
     @Override
     protected Integer doInBackground(Map<String, String>... data) {
-	Log.d(ConnectionAsyncTask.class.toString(),
-		"doInBackground: Comenzando asyncTask...");
+	Log.d(ConnectionAsyncTask.class.toString(), "doInBackground: Comenzando asyncTask...");
 	Map<String, String> dataLogin = data[0];
 	saveSharedPreferences(dataLogin);
 
-	// TODO conexión real
-	return DedicaHTMLParserMock.getInstance().connectWeb(); // TODO enum con tipos de retorno, errores, etc
+	int result = -1; // Si no hay conexión a internet, devolveremos -1
+	if (ConnectionFacade.getWebConnection().isOnline(activity)) {
+	    result = ConnectionFacade.getWebConnection().connectWeb(dataLogin.get("user"),
+		    dataLogin.get("pass"));
+	}
+
+	// TODO enum con tipos de retorno, errores, etc
+	return result;
     }
 
     private void saveSharedPreferences(Map<String, String> dataLogin) {
-	SharedPreferences sharedPref = loginActivity
-		.getPreferences(Context.MODE_PRIVATE);
+	SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
 	if (dataLogin.get("check").equals("true")) { // Guardamos todo
 	    SharedPreferences.Editor editor = sharedPref.edit();
 	    editor.putString("user", dataLogin.get("user")); // TODO constantes
 							     // y demás!!
 	    editor.putString("pass", dataLogin.get("pass"));
-	    editor.putBoolean("remember",
-		    Boolean.valueOf(dataLogin.get("check")));
+	    editor.putBoolean("remember", Boolean.valueOf(dataLogin.get("check")));
 	    editor.commit();
 	} else { // borramos todo
 	    sharedPref.edit().clear().commit();
@@ -62,14 +64,12 @@ public class ConnectionAsyncTask extends
 
     @Override
     protected void onPostExecute(Integer result) {
-	Log.d(ConnectionAsyncTask.class.toString(),
-		"onPostExecute: Finalizando asyncTask...");
+	Log.d(ConnectionAsyncTask.class.toString(), "onPostExecute: Finalizando asyncTask...");
 
 	// TODO realizar la conexión, preparar un mock que de ok o algo así...
 	if (result == 200) { // TODO comprobaciones de resultado y constantes!
 	    this.startNextActivity();
-	}
-	else {
+	} else {
 	    showToastErrorConnection();
 	}
 
@@ -83,33 +83,29 @@ public class ConnectionAsyncTask extends
 
     @Override
     protected void onProgressUpdate(Integer... values) {
-	Log.d(ConnectionAsyncTask.class.toString(),
-		"onProgressUpdate: Actualizando progreso...");
+	Log.d(ConnectionAsyncTask.class.toString(), "onProgressUpdate: Actualizando progreso...");
     }
 
     private void startNextActivity() {
-	Intent intent = new Intent(this.loginActivity, MainMenuActivity.class);
-	
-	this.loginActivity.startActivity(intent);
-	this.loginActivity.finish();
+	Intent intent = new Intent(this.activity, MainMenuActivity.class);
+
+	this.activity.startActivity(intent);
+	this.activity.finish();
 
 	showToastConnected();
 
     }
 
     private void showToastConnected() {
-	Toast toast = Toast.makeText(this.loginActivity, "Conectado!",
-		Toast.LENGTH_LONG);
-	toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM,
-		0, 20);
+	Toast toast = Toast.makeText(this.activity, "Conectado!", Toast.LENGTH_LONG);
+	toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 20);
 	toast.show();
     }
-    
+
     private void showToastErrorConnection() {
-	Toast toast = Toast.makeText(this.loginActivity, "Error en la conexión!",
-		Toast.LENGTH_LONG);
-	toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM,
-		0, 20);
+	Toast toast = Toast.makeText(this.activity,
+		"Error en la conexión: revisa que tu usuario y password sean correctos", Toast.LENGTH_LONG);
+	toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 20);
 	toast.show();
     }
 
