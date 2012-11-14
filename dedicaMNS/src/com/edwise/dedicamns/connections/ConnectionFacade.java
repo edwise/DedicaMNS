@@ -20,6 +20,8 @@ import com.edwise.dedicamns.connections.impl.MNSWebConnectionImpl;
  */
 public class ConnectionFacade {
 
+    public static final Integer CONNECTION_OK = 200;
+
     private static WebConnection webConnection;
 
     public static WebConnection getWebConnection() {

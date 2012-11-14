@@ -1,13 +1,17 @@
 <resources>
+
     <string name="app_name">Dedica MNS</string>
     <string name="menu_about_us">About Us</string>
     <string name="menu_logout">Logout</string>
-    
     <string name="title_activity_login">Dedica MNS</string>
-    
     <string name="connectButtonS">Connect</string>
-    <string name="remmbemberUserCheckS">Remmember Me</string>    
+    <string name="remmbemberUserCheckS">Remmember Me</string>
     <string name="userMNTextS">User Media Net</string>
     <string name="passMNTextS">Password</string>
     <string name="mnLogoS">MediaNet Logo</string>
+    <string name="title_activity_month_view">Month list</string>
+    <string name="title_activity_detail_day">Day Detail</string>
+    <string name="title_activity_main_menu">Dedica MNS</string>
+    <string name="title_activity_batch_menu">Dedica MNS</string>
+
 </resources>

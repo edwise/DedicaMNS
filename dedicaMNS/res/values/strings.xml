@@ -3,14 +3,12 @@
     <string name="app_name">Dedica MNS</string>
     <string name="menu_about_us">Acerca De</string>
     <string name="menu_logout">Logout</string>
-    
     <string name="title_activity_login">Dedica MNS</string>
     <string name="connectButtonS">Conectar</string>
     <string name="remmbemberUserCheckS">Recordarme</string>
     <string name="userMNTextS">Usuario Media Net</string>
     <string name="passMNTextS">Contraseña</string>
     <string name="mnLogoS">Logo MediaNet</string>
-    <string name="hello_world">Hello world!</string>
     <string name="title_activity_month_view">Listado mes</string>
     <string name="title_activity_detail_day">Detalle día</string>
     <string name="title_activity_main_menu">Dedica MNS</string>

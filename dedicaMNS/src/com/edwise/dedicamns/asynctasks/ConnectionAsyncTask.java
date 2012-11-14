@@ -17,12 +17,14 @@ import android.widget.Toast;
 
 import com.edwise.dedicamns.MainMenuActivity;
 import com.edwise.dedicamns.connections.ConnectionFacade;
+import com.edwise.dedicamns.utils.ErrorUtils;
 
 /**
  * @author edwise
  * 
  */
 public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer, Integer> {
+    private static final String LOGTAG = ConnectionAsyncTask.class.toString();
 
     private ProgressDialog pDialog;
     private Activity activity;
@@ -34,7 +36,7 @@ public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer,
 
     @Override
     protected Integer doInBackground(Map<String, String>... data) {
-	Log.d(ConnectionAsyncTask.class.toString(), "doInBackground: Comenzando asyncTask...");
+	Log.d(LOGTAG, "doInBackground: Comenzando asyncTask...");
 	Map<String, String> dataLogin = data[0];
 	saveSharedPreferences(dataLogin);
 
@@ -44,7 +46,6 @@ public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer,
 		    dataLogin.get("pass"));
 	}
 
-	// TODO enum con tipos de retorno, errores, etc
 	return result;
     }
 
@@ -64,13 +65,12 @@ public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer,
 
     @Override
     protected void onPostExecute(Integer result) {
-	Log.d(ConnectionAsyncTask.class.toString(), "onPostExecute: Finalizando asyncTask...");
+	Log.d(LOGTAG, "onPostExecute: Finalizando asyncTask...");
 
-	// TODO realizar la conexión, preparar un mock que de ok o algo así...
-	if (result == 200) { // TODO comprobaciones de resultado y constantes!
+	if (ConnectionFacade.CONNECTION_OK.equals(result)) {
 	    this.startNextActivity();
 	} else {
-	    showToastErrorConnection();
+	    showToastErrorConnection(ErrorUtils.getMessageError(result));
 	}
 
 	closeDialog();
@@ -83,7 +83,7 @@ public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer,
 
     @Override
     protected void onProgressUpdate(Integer... values) {
-	Log.d(ConnectionAsyncTask.class.toString(), "onProgressUpdate: Actualizando progreso...");
+	Log.d(LOGTAG, "onProgressUpdate: Actualizando progreso...");
     }
 
     private void startNextActivity() {
@@ -97,15 +97,14 @@ public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer,
     }
 
     private void showToastConnected() {
-	Toast toast = Toast.makeText(this.activity, "Conectado!", Toast.LENGTH_LONG);
+	Toast toast = Toast.makeText(this.activity, "¡Conectado!", Toast.LENGTH_LONG);
 	toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 20);
 	toast.show();
     }
 
-    private void showToastErrorConnection() {
-	Toast toast = Toast.makeText(this.activity,
-		"Error en la conexión: revisa que tu usuario y password sean correctos", Toast.LENGTH_LONG);
-	toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 20);
+    private void showToastErrorConnection(String msg) {
+	Toast toast = Toast.makeText(this.activity, msg, Toast.LENGTH_LONG);
+	toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 40);
 	toast.show();
     }
 

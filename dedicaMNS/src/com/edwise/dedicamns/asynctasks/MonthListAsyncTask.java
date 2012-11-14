@@ -24,6 +24,7 @@ import com.edwise.dedicamns.mocks.DedicaHTMLParserMock;
  * 
  */
 public class MonthListAsyncTask extends AsyncTask<Integer, Integer, Integer> {
+    private static final String LOGTAG = MonthListAsyncTask.class.toString();
     // TODO que reciba el mes como parametro!!
 
     private Activity activity;
@@ -37,7 +38,7 @@ public class MonthListAsyncTask extends AsyncTask<Integer, Integer, Integer> {
 
     @Override
     protected Integer doInBackground(Integer... params) {
-	Log.d(MonthListAsyncTask.class.toString(), "doInBackground...");
+	Log.d(LOGTAG, "doInBackground...");
 	// TODO desmockear
 	DedicaHTMLParserMock parser = DedicaHTMLParserMock.getInstance();
 	listDays = parser.getListFromHTML();
@@ -49,7 +50,7 @@ public class MonthListAsyncTask extends AsyncTask<Integer, Integer, Integer> {
 
     @Override
     protected void onPostExecute(Integer result) {
-	Log.d(MonthListAsyncTask.class.toString(), "onPostExecute...");
+	Log.d(LOGTAG, "onPostExecute...");
 	super.onPostExecute(result);
 
 	if (result == 1) {
