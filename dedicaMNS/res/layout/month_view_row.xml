@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/dayNum"
@@ -10,8 +10,7 @@
         android:background="@drawable/back"
         android:gravity="right"
         android:padding="5sp"
-        android:text="30"
-        android:textSize="20dp" >
+        android:textSize="20sp" >
     </TextView>
 
     <TextView
@@ -20,10 +19,9 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/dayNum"
         android:gravity="bottom"
-        android:paddingTop="9sp"
         android:paddingLeft="6sp"
-        android:text="Miercoles"
-        android:textSize="14dp" >
+        android:paddingTop="9sp"
+        android:textSize="14sp" >
     </TextView>
 
     <TextView
@@ -32,9 +30,8 @@
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@+id/hours"
         android:gravity="center_vertical|right"
-        android:paddingTop="9sp"        
-        android:text="BBVA68"
-        android:textSize="16dp" >
+        android:paddingTop="9sp"
+        android:textSize="16sp" >
     </TextView>
 
     <TextView
@@ -44,7 +41,6 @@
         android:layout_alignParentRight="true"
         android:gravity="right"
         android:padding="5sp"
-        android:text="8:30"
-        android:textSize="20dp" />
+        android:textSize="20sp" />
 
 </RelativeLayout>

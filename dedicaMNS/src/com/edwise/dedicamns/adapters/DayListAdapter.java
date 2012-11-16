@@ -4,8 +4,9 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,9 @@ public class DayListAdapter extends ArrayAdapter<DayRecord> {
     private final Activity context;
     private final List<DayRecord> days;
 
+    private static int SDK_VERSION = android.os.Build.VERSION.SDK_INT;
+    private static int JELLYBEAN_VERSION = android.os.Build.VERSION_CODES.JELLY_BEAN;
+
     static class ViewHolder {
 	public TextView dayNum;
 	public TextView dayName;
@@ -33,6 +37,8 @@ public class DayListAdapter extends ArrayAdapter<DayRecord> {
 	this.days = days;
     }
 
+    @SuppressWarnings("deprecation")
+    @SuppressLint("NewApi")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 	View rowView = convertView;
@@ -43,8 +49,7 @@ public class DayListAdapter extends ArrayAdapter<DayRecord> {
 	    viewHolder.dayNum = (TextView) rowView.findViewById(R.id.dayNum);
 	    viewHolder.dayName = (TextView) rowView.findViewById(R.id.dayName);
 	    viewHolder.hours = (TextView) rowView.findViewById(R.id.hours);
-	    viewHolder.projectId = (TextView) rowView
-		    .findViewById(R.id.projectId);
+	    viewHolder.projectId = (TextView) rowView.findViewById(R.id.projectId);
 	    rowView.setTag(viewHolder);
 	}
 
@@ -54,17 +59,25 @@ public class DayListAdapter extends ArrayAdapter<DayRecord> {
 	holder.dayName.setText(record.getDayName());
 	holder.hours.setText(record.getHours());
 	holder.projectId.setText(record.getProjectId());
-	
+
+	Drawable drawable = null;
 	if (DayUtils.isWeekend(record.getDayName())) {
-	    rowView.setBackgroundColor(Color.rgb(135, 206, 250)); // Light Sky Blue 	
-	}
-	else {
+	    // Light Sky Blue
+	    drawable = rowView.getResources().getDrawable(R.drawable.selector_weekend);
+	} else {
 	    if (StringUtils.isBlank(record.getHours())) {
-		rowView.setBackgroundColor(Color.rgb(240, 255, 255)); // Azure
+		// Azure
+		drawable = rowView.getResources().getDrawable(R.drawable.selector_blank);
+	    } else {
+		// Light Cyan
+		drawable = rowView.getResources().getDrawable(R.drawable.selector_filled);
 	    }
-	    else {
-		rowView.setBackgroundColor(Color.rgb(224, 255, 255)); // Light Cyan
-	    }
+	}
+
+	if (SDK_VERSION < JELLYBEAN_VERSION) {
+	    rowView.setBackgroundDrawable(drawable);
+	} else {
+	    rowView.setBackground(drawable);
 	}
 
 	return rowView;

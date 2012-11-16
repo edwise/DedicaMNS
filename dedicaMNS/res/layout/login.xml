@@ -22,7 +22,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="70dp"
         android:hint="@string/userMNTextS"
         android:inputType="textPersonName" />
 
@@ -34,7 +34,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="18dp"
         android:hint="@string/passMNTextS"
         android:inputType="textPassword" >
     </EditText>
@@ -47,7 +47,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="22dp"
         android:orientation="horizontal" >
 
         <CheckBox

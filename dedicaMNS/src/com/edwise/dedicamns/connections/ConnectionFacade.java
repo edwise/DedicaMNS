@@ -13,6 +13,7 @@ import android.content.res.Resources;
 import android.util.Log;
 
 import com.edwise.dedicamns.connections.impl.MNSWebConnectionImpl;
+import com.edwise.dedicamns.connections.impl.MockWebConnectionImpl;
 
 /**
  * @author edwise
@@ -32,7 +33,7 @@ public class ConnectionFacade {
 	boolean isMock = getMockProperty(activity);
 
 	if (isMock) {
-	    webConnection = null; // TODO poner el mock
+	    webConnection = new MockWebConnectionImpl();
 	} else {
 	    webConnection = new MNSWebConnectionImpl();
 	}
