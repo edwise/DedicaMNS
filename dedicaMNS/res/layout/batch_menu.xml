@@ -51,6 +51,25 @@
         <TableRow>
 
             <TextView
+                android:id="@+id/batchYearsTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Año: "
+                android:textSize="14sp" >
+            </TextView>
+
+            <Spinner
+                android:id="@+id/batchYearsSpinner"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:textSize="8sp" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
                 android:id="@+id/batchProjectTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

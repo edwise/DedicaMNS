@@ -17,6 +17,9 @@ import android.widget.Toast;
 import com.edwise.dedicamns.BatchMenuActivity;
 import com.edwise.dedicamns.MonthViewActivity;
 import com.edwise.dedicamns.beans.DayRecord;
+import com.edwise.dedicamns.connections.ConnectionException;
+import com.edwise.dedicamns.connections.ConnectionFacade;
+import com.edwise.dedicamns.connections.WebConnection;
 import com.edwise.dedicamns.mocks.DedicaHTMLParserMock;
 
 /**
@@ -39,6 +42,17 @@ public class MonthListAsyncTask extends AsyncTask<Integer, Integer, Integer> {
     @Override
     protected Integer doInBackground(Integer... params) {
 	Log.d(LOGTAG, "doInBackground...");
+
+	WebConnection webConnection = ConnectionFacade.getWebConnection();
+	Integer result = 1;
+	try {
+	    webConnection.fillProyectsAndSubProyectsCached();
+	    webConnection.fillMonthsAndYearsCached();
+	} catch (ConnectionException e) {
+	    Log.e(LOGTAG, "Error al obtener datos de cacheo (proyectos, meses y años)", e);
+	    result = -1; // TODO usar este result en el return
+	}
+
 	// TODO desmockear
 	DedicaHTMLParserMock parser = DedicaHTMLParserMock.getInstance();
 	listDays = parser.getListFromHTML();

@@ -16,6 +16,7 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 import com.edwise.dedicamns.MainMenuActivity;
+import com.edwise.dedicamns.connections.ConnectionException;
 import com.edwise.dedicamns.connections.ConnectionFacade;
 import com.edwise.dedicamns.utils.ErrorUtils;
 
@@ -42,8 +43,13 @@ public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer,
 
 	int result = -1; // Si no hay conexión a internet, devolveremos -1
 	if (ConnectionFacade.getWebConnection().isOnline(activity)) {
-	    result = ConnectionFacade.getWebConnection().connectWeb(dataLogin.get("user"),
+	    try {
+		result = ConnectionFacade.getWebConnection().connectWeb(dataLogin.get("user"),
 		    dataLogin.get("pass"));
+	    } catch (ConnectionException e) {
+		Log.e(LOGTAG, "Error en la conexión al intentar logarse", e);
+		result = -2;
+	    }
 	}
 
 	return result;

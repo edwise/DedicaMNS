@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.edwise.dedicamns.beans.DayRecord;
+import com.edwise.dedicamns.connections.ConnectionFacade;
 import com.edwise.dedicamns.menu.MenuUtils;
 import com.edwise.dedicamns.mocks.DedicaHTMLParserMock;
 import com.edwise.dedicamns.utils.Time24HoursValidator;
@@ -46,6 +47,8 @@ public class DetailDayActivity extends Activity {
     private Spinner subProjectSpinner = null;
     private EditText taskEditText = null;
 
+    private boolean isFirstChargeSubprojectSpinner;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 	Log.d(DetailDayActivity.class.toString(), "onCreate");
@@ -59,12 +62,9 @@ public class DetailDayActivity extends Activity {
 	    hoursEditText = (EditText) findViewById(R.id.detailHoursEditText);
 	    hoursEditText.setText(dayRecord.getHours());
 
+	    isFirstChargeSubprojectSpinner = true;
 	    linkProjectSpinner();
-	    if (subProjectSpinner == null) { // Por si el onItemSelected del
-					     // otro se ejecuta antes, no lo
-					     // vuelvo a hacer...
-		linkSubProjectSpinner((String) this.projectSpinner.getSelectedItem());
-	    }
+	    linkSubProjectSpinner((String) this.projectSpinner.getSelectedItem());
 
 	    taskEditText = (EditText) findViewById(R.id.detailTaskEditText);
 	    taskEditText.setText(dayRecord.getTask());
@@ -97,8 +97,7 @@ public class DetailDayActivity extends Activity {
     }
 
     private void linkProjectSpinner() {
-	// TODO mirar obtener el listado de proyectos y subproyectos antes!!
-	List<String> projectsArray = DedicaHTMLParserMock.getInstance().getArrayProjects();
+	List<String> projectsArray = ConnectionFacade.getWebConnection().getArrayProjects();
 	projectSpinner = (Spinner) findViewById(R.id.detailProjectSpinner);
 	ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
 		projectsArray);
@@ -109,26 +108,31 @@ public class DetailDayActivity extends Activity {
 	}
 	projectSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 	    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-		linkSubProjectSpinner((String) parent.getItemAtPosition(pos));
+		if (isFirstChargeSubprojectSpinner) {
+		    isFirstChargeSubprojectSpinner = false;
+		} else {
+		    linkSubProjectSpinner((String) parent.getItemAtPosition(pos));
+		}
 	    }
 
 	    public void onNothingSelected(AdapterView<?> parent) {
 	    }
-
 	});
     }
 
     private void linkSubProjectSpinner(String projectSelected) {
 	List<String> subProjectArray = null;
-	subProjectArray = DedicaHTMLParserMock.getInstance().getArraySubProjects(projectSelected);
-	// Cargar el combo de subproyectos
+	subProjectArray = ConnectionFacade.getWebConnection().getArraySubProjects(projectSelected);
 	if (subProjectSpinner == null) {
 	    subProjectSpinner = (Spinner) findViewById(R.id.detailSubprojectSpinner);
 	}
 	ArrayAdapter<String> subProjectAdapter = new ArrayAdapter<String>(this,
 		android.R.layout.simple_spinner_item, subProjectArray);
 	subProjectSpinner.setAdapter(subProjectAdapter);
-	subProjectSpinner.setSelection(0); // TODO dayRecord.getSubProjectId()
+	if (StringUtils.isNotBlank(dayRecord.getSubProject()) && isFirstChargeSubprojectSpinner) {
+	    int spinnerPosition = subProjectAdapter.getPosition(dayRecord.getSubProject());
+	    subProjectSpinner.setSelection(spinnerPosition);
+	}
 	subProjectSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 	    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 	    }

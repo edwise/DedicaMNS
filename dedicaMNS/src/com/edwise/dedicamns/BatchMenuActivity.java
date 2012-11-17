@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,12 +24,14 @@ import android.widget.Toast;
 
 import com.edwise.dedicamns.asynctasks.MonthListAsyncTask;
 import com.edwise.dedicamns.beans.BatchDataBean;
+import com.edwise.dedicamns.connections.ConnectionFacade;
 import com.edwise.dedicamns.menu.MenuUtils;
 import com.edwise.dedicamns.mocks.DedicaHTMLParserMock;
 
 public class BatchMenuActivity extends Activity {
 
     private Spinner monthSpinner = null;
+    private Spinner yearSpinner = null;
     private Spinner projectSpinner = null;
     private Spinner subProjectSpinner = null;
     private EditText taskEditText = null;
@@ -43,14 +46,14 @@ public class BatchMenuActivity extends Activity {
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.batch_menu);
 
-	List<String> listMonths = (List<String>) getIntent().getSerializableExtra("monthsList");
-	List<String> listProjects = (List<String>) getIntent().getSerializableExtra("projectList");
+	List<String> listMonths = ConnectionFacade.getWebConnection().getMonths();
+	List<String> listYears = ConnectionFacade.getWebConnection().getYears();
+	List<String> listProjects = ConnectionFacade.getWebConnection().getArrayProjects();
 
 	linkMonthSpinner(listMonths);
+	linkYearsSpinner(listYears);
 	linkProjectSpinner(listProjects);
-	if (subProjectSpinner == null) {
 	    linkSubProjectSpinner((String) this.projectSpinner.getSelectedItem());
-	}
 	linkTypeHourSpinner();
 	taskEditText = (EditText) findViewById(R.id.batchTaskEditText);
     }
@@ -101,10 +104,25 @@ public class BatchMenuActivity extends Activity {
 
 	});
     }
+    
+    private void linkYearsSpinner(List<String> listYears) {
+	yearSpinner = (Spinner) findViewById(R.id.batchYearsSpinner);
+	ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
+		listYears);
+	yearSpinner.setAdapter(adapter);
+	yearSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+	    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+	    }
+
+	    public void onNothingSelected(AdapterView<?> parent) {
+	    }
+
+	});
+    }
 
     private void linkSubProjectSpinner(String projectSelected) {
 	List<String> subProjectArray = null;
-	subProjectArray = DedicaHTMLParserMock.getInstance().getArraySubProjects(projectSelected);
+	subProjectArray = ConnectionFacade.getWebConnection().getArraySubProjects(projectSelected);
 	// Cargar el combo de subproyectos
 	if (subProjectSpinner == null) {
 	    subProjectSpinner = (Spinner) findViewById(R.id.batchSubprojectSpinner);

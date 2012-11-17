@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.edwise.dedicamns.beans.BatchDataBean;
 import com.edwise.dedicamns.beans.DayRecord;
+import com.edwise.dedicamns.beans.ProjectSubprojectBean;
 import com.edwise.dedicamns.utils.DayUtils;
 
 /**
@@ -56,6 +57,11 @@ public class DedicaHTMLParserMock {
 	    if (i < 10 && !DayUtils.isWeekend(dayRecord.getDayName())) {
 		dayRecord.setHours("8:30");
 		dayRecord.setProjectId("BBVA58");
+		dayRecord.setSubProject("3 - Calentar silla");
+	    }
+	    else {
+		// Si esta vacio
+		dayRecord.setSubProject(ProjectSubprojectBean.SUBPROJECT_DEFAULT);
 	    }
 
 	    list.add(dayRecord);

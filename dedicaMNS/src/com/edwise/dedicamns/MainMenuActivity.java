@@ -1,8 +1,5 @@
 package com.edwise.dedicamns;
 
-import java.io.Serializable;
-import java.util.List;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -16,10 +13,13 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.edwise.dedicamns.asynctasks.MonthListAsyncTask;
+import com.edwise.dedicamns.connections.ConnectionException;
+import com.edwise.dedicamns.connections.ConnectionFacade;
+import com.edwise.dedicamns.connections.WebConnection;
 import com.edwise.dedicamns.menu.MenuUtils;
-import com.edwise.dedicamns.mocks.DedicaHTMLParserMock;
 
 public class MainMenuActivity extends Activity {
+    private static final String LOGTAG = MainMenuActivity.class.toString();
 
     private ProgressDialog pDialog = null;
 
@@ -75,9 +75,7 @@ public class MainMenuActivity extends Activity {
     private class BatchMenuAsyncTask extends AsyncTask<Integer, Integer, Integer> {
 
 	private Activity activity;
-	private List<String> listProyects = null;
-	private List<String> listMonths = null;
-
+	
 	public BatchMenuAsyncTask(Activity activity) {
 	    this.activity = activity;
 	}
@@ -85,15 +83,19 @@ public class MainMenuActivity extends Activity {
 	@Override
 	protected Integer doInBackground(Integer... params) {
 	    Log.d(BatchMenuAsyncTask.class.toString(), "doInBackground...");
-	    // TODO desmockear
-	    DedicaHTMLParserMock parser = DedicaHTMLParserMock.getInstance();
-	    listProyects = parser.getArrayProjects();
-	    listMonths = parser.getMonths();
 
-	    return listProyects != null && listProyects.size() > 0 ? 1 : -1; // TODO
-									     // constantes
-									     // de
-									     // error
+	    WebConnection webConnection = ConnectionFacade.getWebConnection();
+	    Integer result = 1;
+	    try {
+		webConnection.fillProyectsAndSubProyectsCached();
+		webConnection.fillMonthsAndYearsCached();
+	    } catch (ConnectionException e) {
+		Log.e(LOGTAG, "Error al obtener datos de cacheo (proyectos, meses y años)", e);
+		result = -1;
+	    }
+
+	    // TODO constantes de error
+	    return result; 
 	}
 
 	@Override
@@ -106,7 +108,7 @@ public class MainMenuActivity extends Activity {
 		this.closeDialog();
 	    } else {
 		this.closeDialog();
-		showToastMessage("Error de la web de dedicaciones");
+		showToastMessage("Error en la conexión con la web de dedicaciones");
 	    }
 	}
 
@@ -117,9 +119,7 @@ public class MainMenuActivity extends Activity {
 
 	private void launchBatchMenuActivity() {
 	    Intent intent = new Intent(this.activity, BatchMenuActivity.class);
-	    intent.putExtra("projectList", (Serializable) listProyects);
-	    intent.putExtra("monthsList", (Serializable) listMonths);
-
+	    
 	    this.activity.startActivity(intent);
 	}
 
