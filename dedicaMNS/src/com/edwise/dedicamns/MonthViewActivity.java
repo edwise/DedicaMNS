@@ -67,7 +67,7 @@ public class MonthViewActivity extends Activity {
 	    MenuUtils.doLogout(this);
 	    returned = true;
 	case R.id.menu_about_us:
-	    // TODO llamada a acerca de, en clase generica para todos.
+	    MenuUtils.goToAbout(this);
 	    returned = true;
 	default:
 	    returned = super.onOptionsItemSelected(item);

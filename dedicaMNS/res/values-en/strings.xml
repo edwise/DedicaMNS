@@ -13,5 +13,7 @@
     <string name="title_activity_detail_day">Day Detail</string>
     <string name="title_activity_main_menu">Dedica MNS</string>
     <string name="title_activity_batch_menu">Dedica MNS</string>
+    <string name="title_activity_about">About</string>
+    <string name="about_text">\nAndroid application for MediaNet Software Dedicaciones Web.\n</string>
 
 </resources>

@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.edwise.dedicamns.asynctasks.ConnectionAsyncTask;
 import com.edwise.dedicamns.connections.ConnectionFacade;
+import com.edwise.dedicamns.menu.MenuUtils;
 
 public class LoginActivity extends Activity {
 
@@ -82,7 +83,7 @@ public class LoginActivity extends Activity {
 	boolean returned = false;
 	switch (item.getItemId()) {
 	case R.id.menu_about_us:
-	    // TODO llamada a acerca de, en clase generica para todos.
+	    MenuUtils.goToAbout(this);
 	    returned = true;
 	default:
 	    returned = super.onOptionsItemSelected(item);

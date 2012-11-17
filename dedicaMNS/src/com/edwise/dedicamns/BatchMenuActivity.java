@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,7 +38,6 @@ public class BatchMenuActivity extends Activity {
 
     private ProgressDialog pDialog = null;
 
-    @SuppressWarnings("unchecked")
     @Override
     public void onCreate(Bundle savedInstanceState) {
 	Log.d(BatchMenuActivity.class.toString(), "onCreate");
@@ -154,7 +152,7 @@ public class BatchMenuActivity extends Activity {
 	    MenuUtils.doLogout(this);
 	    returned = true;
 	case R.id.menu_about_us:
-	    // TODO llamada a acerca de, en clase generica para todos.
+	    MenuUtils.goToAbout(this);
 	    returned = true;
 	default:
 	    returned = super.onOptionsItemSelected(item);

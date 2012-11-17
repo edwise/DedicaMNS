@@ -10,6 +10,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
+        android:contentDescription="Listado mensual"
         android:onClick="doShowListMonth"
         android:src="@drawable/calendar_img" />
 
@@ -28,6 +29,7 @@
         android:layout_below="@+id/ListMonthTextView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
+        android:contentDescription="Imputacion BATCH"
         android:onClick="doShowBatchMenu"
         android:src="@drawable/batch_img" />
 
