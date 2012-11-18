@@ -1,6 +1,7 @@
 package com.edwise.dedicamns;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import android.app.Activity;
@@ -51,9 +52,11 @@ public class BatchMenuActivity extends Activity {
 	linkMonthSpinner(listMonths);
 	linkYearsSpinner(listYears);
 	linkProjectSpinner(listProjects);
-	    linkSubProjectSpinner((String) this.projectSpinner.getSelectedItem());
+	linkSubProjectSpinner((String) this.projectSpinner.getSelectedItem());
 	linkTypeHourSpinner();
 	taskEditText = (EditText) findViewById(R.id.batchTaskEditText);
+
+	markTodayMonthYearSelected();
     }
 
     private void linkTypeHourSpinner() {
@@ -102,7 +105,7 @@ public class BatchMenuActivity extends Activity {
 
 	});
     }
-    
+
     private void linkYearsSpinner(List<String> listYears) {
 	yearSpinner = (Spinner) findViewById(R.id.batchYearsSpinner);
 	ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
@@ -136,6 +139,17 @@ public class BatchMenuActivity extends Activity {
 	    public void onNothingSelected(AdapterView<?> parent) {
 	    }
 	});
+    }
+
+    @SuppressWarnings("unchecked")
+    private void markTodayMonthYearSelected() {
+	Calendar today = Calendar.getInstance();
+
+	ArrayAdapter<String> yearSpinnerAdapter = (ArrayAdapter<String>) yearSpinner.getAdapter();
+	int spinnerPosition = yearSpinnerAdapter.getPosition(String.valueOf(today.get(Calendar.YEAR)));
+	yearSpinner.setSelection(spinnerPosition);
+
+	monthSpinner.setSelection(today.get(Calendar.MONTH)); // Van de 0 a 11 las dos cosas...
     }
 
     @Override

@@ -21,6 +21,7 @@ import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.menu.MenuUtils;
 
 public class MonthViewActivity extends Activity {
+    private static final String LOGTAG = MonthViewActivity.class.toString();
 
     static final int DAY_REQUEST = 0;
 
@@ -31,11 +32,12 @@ public class MonthViewActivity extends Activity {
     @SuppressWarnings("unchecked")
     @Override
     public void onCreate(Bundle savedInstanceState) {
+	Log.d(LOGTAG, "onCreate...");
+
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.month_view);
 
 	listDayRecord = (List<DayRecord>) getIntent().getSerializableExtra("dayList");
-	// TODO comprobacion antes de si viene el dato
 
 	listView = (ListView) findViewById(R.id.listV_main);
 	listView.setAdapter(new DayListAdapter(this, listDayRecord));
@@ -77,7 +79,7 @@ public class MonthViewActivity extends Activity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-	Log.d(MonthViewActivity.class.toString(), "onActivityResult...");
+	Log.d(LOGTAG, "onActivityResult...");
 
 	if (requestCode == DAY_REQUEST) {
 	    if (resultCode == RESULT_OK) {
@@ -97,12 +99,12 @@ public class MonthViewActivity extends Activity {
     }
 
     private void reDrawList(DayRecord dayRecord) {
-	// Repintar toda la lista, cambiando el dia que ha cambiado
+	// Repintado de toda la lista, cambiando el dia que ha cambiado
 	changeDayRecordInList(dayRecord);
 	listView.setAdapter(new DayListAdapter(this, listDayRecord));
 	listView.onRestoreInstanceState(listState);
 
-	Log.d(MonthViewActivity.class.toString(), "changeDataList: done");
+	Log.d(LOGTAG, "changeDataList: done");
     }
 
     private void changeDayRecordInList(DayRecord dayRecord) {

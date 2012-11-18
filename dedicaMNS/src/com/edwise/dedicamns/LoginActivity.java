@@ -27,6 +27,7 @@ import com.edwise.dedicamns.connections.ConnectionFacade;
 import com.edwise.dedicamns.menu.MenuUtils;
 
 public class LoginActivity extends Activity {
+    private static final String LOGTAG = LoginActivity.class.toString();
 
     private ProgressDialog pDialog;
 
@@ -38,11 +39,11 @@ public class LoginActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.login);
-	Log.d(LoginActivity.class.toString(), "onCreate: Comenzando...");
+	Log.d(LOGTAG, "onCreate: Comenzando...");
 
 	initFields();
 	if (!checkIfLogout()) {
-	    chargeSavedData();	    
+	    chargeSavedData();
 	    ConnectionFacade.createWebConnection(this);
 	}
     }
@@ -71,7 +72,7 @@ public class LoginActivity extends Activity {
     private boolean checkIfLogout() {
 	return getIntent().getBooleanExtra("isLogout", false);
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 	getMenuInflater().inflate(R.menu.login_menu, menu);
@@ -93,8 +94,7 @@ public class LoginActivity extends Activity {
     }
 
     public void doLogin(View view) {
-	Log.d(LoginActivity.class.toString(), "doLogin: Click en conectar...");
-	// TODO pasar todos los activity.class.toString() a un static...
+	Log.d(LOGTAG, "doLogin: Click en conectar...");
 
 	if (checkFieldsFilled()) {
 	    accesWebWithLoginData();
@@ -118,8 +118,7 @@ public class LoginActivity extends Activity {
 	String checked = Boolean.toString(rememberMeCheckBox.isChecked());
 	accessData.put("check", checked); // TODO constantes o enum
 
-	Log.d(LoginActivity.class.toString(), "doLogin: User y pass insertado: " + userLogin + " / "
-		+ passLogin + " / " + checked);
+	Log.d(LOGTAG, "doLogin: User y pass insertado: " + userLogin + " / " + passLogin + " / " + checked);
 
 	hideKeyboard();
 
@@ -136,7 +135,7 @@ public class LoginActivity extends Activity {
 
     @SuppressWarnings("unchecked")
     private void callConnectionAsyncTask(Map<String, String> accessData) {
-	Log.d(LoginActivity.class.toString(), "callConnectionAsyncTask: Llamada al asyncTask...");
+	Log.d(LOGTAG, "callConnectionAsyncTask: Llamada al asyncTask...");
 
 	AsyncTask<Map<String, String>, Integer, Integer> connectionAsyncTask = new ConnectionAsyncTask(this,
 		this.pDialog);
@@ -146,13 +145,13 @@ public class LoginActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	super.onActivityResult(requestCode, resultCode, data);
-	Log.d(LoginActivity.class.toString(), "onActivityResult: en el onActivityResult...");
+	Log.d(LOGTAG, "onActivityResult: en el onActivityResult...");
     }
 
     @Override
     protected void onDestroy() {
 	super.onStop();
-	Log.d(LoginActivity.class.toString(), "onDestroy: en el onDestroy...");
+	Log.d(LOGTAG, "onDestroy: en el onDestroy...");
 	// Borrar preferences si el check está desactivado
 	removeLoginDataIfNeeded();
     }
@@ -167,7 +166,7 @@ public class LoginActivity extends Activity {
 	if (!rememberMeCheckBox.isChecked()) {
 	    SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
 	    sharedPref.edit().clear().commit();
-	    Log.d(LoginActivity.class.toString(), "removeLoginDataIfNeeded: Borrado el sharedPreferences!");
+	    Log.d(LOGTAG, "removeLoginDataIfNeeded: Borrado el sharedPreferences!");
 	}
     }
 

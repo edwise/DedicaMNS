@@ -29,6 +29,8 @@ import com.edwise.dedicamns.mocks.DedicaHTMLParserMock;
 import com.edwise.dedicamns.utils.Time24HoursValidator;
 
 public class DetailDayActivity extends Activity {
+    private static final String LOGTAG = DetailDayActivity.class.toString();
+
     private static final String MESSAGE_SAVE_OK = "Guardado registro de horas correctamente";
     private static final String MESSAGE_REMOVE_OK = "Borrado registro de horas correctamente";
     private static final String DIALOG_SAVING = "Guardando datos";
@@ -51,7 +53,7 @@ public class DetailDayActivity extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-	Log.d(DetailDayActivity.class.toString(), "onCreate");
+	Log.d(LOGTAG, "onCreate");
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.detail_day);
 
@@ -143,7 +145,7 @@ public class DetailDayActivity extends Activity {
     }
 
     public void doSaveDay(View view) {
-	Log.d(DetailDayActivity.class.toString(), "doSaveDay");
+	Log.d(LOGTAG, "doSaveDay");
 
 	if (!Time24HoursValidator.validateTime(hoursEditText.getText().toString().trim())) {
 	    showToastMessage("El formato de horas es incorrecto");
@@ -176,7 +178,7 @@ public class DetailDayActivity extends Activity {
     }
 
     public void doRemoveDay(View view) {
-	Log.d(DetailDayActivity.class.toString(), "doRemoveDay");
+	Log.d(LOGTAG, "doRemoveDay");
 
 	showDialog(DetailDayActionEnum.REMOVE);
 
@@ -195,7 +197,7 @@ public class DetailDayActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-	Log.d(DetailDayActivity.class.toString(), "onBackPressed");
+	Log.d(LOGTAG, "onBackPressed");
 	super.onBackPressed();
 
 	Intent returnIntent = new Intent();

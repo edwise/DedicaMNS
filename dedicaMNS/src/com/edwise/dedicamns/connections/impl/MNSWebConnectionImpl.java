@@ -9,6 +9,7 @@ import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -45,6 +46,8 @@ import com.edwise.dedicamns.connections.WebConnection;
 public class MNSWebConnectionImpl implements WebConnection {
     private static final String LOGTAG = MNSWebConnectionImpl.class.toString();
 
+    private static final int FIRST_YEAR = 2004;
+
     private static final String URL_STR = "http://dedicaciones.medianet.es";
     private static final String DOMAIN = "medianet2k";
     private static final String COOKIE_SESSION = "ASP.NET_SessionId";
@@ -76,12 +79,12 @@ public class MNSWebConnectionImpl implements WebConnection {
     public Integer connectWeb(String userName, String password) throws ConnectionException {
 	int responseCode;
 	try {
-	    Log.d(MNSWebConnectionImpl.class.toString(), "connectWeb... inicio...");
+	    Log.d(LOGTAG, "connectWeb... inicio...");
 	    responseCode = doLoginAndGetCookie(URL_STR, DOMAIN, userName, password);
-	    Log.d(MNSWebConnectionImpl.class.toString(), "connectWeb... fin...");
+	    Log.d(LOGTAG, "connectWeb... fin...");
 	} catch (Exception e) {
 	    // TODO controlar el error devolviendo un responsecode erroneo?
-	    Log.e(MNSWebConnectionImpl.class.toString(), "Error en el acceso web", e);
+	    Log.e(LOGTAG, "Error en el acceso web", e);
 	    throw new ConnectionException(e);
 	}
 	return responseCode;
@@ -89,6 +92,7 @@ public class MNSWebConnectionImpl implements WebConnection {
 
     private int doLoginAndGetCookie(final String urlStr, final String domain, final String userName,
 	    final String password) throws ClientProtocolException, IOException, URISyntaxException {
+	long beginTime = System.currentTimeMillis();
 
 	URL url = new URL(urlStr);
 	client = new DefaultHttpClient();
@@ -98,15 +102,18 @@ public class MNSWebConnectionImpl implements WebConnection {
 	HttpResponse resp = client.execute(get);
 	List<Cookie> cookies = client.getCookieStore().getCookies();
 	for (Cookie c : cookies) {
-	    Log.d(MNSWebConnectionImpl.class.toString(),
-		    "Cookie - Name: " + c.getName() + " Value: " + c.getValue());
+	    Log.d(LOGTAG, "Cookie - Name: " + c.getName() + " Value: " + c.getValue());
 	    if (COOKIE_SESSION.equals(c.getName())) {
 		cookie = c.getValue();
 	    }
 	}
 
-	Log.d(MNSWebConnectionImpl.class.toString(), "StatusCode: " + resp.getStatusLine().getStatusCode()
-		+ " StatusLine: " + resp.getStatusLine().getReasonPhrase());
+	Log.d(LOGTAG, "StatusCode: " + resp.getStatusLine().getStatusCode() + " StatusLine: "
+		+ resp.getStatusLine().getReasonPhrase());
+
+	long endTime = System.currentTimeMillis();
+	Log.d(LOGTAG, "Tiempo login: " + (endTime - beginTime));
+
 	// 200 OK. 401 error
 	return resp.getStatusLine().getStatusCode();
     }
@@ -129,7 +136,12 @@ public class MNSWebConnectionImpl implements WebConnection {
 
     public void fillProyectsAndSubProyectsCached() throws ConnectionException {
 	if (projects == null) {
+	    long beginTime = System.currentTimeMillis();
+
 	    fillProyectsAndSubProyects();
+
+	    long endTime = System.currentTimeMillis();
+	    Log.d(LOGTAG, "Tiempo carga proyectos: " + (endTime - beginTime));
 	}
     }
 
@@ -177,40 +189,52 @@ public class MNSWebConnectionImpl implements WebConnection {
 	return projectName.trim().substring(0, projectName.indexOf(" -"));
     }
 
-    public void fillMonthsAndYearsCached() throws ConnectionException {
+    public void fillMonthsAndYearsCached() {
 	if (monthYears == null) {
 	    fillMonthsAndYears();
 	}
     }
 
-    private void fillMonthsAndYears() throws ConnectionException {
-	String html = this.getHttpContent(URL_STR);
-	Document document = Jsoup.parse(html);
-
-	List<String> months = new ArrayList<String>();
-	List<String> years = new ArrayList<String>();
-
-	Elements selectMonth = document.select("#month");
-	if (selectMonth != null) {
-	    Iterator<Element> iterator = selectMonth.select("option").iterator();
-	    while (iterator.hasNext()) {
-		Element elemento = iterator.next();
-		// en elemento.val() está el id del option
-		months.add(elemento.html());
-	    }
-	}
-
-	Elements selectYear = document.select("#year");
-	if (selectYear != null) {
-	    Iterator<Element> iterator = selectYear.select("option").iterator();
-	    while (iterator.hasNext()) {
-		Element elemento = iterator.next();
-		// en elemento.val() está el id del option
-		years.add(elemento.html());
-	    }
-	}
+    private void fillMonthsAndYears() {
+	List<String> months = generateMonthsList();
+	List<String> years = generateYearsList();
 
 	this.monthYears = new MonthYearBean(months, years);
+    }
+
+    private List<String> generateMonthsList() {
+	List<String> monthsList = new ArrayList<String>();
+	monthsList.add("Enero");
+	monthsList.add("Febrero");
+	monthsList.add("Marzo");
+	monthsList.add("Abril");
+	monthsList.add("Mayo");
+	monthsList.add("Junio");
+	monthsList.add("Julio");
+	monthsList.add("Agosto");
+	monthsList.add("Septiembre");
+	monthsList.add("Octubre");
+	monthsList.add("Noviembre");
+	monthsList.add("Diciembre");
+
+	return monthsList;
+    }
+
+    private List<String> generateYearsList() {
+	List<String> yearsList = new ArrayList<String>();
+
+	Calendar today = Calendar.getInstance();
+	int lastYear = today.get(Calendar.YEAR);
+	if (today.get(Calendar.MONTH) == Calendar.DECEMBER) {
+	    // Si es diciembre, le añadimos ya el año siguiente, deberia estar ya...
+	    lastYear++;
+	}
+
+	for (int i = FIRST_YEAR; i <= lastYear; i++) {
+	    yearsList.add(String.valueOf(i));
+	}
+
+	return yearsList;
     }
 
     private String getHttpContent(String url) throws ConnectionException {

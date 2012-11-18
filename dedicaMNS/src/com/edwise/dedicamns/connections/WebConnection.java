@@ -20,5 +20,5 @@ public interface WebConnection {
 
     void fillProyectsAndSubProyectsCached() throws ConnectionException;
 
-    void fillMonthsAndYearsCached() throws ConnectionException;
+    void fillMonthsAndYearsCached();
 }
