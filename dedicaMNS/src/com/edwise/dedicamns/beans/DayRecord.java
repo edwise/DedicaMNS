@@ -1,6 +1,8 @@
 package com.edwise.dedicamns.beans;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DayRecord implements Serializable {
 
@@ -8,16 +10,17 @@ public class DayRecord implements Serializable {
      * 
      */
     private static final long serialVersionUID = -749246389856673135L;
-    
+
     private int dayNum;
     private String dayName;
-    private String hours;
-    private String projectId;
-    private String subProject;
-    private String task;
+    private String totalHours;
+
+    private List<ActivityDay> activities = new ArrayList<ActivityDay>();
+
     private String addLink;
     private String editLink;
     private String removeLink;
+
     private Boolean isWeekend;
     private Boolean isHoliday;
 
@@ -40,35 +43,28 @@ public class DayRecord implements Serializable {
     }
 
     public String getHours() {
-	return hours;
+	return totalHours;
     }
 
     public void setHours(String hours) {
-	this.hours = hours;
+	this.totalHours = hours;
     }
 
+    public List<ActivityDay> getActivities() {
+	return activities;
+    }
+
+    // TODO quitar estos getters, que están por ahora para que funcionen ciertos mockeos.
     public String getProjectId() {
-	return projectId;
-    }
-
-    public void setProjectId(String projectId) {
-	this.projectId = projectId;
+	return this.activities.size() == 0 ? null : this.activities.get(0).getProjectId();
     }
 
     public String getSubProject() {
-	return subProject;
-    }
-
-    public void setSubProject(String subProject) {
-	this.subProject = subProject;
+	return this.activities.size() == 0 ? null : this.activities.get(0).getSubProject();
     }
 
     public String getTask() {
-	return task;
-    }
-
-    public void setTask(String task) {
-	this.task = task;
+	return this.activities.size() == 0 ? null : this.activities.get(0).getTask();
     }
 
     public String getAddLink() {
@@ -124,16 +120,13 @@ public class DayRecord implements Serializable {
     }
 
     public void clearDay() {
-	this.hours = null;
-	this.projectId = null;
-	this.subProject = null;
-	this.task = null;
+	this.totalHours = null;
+	this.activities.clear();
     }
-    
+
     public void copyDayData(DayRecord dayRecord) {
-	this.hours =  dayRecord.getHours();
-	this.projectId = dayRecord.getProjectId();
-	this.subProject = dayRecord.getSubProject();
-	this.task = dayRecord.getTask();
+	this.totalHours = dayRecord.getHours();
+	this.activities.clear();
+	this.activities = dayRecord.getActivities();
     }
 }

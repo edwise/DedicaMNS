@@ -34,6 +34,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.edwise.dedicamns.beans.ActivityDay;
+import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.beans.MonthYearBean;
 import com.edwise.dedicamns.beans.ProjectSubprojectBean;
 import com.edwise.dedicamns.connections.ConnectionException;
@@ -259,4 +261,57 @@ public class MNSWebConnectionImpl implements WebConnection {
 
 	return html;
     }
+
+    // TODO refactorizar bien y constantizar
+    public List<DayRecord> getListDaysForMonth() throws ConnectionException {
+	List<DayRecord> listDays = new ArrayList<DayRecord>();
+	String html = this.getHttpContent(URL_STR);
+	Document document = Jsoup.parse(html);
+
+	Elements selectUlDays = document.select("#ListOfDays");
+	if (selectUlDays != null) {
+	    Element ulDays = selectUlDays.first();
+	    Elements liDays = ulDays.children();
+	    Iterator<Element> itDays = liDays.iterator();
+	    while (itDays.hasNext()) {
+		Element liDay = itDays.next();
+		Elements spanDayNumbers = liDay.select(".DayNumber");
+		Elements spanDayNInitials = liDay.select(".DayInitials");
+		Elements spanTotalHours = liDay.select(".TotalHours");
+
+		DayRecord dayRecord = new DayRecord();
+		dayRecord.setHours(spanTotalHours.first().html());
+		dayRecord.setIsWeekend("WeekendDay".equals(liDay.className()));
+		dayRecord.setIsHoliday("Holiday".equals(liDay.className()));
+		dayRecord.setDayNum(Integer.valueOf(spanDayNumbers.first().html()));
+		dayRecord.setDayName(spanDayNInitials.first().html());
+
+		Elements selectUlActivities = liDay.select("ul.Activities");
+		Element ulActivities = selectUlActivities.first();
+		Elements liActivities = ulActivities.children();
+		Iterator<Element> itAct = liActivities.iterator();
+		while (itAct.hasNext()) {
+		    Element liActivity = itAct.next();
+		    ActivityDay activityDay = new ActivityDay();
+		    activityDay.setHours(liActivity.select("div.ActivityHours").html());
+		    activityDay.setProjectId(liActivity.select("div.ActivityAccount span").html());
+		    activityDay.setSubProject("");
+		    activityDay.setSubProjectId(liActivity.select("div.ActivitySubaccount span").html());
+		    activityDay.setTask(liActivity.select("div.ActivityTask").html());
+
+		    dayRecord.getActivities().add(activityDay);
+		}
+
+		listDays.add(dayRecord);
+	    }
+	} else {
+	    throw new ConnectionException("No existen datos de días en la página recibida!");
+	}
+
+	return listDays;
+    }
+
+    final static String[] dayNames = { "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado",
+	    "Domingo" };
+
 }

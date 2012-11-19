@@ -20,7 +20,6 @@ import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.connections.ConnectionException;
 import com.edwise.dedicamns.connections.ConnectionFacade;
 import com.edwise.dedicamns.connections.WebConnection;
-import com.edwise.dedicamns.mocks.DedicaHTMLParserMock;
 
 /**
  * @author edwise
@@ -42,8 +41,21 @@ public class MonthListAsyncTask extends AsyncTask<Integer, Integer, Integer> {
     @Override
     protected Integer doInBackground(Integer... params) {
 	Log.d(LOGTAG, "doInBackground...");
-
 	WebConnection webConnection = ConnectionFacade.getWebConnection();
+
+	Integer result = fillNeededDataCache(webConnection);
+
+	try {
+	    listDays = webConnection.getListDaysForMonth();
+	} catch (ConnectionException e) {
+	    Log.e(LOGTAG, "Error al obtener la lista de datos diarios", e);
+	    // TODO error en result?
+	}
+
+	return listDays != null && listDays.size() > 0 ? 1 : -1; // TODO constantes de error
+    }
+
+    private Integer fillNeededDataCache(WebConnection webConnection) {
 	Integer result = 1;
 	try {
 	    webConnection.fillProyectsAndSubProyectsCached();
@@ -52,14 +64,7 @@ public class MonthListAsyncTask extends AsyncTask<Integer, Integer, Integer> {
 	    Log.e(LOGTAG, "Error al obtener datos de cacheo (proyectos, meses y años)", e);
 	    result = -1; // TODO usar este result en el return
 	}
-
-	// TODO desmockear
-	DedicaHTMLParserMock parser = DedicaHTMLParserMock.getInstance();
-	listDays = parser.getListFromHTML();
-
-	return listDays != null && listDays.size() > 0 ? 1 : -1; // TODO
-								 // constantes
-								 // de error
+	return result;
     }
 
     @Override

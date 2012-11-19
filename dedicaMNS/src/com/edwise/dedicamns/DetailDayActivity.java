@@ -22,6 +22,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.edwise.dedicamns.beans.ActivityDay;
 import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.connections.ConnectionFacade;
 import com.edwise.dedicamns.menu.MenuUtils;
@@ -172,9 +173,16 @@ public class DetailDayActivity extends Activity {
 
     private void fillDayRecord() {
 	this.dayRecord.setHours(hoursEditText.getText().toString().trim());
-	this.dayRecord.setProjectId((String) this.projectSpinner.getSelectedItem());
-	this.dayRecord.setSubProject((String) this.subProjectSpinner.getSelectedItem());
-	this.dayRecord.setTask(this.taskEditText.getText().toString().trim());
+	ActivityDay activityDay = null;
+	if (this.dayRecord.getActivities().size() == 0) {
+	    activityDay = new ActivityDay();
+	    this.dayRecord.getActivities().add(activityDay);
+	} else {
+	    activityDay = this.dayRecord.getActivities().get(0);
+	}
+	activityDay.setProjectId((String) this.projectSpinner.getSelectedItem());
+	activityDay.setSubProject((String) this.subProjectSpinner.getSelectedItem());
+	activityDay.setTask(this.taskEditText.getText().toString().trim());
     }
 
     public void doRemoveDay(View view) {
