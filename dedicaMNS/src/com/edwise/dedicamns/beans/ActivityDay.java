@@ -11,6 +11,8 @@ import java.io.Serializable;
  */
 public class ActivityDay implements Serializable {
 
+    private static final String NBSP = "&nbsp;";
+
     /**
      * 
      */
@@ -59,7 +61,9 @@ public class ActivityDay implements Serializable {
     }
 
     public void setTask(String task) {
-	this.task = task;
+	if (!NBSP.equals(task)) {
+	    this.task = task;
+	}
     }
 
 }

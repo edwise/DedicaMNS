@@ -2,7 +2,7 @@ package com.edwise.dedicamns.connections;
 
 import java.util.List;
 
-import com.edwise.dedicamns.beans.DayRecord;
+import com.edwise.dedicamns.beans.MonthListBean;
 
 import android.app.Activity;
 
@@ -24,5 +24,5 @@ public interface WebConnection {
 
     void fillMonthsAndYearsCached();
     
-    List<DayRecord> getListDaysForMonth() throws ConnectionException;
+    MonthListBean getListDaysForMonth() throws ConnectionException;
 }

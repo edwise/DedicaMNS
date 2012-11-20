@@ -4,7 +4,6 @@
 package com.edwise.dedicamns.asynctasks;
 
 import java.io.Serializable;
-import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -16,7 +15,7 @@ import android.widget.Toast;
 
 import com.edwise.dedicamns.BatchMenuActivity;
 import com.edwise.dedicamns.MonthViewActivity;
-import com.edwise.dedicamns.beans.DayRecord;
+import com.edwise.dedicamns.beans.MonthListBean;
 import com.edwise.dedicamns.connections.ConnectionException;
 import com.edwise.dedicamns.connections.ConnectionFacade;
 import com.edwise.dedicamns.connections.WebConnection;
@@ -30,7 +29,7 @@ public class MonthListAsyncTask extends AsyncTask<Integer, Integer, Integer> {
     // TODO que reciba el mes como parametro!!
 
     private Activity activity;
-    private List<DayRecord> listDays = null;
+    private MonthListBean monthList = null;
     private ProgressDialog pDialog = null;
 
     public MonthListAsyncTask(Activity activity, ProgressDialog pDialog) {
@@ -46,13 +45,13 @@ public class MonthListAsyncTask extends AsyncTask<Integer, Integer, Integer> {
 	Integer result = fillNeededDataCache(webConnection);
 
 	try {
-	    listDays = webConnection.getListDaysForMonth();
+	    monthList = webConnection.getListDaysForMonth();
 	} catch (ConnectionException e) {
 	    Log.e(LOGTAG, "Error al obtener la lista de datos diarios", e);
 	    // TODO error en result?
 	}
 
-	return listDays != null && listDays.size() > 0 ? 1 : -1; // TODO constantes de error
+	return monthList.getListDays() != null && monthList.getListDays().size() > 0 ? 1 : -1; // TODO constantes de error
     }
 
     private Integer fillNeededDataCache(WebConnection webConnection) {
@@ -95,7 +94,7 @@ public class MonthListAsyncTask extends AsyncTask<Integer, Integer, Integer> {
 
     private void launchMonthActivity() {
 	Intent intent = new Intent(this.activity, MonthViewActivity.class);
-	intent.putExtra("dayList", (Serializable) listDays);
+	intent.putExtra("monthList", (Serializable) monthList);
 
 	this.activity.startActivity(intent);
     }

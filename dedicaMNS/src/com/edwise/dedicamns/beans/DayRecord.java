@@ -14,15 +14,14 @@ public class DayRecord implements Serializable {
     private int dayNum;
     private String dayName;
     private String totalHours;
-
     private List<ActivityDay> activities = new ArrayList<ActivityDay>();
 
     private String addLink;
     private String editLink;
     private String removeLink;
 
-    private Boolean isWeekend;
-    private Boolean isHoliday;
+    private Boolean isWeekend = Boolean.FALSE;
+    private Boolean isHoliday = Boolean.FALSE;
 
     private boolean toRemove;
 

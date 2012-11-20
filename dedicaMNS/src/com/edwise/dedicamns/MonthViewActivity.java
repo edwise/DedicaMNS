@@ -1,7 +1,5 @@
 package com.edwise.dedicamns;
 
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,10 +12,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.edwise.dedicamns.adapters.DayListAdapter;
 import com.edwise.dedicamns.beans.DayRecord;
+import com.edwise.dedicamns.beans.MonthListBean;
 import com.edwise.dedicamns.menu.MenuUtils;
 
 public class MonthViewActivity extends Activity {
@@ -26,10 +26,10 @@ public class MonthViewActivity extends Activity {
     static final int DAY_REQUEST = 0;
 
     private ListView listView = null;
-    private List<DayRecord> listDayRecord = null;
+    private MonthListBean monthList = null;
     private Parcelable listState = null;
+    private TextView monthYearTextView = null;
 
-    @SuppressWarnings("unchecked")
     @Override
     public void onCreate(Bundle savedInstanceState) {
 	Log.d(LOGTAG, "onCreate...");
@@ -37,10 +37,14 @@ public class MonthViewActivity extends Activity {
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.month_view);
 
-	listDayRecord = (List<DayRecord>) getIntent().getSerializableExtra("dayList");
+	// TODO un poco de refactor...
+	monthList = (MonthListBean) getIntent().getSerializableExtra("monthList");
+
+	monthYearTextView = (TextView) findViewById(R.id.monthAndYearTextView);
+	monthYearTextView.setText(monthList.getMonthName() + " " + monthList.getYear());
 
 	listView = (ListView) findViewById(R.id.listV_main);
-	listView.setAdapter(new DayListAdapter(this, listDayRecord));
+	listView.setAdapter(new DayListAdapter(this, monthList.getListDays()));
 
 	listView.setOnItemClickListener(new OnItemClickListener() {
 	    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -101,14 +105,14 @@ public class MonthViewActivity extends Activity {
     private void reDrawList(DayRecord dayRecord) {
 	// Repintado de toda la lista, cambiando el dia que ha cambiado
 	changeDayRecordInList(dayRecord);
-	listView.setAdapter(new DayListAdapter(this, listDayRecord));
+	listView.setAdapter(new DayListAdapter(this, monthList.getListDays()));
 	listView.onRestoreInstanceState(listState);
 
 	Log.d(LOGTAG, "changeDataList: done");
     }
 
     private void changeDayRecordInList(DayRecord dayRecord) {
-	for (DayRecord oldDayRecord : listDayRecord) {
+	for (DayRecord oldDayRecord : monthList.getListDays()) {
 	    if (oldDayRecord.getDayNum() == dayRecord.getDayNum()) {
 		if (dayRecord.isToRemove()) {
 		    oldDayRecord.clearDay();

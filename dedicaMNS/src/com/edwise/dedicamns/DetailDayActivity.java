@@ -180,6 +180,7 @@ public class DetailDayActivity extends Activity {
 	} else {
 	    activityDay = this.dayRecord.getActivities().get(0);
 	}
+	activityDay.setHours(this.dayRecord.getHours());
 	activityDay.setProjectId((String) this.projectSpinner.getSelectedItem());
 	activityDay.setSubProject((String) this.subProjectSpinner.getSelectedItem());
 	activityDay.setTask(this.taskEditText.getText().toString().trim());

@@ -10,6 +10,7 @@ import android.app.Activity;
 
 import com.edwise.dedicamns.beans.ActivityDay;
 import com.edwise.dedicamns.beans.DayRecord;
+import com.edwise.dedicamns.beans.MonthListBean;
 import com.edwise.dedicamns.connections.WebConnection;
 import com.edwise.dedicamns.utils.DayUtils;
 
@@ -80,6 +81,14 @@ public class MockWebConnectionImpl implements WebConnection {
     public void fillMonthsAndYearsCached() {
 	months = new ArrayList<String>();
 	months.add("Enero");
+	months.add("Febrero");
+	months.add("Marzo");
+	months.add("Abril");
+	months.add("Mayo");
+	months.add("Junio");
+	months.add("Julio");
+	months.add("Agosto");
+	months.add("Septiembre");
 	months.add("Octubre");
 	months.add("Noviembre");
 	months.add("Diciembre");
@@ -90,12 +99,14 @@ public class MockWebConnectionImpl implements WebConnection {
 	years.add("2013");
     }
 
-    public List<DayRecord> getListDaysForMonth() {
+    public MonthListBean getListDaysForMonth() {
 	List<DayRecord> list = new ArrayList<DayRecord>();
 
 	fillListMock(list);
 
-	return list;
+	MonthListBean monthList = new MonthListBean("Noviembre", "2012", list);
+
+	return monthList;
     }
 
     private void fillListMock(List<DayRecord> list) {
@@ -103,6 +114,10 @@ public class MockWebConnectionImpl implements WebConnection {
 	    DayRecord dayRecord = new DayRecord();
 	    dayRecord.setDayNum(i);
 	    dayRecord.setDayName(generateDayName(i));
+	    dayRecord.setIsHoliday(false);
+	    if (DayUtils.isWeekend(dayRecord.getDayName())) {
+		dayRecord.setIsWeekend(true);
+	    }
 
 	    if (i < 10 && !DayUtils.isWeekend(dayRecord.getDayName())) {
 		dayRecord.setHours("8:30");
@@ -120,8 +135,7 @@ public class MockWebConnectionImpl implements WebConnection {
 	}
     }
 
-    final static String[] dayNames = { "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado",
-	    "Domingo" };
+    final static String[] dayNames = { "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom" };
 
     private String generateDayName(int i) {
 	String dayName = null;

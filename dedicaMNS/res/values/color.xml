@@ -21,5 +21,6 @@
     <color name="azure">#F0FFFF</color>
     <color name="lightCyan">#E0FFFF</color>
     <color name="royalBlue">#4169E1</color>
+    <color name="skyBlue">#87CEEB</color>
 
 </resources>

@@ -36,10 +36,12 @@ import android.util.Log;
 
 import com.edwise.dedicamns.beans.ActivityDay;
 import com.edwise.dedicamns.beans.DayRecord;
+import com.edwise.dedicamns.beans.MonthListBean;
 import com.edwise.dedicamns.beans.MonthYearBean;
 import com.edwise.dedicamns.beans.ProjectSubprojectBean;
 import com.edwise.dedicamns.connections.ConnectionException;
 import com.edwise.dedicamns.connections.WebConnection;
+import com.edwise.dedicamns.utils.DayUtils;
 
 /**
  * @author edwise
@@ -263,10 +265,20 @@ public class MNSWebConnectionImpl implements WebConnection {
     }
 
     // TODO refactorizar bien y constantizar
-    public List<DayRecord> getListDaysForMonth() throws ConnectionException {
+    public MonthListBean getListDaysForMonth() throws ConnectionException {
+	long beginTime = System.currentTimeMillis();
+	    
 	List<DayRecord> listDays = new ArrayList<DayRecord>();
 	String html = this.getHttpContent(URL_STR);
 	Document document = Jsoup.parse(html);
+
+	Elements optionsMonth = document.select("#month > option[selected]");
+	Element optionMonth = optionsMonth.first();
+	String month = optionMonth.html();
+
+	Elements optionsYear = document.select("#year > option[selected]");
+	Element optionYear = optionsYear.first();
+	String year = optionYear.html();
 
 	Elements selectUlDays = document.select("#ListOfDays");
 	if (selectUlDays != null) {
@@ -284,7 +296,7 @@ public class MNSWebConnectionImpl implements WebConnection {
 		dayRecord.setIsWeekend("WeekendDay".equals(liDay.className()));
 		dayRecord.setIsHoliday("Holiday".equals(liDay.className()));
 		dayRecord.setDayNum(Integer.valueOf(spanDayNumbers.first().html()));
-		dayRecord.setDayName(spanDayNInitials.first().html());
+		dayRecord.setDayName(DayUtils.replaceAcutes(spanDayNInitials.first().html()));
 
 		Elements selectUlActivities = liDay.select("ul.Activities");
 		Element ulActivities = selectUlActivities.first();
@@ -308,10 +320,14 @@ public class MNSWebConnectionImpl implements WebConnection {
 	    throw new ConnectionException("No existen datos de días en la página recibida!");
 	}
 
-	return listDays;
+	MonthListBean monthList = new MonthListBean(month, year, listDays);
+	
+	long endTime = System.currentTimeMillis();
+	Log.d(LOGTAG, "Tiempo carga lista mensual: " + (endTime - beginTime));
+
+	return monthList;
     }
 
-    final static String[] dayNames = { "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado",
-	    "Domingo" };
+    final static String[] dayNames = { "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom" };
 
 }

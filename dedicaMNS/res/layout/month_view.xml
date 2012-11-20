@@ -9,12 +9,11 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            android:id="@+id/monthAndYear"
+            android:id="@+id/monthAndYearTextView"
             android:layout_width="fill_parent"
             android:layout_height="45dp"
             android:background="#d3d3d3"
             android:gravity="center"
-            android:text="Dedicaciones Octubre 2012"
             android:textSize="22sp" />
     </RelativeLayout>
 
