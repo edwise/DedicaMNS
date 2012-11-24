@@ -16,14 +16,10 @@ public class DayRecord implements Serializable {
     private String totalHours;
     private List<ActivityDay> activities = new ArrayList<ActivityDay>();
 
-    private String addLink;
-    private String editLink;
-    private String removeLink;
-
     private Boolean isWeekend = Boolean.FALSE;
     private Boolean isHoliday = Boolean.FALSE;
 
-    private boolean toRemove;
+    private String dateForm;    
 
     public int getDayNum() {
 	return dayNum;
@@ -66,30 +62,6 @@ public class DayRecord implements Serializable {
 	return this.activities.size() == 0 ? null : this.activities.get(0).getTask();
     }
 
-    public String getAddLink() {
-	return addLink;
-    }
-
-    public void setAddLink(String addLink) {
-	this.addLink = addLink;
-    }
-
-    public String getEditLink() {
-	return editLink;
-    }
-
-    public void setEditLink(String editLink) {
-	this.editLink = editLink;
-    }
-
-    public String getRemoveLink() {
-	return removeLink;
-    }
-
-    public void setRemoveLink(String removeLink) {
-	this.removeLink = removeLink;
-    }
-
     public Boolean getIsWeekend() {
 	return isWeekend;
     }
@@ -106,16 +78,12 @@ public class DayRecord implements Serializable {
 	this.isHoliday = isHoliday;
     }
 
-    public int describeContents() {
-	return 0;
+    public String getDateForm() {
+	return dateForm;
     }
 
-    public boolean isToRemove() {
-	return toRemove;
-    }
-
-    public void setToRemove(boolean toRemove) {
-	this.toRemove = toRemove;
+    public void setDateForm(String dateForm) {
+	this.dateForm = dateForm;
     }
 
     public void clearDay() {

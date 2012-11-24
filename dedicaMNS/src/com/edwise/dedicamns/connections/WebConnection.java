@@ -2,9 +2,10 @@ package com.edwise.dedicamns.connections;
 
 import java.util.List;
 
-import com.edwise.dedicamns.beans.MonthListBean;
-
 import android.app.Activity;
+
+import com.edwise.dedicamns.beans.DayRecord;
+import com.edwise.dedicamns.beans.MonthListBean;
 
 public interface WebConnection {
 
@@ -17,12 +18,16 @@ public interface WebConnection {
     List<String> getYears();
 
     List<String> getArrayProjects();
-    
+
     List<String> getArraySubProjects(String projectId);
 
     void fillProyectsAndSubProyectsCached() throws ConnectionException;
 
     void fillMonthsAndYearsCached();
-    
+
     MonthListBean getListDaysForMonth() throws ConnectionException;
+
+    Integer saveDay(DayRecord dayRecord) throws ConnectionException;
+
+    Integer removeDay(DayRecord dayRecord) throws ConnectionException;
 }

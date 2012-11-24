@@ -24,9 +24,12 @@ import android.widget.Toast;
 
 import com.edwise.dedicamns.beans.ActivityDay;
 import com.edwise.dedicamns.beans.DayRecord;
+import com.edwise.dedicamns.connections.ConnectionException;
 import com.edwise.dedicamns.connections.ConnectionFacade;
+import com.edwise.dedicamns.connections.WebConnection;
 import com.edwise.dedicamns.menu.MenuUtils;
-import com.edwise.dedicamns.mocks.DedicaHTMLParserMock;
+import com.edwise.dedicamns.utils.DayUtils;
+import com.edwise.dedicamns.utils.ErrorUtils;
 import com.edwise.dedicamns.utils.Time24HoursValidator;
 
 public class DetailDayActivity extends Activity {
@@ -176,6 +179,7 @@ public class DetailDayActivity extends Activity {
 	ActivityDay activityDay = null;
 	if (this.dayRecord.getActivities().size() == 0) {
 	    activityDay = new ActivityDay();
+	    activityDay.setUpdate(false);
 	    this.dayRecord.getActivities().add(activityDay);
 	} else {
 	    activityDay = this.dayRecord.getActivities().get(0);
@@ -183,6 +187,7 @@ public class DetailDayActivity extends Activity {
 	activityDay.setHours(this.dayRecord.getHours());
 	activityDay.setProjectId((String) this.projectSpinner.getSelectedItem());
 	activityDay.setSubProject((String) this.subProjectSpinner.getSelectedItem());
+	activityDay.setSubProjectId(DayUtils.getNumSubProject((String) this.subProjectSpinner.getSelectedItem()));
 	activityDay.setTask(this.taskEditText.getText().toString().trim());
     }
 
@@ -226,23 +231,34 @@ public class DetailDayActivity extends Activity {
 	@Override
 	protected Integer doInBackground(DetailDayActionEnum... action) {
 	    Log.d(SaveRemoveDayAsyncTask.class.toString(), "doInBackground...");
-	    DedicaHTMLParserMock parser = DedicaHTMLParserMock.getInstance();
+	    WebConnection webConnection = ConnectionFacade.getWebConnection();
 	    this.action = action[0];
-	    boolean ok = false;
+	    Integer result = 0;
 	    switch (this.action) {
 	    case SAVE:
-		ok = parser.saveDay(dayRecord);
+		try {
+		    result = webConnection.saveDay(dayRecord);
+		} catch (ConnectionException e) {
+		    Log.e(LOGTAG, "Error al guardar datos de un día", e);
+		    result = -2;
+		}
 		break;
 
 	    case REMOVE:
-		dayRecord.setToRemove(true);
-		ok = parser.removeDay(dayRecord);
+		// TODO cambiar cuando se haga con varias actividades diarias
+		dayRecord.getActivities().get(0).setToRemove(true);
+		try {
+		    result = webConnection.removeDay(dayRecord);
+		} catch (ConnectionException e) {
+		    Log.e(LOGTAG, "Error al borrar datos de un día", e);
+		    result = -2;
+		}
 		break;
 	    default:
 		break;
 	    }
 	    // TODO revisar si devolver boolean o tener varios tipos de error
-	    return ok ? 1 : -1;
+	    return result;
 	}
 
 	@Override
@@ -254,7 +270,7 @@ public class DetailDayActivity extends Activity {
 		this.closeDialog();
 	    } else {
 		this.closeDialog();
-		showToastMessage("Error de la web de dedicaciones");
+		showToastMessage(ErrorUtils.getMessageError(result));
 	    }
 	}
 

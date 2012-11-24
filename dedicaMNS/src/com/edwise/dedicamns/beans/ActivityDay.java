@@ -24,6 +24,18 @@ public class ActivityDay implements Serializable {
     private String subProject;
     private String task;
 
+    private String idActivity;
+    private boolean isUpdate;
+    private boolean toRemove;
+
+    public String getIdActivity() {
+	return idActivity;
+    }
+
+    public void setIdActivity(String idActivity) {
+	this.idActivity = idActivity;
+    }
+
     public String getHours() {
 	return hours;
     }
@@ -64,6 +76,22 @@ public class ActivityDay implements Serializable {
 	if (!NBSP.equals(task)) {
 	    this.task = task;
 	}
+    }
+
+    public boolean isUpdate() {
+	return isUpdate;
+    }
+
+    public void setUpdate(boolean isUpdate) {
+	this.isUpdate = isUpdate;
+    }
+
+    public boolean isToRemove() {
+	return toRemove;
+    }
+
+    public void setToRemove(boolean toRemove) {
+	this.toRemove = toRemove;
     }
 
 }

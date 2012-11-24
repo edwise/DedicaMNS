@@ -19,10 +19,16 @@ import net.maxters.android.ntlm.NTLM;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -48,17 +54,22 @@ import com.edwise.dedicamns.utils.DayUtils;
  * 
  */
 public class MNSWebConnectionImpl implements WebConnection {
+
     private static final String LOGTAG = MNSWebConnectionImpl.class.toString();
+
+    private static final int TIMEOUT_GETDATA = 60000;
+    private static final int TIMEOUT_CONNECTION = 30000;
 
     private static final int FIRST_YEAR = 2004;
 
-    private static final String URL_STR = "http://dedicaciones.medianet.es";
     private static final String DOMAIN = "medianet2k";
     private static final String COOKIE_SESSION = "ASP.NET_SessionId";
-
+    private static final String URL_STR = "http://dedicaciones.medianet.es";
     private static final String URL_ACCOUNTS_STR = "http://dedicaciones.medianet.es/Home/Accounts";
+    private static final String URL_STR_CREATE = "http://dedicaciones.medianet.es/Home/CreateActivity";
+    private static final String URL_STR_MODIFY = "http://dedicaciones.medianet.es/Home/EditActivity";
 
-    private DefaultHttpClient client = null;
+    private DefaultHttpClient httpClient = null;
     private String cookie = null;
     private MonthYearBean monthYears = null;
     private ProjectSubprojectBean projects = null;
@@ -99,12 +110,12 @@ public class MNSWebConnectionImpl implements WebConnection {
 	long beginTime = System.currentTimeMillis();
 
 	URL url = new URL(urlStr);
-	client = new DefaultHttpClient();
-	NTLM.setNTLM(client, userName, password, domain, null, -1);
+	createHttpClient();
+	NTLM.setNTLM(httpClient, userName, password, domain, null, -1);
 	HttpGet get = new HttpGet(url.toURI());
 
-	HttpResponse resp = client.execute(get);
-	List<Cookie> cookies = client.getCookieStore().getCookies();
+	HttpResponse resp = httpClient.execute(get);
+	List<Cookie> cookies = httpClient.getCookieStore().getCookies();
 	for (Cookie c : cookies) {
 	    Log.d(LOGTAG, "Cookie - Name: " + c.getName() + " Value: " + c.getValue());
 	    if (COOKIE_SESSION.equals(c.getName())) {
@@ -120,6 +131,13 @@ public class MNSWebConnectionImpl implements WebConnection {
 
 	// 200 OK. 401 error
 	return resp.getStatusLine().getStatusCode();
+    }
+
+    private void createHttpClient() {
+	httpClient = new DefaultHttpClient();
+	HttpParams params = httpClient.getParams();
+	HttpConnectionParams.setConnectionTimeout(params, TIMEOUT_CONNECTION);
+	HttpConnectionParams.setSoTimeout(params, TIMEOUT_GETDATA);
     }
 
     public List<String> getMonths() {
@@ -244,15 +262,22 @@ public class MNSWebConnectionImpl implements WebConnection {
     private String getHttpContent(String url) throws ConnectionException {
 	String html = null;
 	try {
+	    long beginTime = System.currentTimeMillis();
+
 	    URL urlObject = new URL(url);
 	    HttpGet get = new HttpGet(urlObject.toURI());
-	    HttpResponse resp = client.execute(get);
-	    InputStream is = resp.getEntity().getContent();
+	    HttpResponse resp = httpClient.execute(get);
 
+	    Log.d(LOGTAG, "StatusCodeGET: " + resp.getStatusLine().getStatusCode() + " StatusLineGET: "
+		    + resp.getStatusLine().getReasonPhrase());
+
+	    InputStream is = resp.getEntity().getContent();
 	    StringWriter writer = new StringWriter();
 	    IOUtils.copy(is, writer, "UTF-8");
-
 	    html = writer.toString();
+
+	    long endTime = System.currentTimeMillis();
+	    Log.d(LOGTAG, "Tiempo conexión a " + url + ": " + (endTime - beginTime));
 	} catch (URISyntaxException e) {
 	    Log.d(LOGTAG, "Error de URI en el acceso getHttp a " + url, e);
 	    throw new ConnectionException(e);
@@ -267,7 +292,7 @@ public class MNSWebConnectionImpl implements WebConnection {
     // TODO refactorizar bien y constantizar
     public MonthListBean getListDaysForMonth() throws ConnectionException {
 	long beginTime = System.currentTimeMillis();
-	    
+
 	List<DayRecord> listDays = new ArrayList<DayRecord>();
 	String html = this.getHttpContent(URL_STR);
 	Document document = Jsoup.parse(html);
@@ -275,6 +300,7 @@ public class MNSWebConnectionImpl implements WebConnection {
 	Elements optionsMonth = document.select("#month > option[selected]");
 	Element optionMonth = optionsMonth.first();
 	String month = optionMonth.html();
+	String numMonth = optionMonth.val();
 
 	Elements optionsYear = document.select("#year > option[selected]");
 	Element optionYear = optionsYear.first();
@@ -297,6 +323,7 @@ public class MNSWebConnectionImpl implements WebConnection {
 		dayRecord.setIsHoliday("Holiday".equals(liDay.className()));
 		dayRecord.setDayNum(Integer.valueOf(spanDayNumbers.first().html()));
 		dayRecord.setDayName(DayUtils.replaceAcutes(spanDayNInitials.first().html()));
+		dayRecord.setDateForm(DayUtils.createDateString(dayRecord.getDayNum(), numMonth, year));
 
 		Elements selectUlActivities = liDay.select("ul.Activities");
 		Element ulActivities = selectUlActivities.first();
@@ -305,11 +332,13 @@ public class MNSWebConnectionImpl implements WebConnection {
 		while (itAct.hasNext()) {
 		    Element liActivity = itAct.next();
 		    ActivityDay activityDay = new ActivityDay();
+		    activityDay.setIdActivity(liActivity.select("input#id").val());
 		    activityDay.setHours(liActivity.select("div.ActivityHours").html());
 		    activityDay.setProjectId(liActivity.select("div.ActivityAccount span").html());
 		    activityDay.setSubProject("");
 		    activityDay.setSubProjectId(liActivity.select("div.ActivitySubaccount span").html());
 		    activityDay.setTask(liActivity.select("div.ActivityTask").html());
+		    activityDay.setUpdate(true); // Para marcarla como a actualizar, si la modificamos
 
 		    dayRecord.getActivities().add(activityDay);
 		}
@@ -321,13 +350,123 @@ public class MNSWebConnectionImpl implements WebConnection {
 	}
 
 	MonthListBean monthList = new MonthListBean(month, year, listDays);
-	
+
 	long endTime = System.currentTimeMillis();
 	Log.d(LOGTAG, "Tiempo carga lista mensual: " + (endTime - beginTime));
 
 	return monthList;
     }
 
-    final static String[] dayNames = { "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom" };
+    public Integer saveDay(DayRecord dayRecord) throws ConnectionException {
+	Integer result = 0;
+	String html = null;
+	if (dayRecord.getActivities().get(0).isUpdate()) {
+	    html = this.doPostModify(dayRecord.getActivities().get(0), dayRecord.getDateForm());
+	} else {
+	    html = this.doPostCreate(dayRecord.getActivities().get(0), dayRecord.getDateForm());
+	}
+	Document document = Jsoup.parse(html);
 
+	Elements errors = document.select(".input-validation-error");
+	if (errors != null && errors.size() > 0) {
+	    result = -3;
+	} else { // Ok
+	    // TODO obtener el id, y guardarlo!!! 
+	    // TODO marcarlo como que es update! (por si se actualiza)
+	    result = 1;
+	}
+
+	return result;
+    }
+
+    public Integer removeDay(DayRecord dayRecord) throws ConnectionException {
+	// TODO implementar!
+	return 1;
+    }
+
+    private String doPostCreate(ActivityDay activityDay, String dateActivity) throws ConnectionException {
+	String html = null;
+
+	try {
+	    long beginTime = System.currentTimeMillis();
+
+	    URL urlObject = new URL(URL_STR_CREATE);
+	    HttpPost post = new HttpPost(urlObject.toURI());
+	    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+	    nameValuePairs.add(new BasicNameValuePair("Date", dateActivity));
+	    nameValuePairs.add(new BasicNameValuePair("createActivity.Hours", activityDay.getHours()));
+	    nameValuePairs.add(new BasicNameValuePair("createActivity.AccountCode", activityDay
+		    .getProjectId()));
+	    nameValuePairs.add(new BasicNameValuePair("createActivity.SubaccountCode", activityDay
+		    .getSubProjectId()));
+	    nameValuePairs.add(new BasicNameValuePair("createActivity.Task", activityDay.getTask()));
+	    nameValuePairs.add(new BasicNameValuePair("ihScroll20", "0"));
+
+	    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+	    HttpResponse resp = httpClient.execute(post);
+
+	    Log.d(LOGTAG, "StatusCodeCREATE: " + resp.getStatusLine().getStatusCode() + " StatusLineCREATE: "
+		    + resp.getStatusLine().getReasonPhrase());
+
+	    InputStream is = resp.getEntity().getContent();
+	    StringWriter writer = new StringWriter();
+	    IOUtils.copy(is, writer, "UTF-8");
+	    html = writer.toString();
+
+	    long endTime = System.currentTimeMillis();
+	    Log.d(LOGTAG, "Tiempo conexión a " + URL_STR_CREATE + ": " + (endTime - beginTime));
+	} catch (URISyntaxException e) {
+	    Log.d(LOGTAG, "Error de URI en el acceso doPostCreate a " + URL_STR_CREATE, e);
+	    throw new ConnectionException(e);
+	} catch (IOException e) {
+	    Log.d(LOGTAG, "Error IO en el acceso doPostCreate a " + URL_STR_CREATE, e);
+	    throw new ConnectionException(e);
+	}
+
+	return html;
+    }
+
+    private String doPostModify(ActivityDay activityDay, String dateActivity) throws ConnectionException {
+	String html = null;
+
+	try {
+	    long beginTime = System.currentTimeMillis();
+
+	    URL urlObject = new URL(URL_STR_MODIFY);
+	    HttpPost post = new HttpPost(urlObject.toURI());
+	    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+	    nameValuePairs.add(new BasicNameValuePair("Date", dateActivity));
+	    nameValuePairs.add(new BasicNameValuePair("editActivity.id", activityDay.getIdActivity()));
+	    nameValuePairs.add(new BasicNameValuePair("id", activityDay.getIdActivity()));
+	    nameValuePairs.add(new BasicNameValuePair("editActivity.Hours", activityDay.getHours()));
+	    nameValuePairs
+		    .add(new BasicNameValuePair("editActivity.AccountCode", activityDay.getProjectId()));
+	    nameValuePairs.add(new BasicNameValuePair("editActivity.SubaccountCode", activityDay
+		    .getSubProjectId()));
+	    nameValuePairs.add(new BasicNameValuePair("editActivity.Task", activityDay.getTask()));
+	    nameValuePairs.add(new BasicNameValuePair("ihScroll" + activityDay.getIdActivity(), "0"));
+
+	    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+	    HttpResponse resp = httpClient.execute(post);
+
+	    Log.d(LOGTAG, "StatusCodeMODIFY: " + resp.getStatusLine().getStatusCode() + " StatusLineMODIFY: "
+		    + resp.getStatusLine().getReasonPhrase());
+
+	    InputStream is = resp.getEntity().getContent();
+	    StringWriter writer = new StringWriter();
+	    IOUtils.copy(is, writer, "UTF-8");
+	    html = writer.toString();
+
+	    long endTime = System.currentTimeMillis();
+	    Log.d(LOGTAG, "Tiempo conexión a " + URL_STR_MODIFY + ": " + (endTime - beginTime));
+	} catch (URISyntaxException e) {
+	    Log.d(LOGTAG, "Error de URI en el acceso doPostModify a " + URL_STR_MODIFY, e);
+	    throw new ConnectionException(e);
+	} catch (IOException e) {
+	    Log.d(LOGTAG, "Error IO en el acceso doPostModify a " + URL_STR_MODIFY, e);
+	    throw new ConnectionException(e);
+	}
+
+	return html;
+    }
 }

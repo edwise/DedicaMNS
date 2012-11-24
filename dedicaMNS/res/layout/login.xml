@@ -41,8 +41,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/passMNText"
         android:layout_centerHorizontal="true"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
         android:layout_marginTop="22dp"
         android:orientation="horizontal" >
 
@@ -50,7 +48,7 @@
             android:id="@+id/rememberUserCheck"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginRight="15dp"
+            android:layout_marginRight="8dp"
             android:layout_weight="1"
             android:text="@string/remmbemberUserCheckS" />
 
@@ -58,7 +56,7 @@
             android:id="@+id/connectButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
+            android:layout_marginLeft="8dp"
             android:onClick="doLogin"
             android:text="@string/connectButtonS" />
     </LinearLayout>

@@ -75,7 +75,7 @@ public class MainMenuActivity extends Activity {
     private class BatchMenuAsyncTask extends AsyncTask<Integer, Integer, Integer> {
 
 	private Activity activity;
-	
+
 	public BatchMenuAsyncTask(Activity activity) {
 	    this.activity = activity;
 	}
@@ -95,7 +95,7 @@ public class MainMenuActivity extends Activity {
 	    }
 
 	    // TODO constantes de error
-	    return result; 
+	    return result;
 	}
 
 	@Override
@@ -119,7 +119,7 @@ public class MainMenuActivity extends Activity {
 
 	private void launchBatchMenuActivity() {
 	    Intent intent = new Intent(this.activity, BatchMenuActivity.class);
-	    
+
 	    this.activity.startActivity(intent);
 	}
 

@@ -24,6 +24,7 @@ public class MockWebConnectionImpl implements WebConnection {
     private List<String> months = null;
     private List<String> years = null;
 
+    
     /*
      * (non-Javadoc)
      * 
@@ -154,4 +155,11 @@ public class MockWebConnectionImpl implements WebConnection {
 	return dayName;
     }
 
+    public Integer saveDay(DayRecord dayRecord) {
+	return 1;
+    }
+    
+    public Integer removeDay(DayRecord dayRecord) {
+	return 1;
+    }
 }
