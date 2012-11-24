@@ -66,7 +66,8 @@ public class DetailDayActivity extends Activity {
 	    dayNumTextView = (TextView) findViewById(R.id.detailDayInfoTextView);
 	    dayNumTextView.setText(dayRecord.getDayNum() + " - " + dayRecord.getDayName());
 	    hoursEditText = (EditText) findViewById(R.id.detailHoursEditText);
-	    hoursEditText.setText(dayRecord.getHours());
+	    hoursEditText
+		    .setText(DayUtils.ZERO_HOUR.equals(dayRecord.getHours()) ? "" : dayRecord.getHours());
 
 	    isFirstChargeSubprojectSpinner = true;
 	    linkProjectSpinner();
@@ -184,10 +185,11 @@ public class DetailDayActivity extends Activity {
 	} else {
 	    activityDay = this.dayRecord.getActivities().get(0);
 	}
-	activityDay.setHours(this.dayRecord.getHours());
+	activityDay.setHours(hoursEditText.getText().toString().trim());
 	activityDay.setProjectId((String) this.projectSpinner.getSelectedItem());
 	activityDay.setSubProject((String) this.subProjectSpinner.getSelectedItem());
-	activityDay.setSubProjectId(DayUtils.getNumSubProject((String) this.subProjectSpinner.getSelectedItem()));
+	activityDay.setSubProjectId(DayUtils.getNumSubProject((String) this.subProjectSpinner
+		.getSelectedItem()));
 	activityDay.setTask(this.taskEditText.getText().toString().trim());
     }
 
@@ -238,6 +240,7 @@ public class DetailDayActivity extends Activity {
 	    case SAVE:
 		try {
 		    result = webConnection.saveDay(dayRecord);
+		    dayRecord.getActivities().get(0).setUpdate(true);
 		} catch (ConnectionException e) {
 		    Log.e(LOGTAG, "Error al guardar datos de un día", e);
 		    result = -2;
@@ -245,8 +248,9 @@ public class DetailDayActivity extends Activity {
 		break;
 
 	    case REMOVE:
-		// TODO cambiar cuando se haga con varias actividades diarias
-		dayRecord.getActivities().get(0).setToRemove(true);
+		if (dayRecord.getActivities().size() > 0) {
+		    dayRecord.getActivities().get(0).setToRemove(true);
+		}
 		try {
 		    result = webConnection.removeDay(dayRecord);
 		} catch (ConnectionException e) {
@@ -257,7 +261,7 @@ public class DetailDayActivity extends Activity {
 	    default:
 		break;
 	    }
-	    // TODO revisar si devolver boolean o tener varios tipos de error
+
 	    return result;
 	}
 

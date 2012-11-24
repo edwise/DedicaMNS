@@ -121,15 +121,18 @@ public class MockWebConnectionImpl implements WebConnection {
 	    }
 
 	    if (i < 10 && !DayUtils.isWeekend(dayRecord.getDayName())) {
-		dayRecord.setHours("8:30");
+		dayRecord.setHours("08:30");
 
 		ActivityDay activityDay = new ActivityDay();
-		activityDay.setHours("8:30");
+		activityDay.setHours("08:30");
 		activityDay.setProjectId("BBVA58");
 		activityDay.setSubProject("3 - Calentar silla");
 		activityDay.setSubProjectId("3");
 
 		dayRecord.getActivities().add(activityDay);
+	    }
+	    else {
+		dayRecord.setHours("00:00");
 	    }
 
 	    list.add(dayRecord);

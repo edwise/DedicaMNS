@@ -3,6 +3,8 @@ package com.edwise.dedicamns.utils;
 import org.apache.commons.lang3.StringUtils;
 
 public class DayUtils {
+    
+    public static final String ZERO_HOUR = "00:00";
 
     public static boolean isWeekend(String dayName) {
 	return dayName.equalsIgnoreCase("Dom") || dayName.equalsIgnoreCase("Sáb");
@@ -13,6 +15,9 @@ public class DayUtils {
 	if (name.contains("acute;")) {
 	    nameWithoutAcutes = nameWithoutAcutes.replace("&aacute;", "á");
 	    nameWithoutAcutes = nameWithoutAcutes.replace("&eacute;", "é");
+	    nameWithoutAcutes = nameWithoutAcutes.replace("&iacute;", "í");
+	    nameWithoutAcutes = nameWithoutAcutes.replace("&oacute;", "ó");
+	    nameWithoutAcutes = nameWithoutAcutes.replace("&uacute;", "ú");
 	}
 
 	return nameWithoutAcutes;

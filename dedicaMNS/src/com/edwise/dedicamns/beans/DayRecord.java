@@ -87,7 +87,7 @@ public class DayRecord implements Serializable {
     }
 
     public void clearDay() {
-	this.totalHours = null;
+	this.totalHours = "00:00";
 	this.activities.clear();
     }
 

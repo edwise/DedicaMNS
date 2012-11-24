@@ -115,7 +115,7 @@ public class MonthViewActivity extends Activity {
 	for (DayRecord oldDayRecord : monthList.getListDays()) {
 	    if (oldDayRecord.getDayNum() == dayRecord.getDayNum()) {
 		// TODO vaciar activities al borrar todas??
-		if (dayRecord.getActivities().get(0).isToRemove()) {
+		if (dayRecord.getActivities().size() > 0 && dayRecord.getActivities().get(0).isToRemove()) {
 		    oldDayRecord.clearDay();
 		} else {
 		    oldDayRecord.copyDayData(dayRecord);

@@ -193,7 +193,7 @@ public class MNSWebConnectionImpl implements WebConnection {
 			Iterator<Element> subIt = selectSpansSubAccounts.iterator();
 			while (subIt.hasNext()) {
 			    Element subSpan = subIt.next();
-			    subProjects.add(subSpan.html());
+			    subProjects.add(DayUtils.replaceAcutes(subSpan.html()));
 			}
 		    }
 		}
@@ -360,23 +360,54 @@ public class MNSWebConnectionImpl implements WebConnection {
     public Integer saveDay(DayRecord dayRecord) throws ConnectionException {
 	Integer result = 0;
 	String html = null;
-	if (dayRecord.getActivities().get(0).isUpdate()) {
-	    html = this.doPostModify(dayRecord.getActivities().get(0), dayRecord.getDateForm());
+	ActivityDay activityDay = dayRecord.getActivities().get(0);
+	if (activityDay.isUpdate()) {
+	    html = this.doPostModify(activityDay, dayRecord.getDateForm());
 	} else {
-	    html = this.doPostCreate(dayRecord.getActivities().get(0), dayRecord.getDateForm());
+	    html = this.doPostCreate(activityDay, dayRecord.getDateForm());
 	}
-	Document document = Jsoup.parse(html);
 
+	Document document = Jsoup.parse(html);
 	Elements errors = document.select(".input-validation-error");
 	if (errors != null && errors.size() > 0) {
 	    result = -3;
 	} else { // Ok
-	    // TODO obtener el id, y guardarlo!!! 
-	    // TODO marcarlo como que es update! (por si se actualiza)
+	    if (!activityDay.isUpdate()) {
+		// Tenemos que obtener en este caso el id
+		activityDay.setIdActivity(getIdFromActivityCreated(dayRecord.getDayNum(), document,
+			activityDay));
+	    }
+
 	    result = 1;
 	}
 
 	return result;
+    }
+
+    private String getIdFromActivityCreated(int dayNum, Document document, ActivityDay activityDay) {
+	Elements divFrm = document.select("div#frmAC" + dayNum);
+	Element divParent = divFrm.first().parent();
+	Elements liActivities = divParent.select("li.Activity");
+	Iterator<Element> it = liActivities.iterator();
+	String id = null;
+	while (it.hasNext()) {
+	    Element liActivity = it.next();
+	    String projectId = liActivity.select("div.ActivityAccount span").html();
+	    String subProjectId = liActivity.select("div.ActivitySubaccount span").html();
+	    String task = liActivity.select("div.ActivityTask").html();
+	    // TODO OJO!!! SIEMPRE VIENE CON EL NBSP, AUNQUE TENGA ALGO!!
+	    if (activityDay.getProjectId().equals(projectId)
+		    && activityDay.getSubProjectId().equals(subProjectId)
+		    && (activityDay.getTask().equals(task) || (activityDay.getTask().equals("") && ActivityDay.NBSP
+			    .equals(task)))) {
+		// Encontrada, nos quedamos con su id
+		id = liActivity.select("input#id").val();
+		break;
+	    }
+
+	}
+
+	return id;
     }
 
     public Integer removeDay(DayRecord dayRecord) throws ConnectionException {
@@ -405,9 +436,11 @@ public class MNSWebConnectionImpl implements WebConnection {
 	    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 	    HttpResponse resp = httpClient.execute(post);
 
-	    Log.d(LOGTAG, "StatusCodeCREATE: " + resp.getStatusLine().getStatusCode() + " StatusLineCREATE: "
-		    + resp.getStatusLine().getReasonPhrase());
-
+	    if (resp.getStatusLine().getStatusCode() != 200) {
+		throw new ConnectionException("Error en la conexión, statusCode: "
+			+ resp.getStatusLine().getStatusCode());
+	    }
+	    
 	    InputStream is = resp.getEntity().getContent();
 	    StringWriter writer = new StringWriter();
 	    IOUtils.copy(is, writer, "UTF-8");
@@ -449,9 +482,11 @@ public class MNSWebConnectionImpl implements WebConnection {
 	    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 	    HttpResponse resp = httpClient.execute(post);
 
-	    Log.d(LOGTAG, "StatusCodeMODIFY: " + resp.getStatusLine().getStatusCode() + " StatusLineMODIFY: "
-		    + resp.getStatusLine().getReasonPhrase());
-
+	    if (resp.getStatusLine().getStatusCode() != 200) {
+		throw new ConnectionException("Error en la conexión, statusCode: "
+			+ resp.getStatusLine().getStatusCode());
+	    }
+	    
 	    InputStream is = resp.getEntity().getContent();
 	    StringWriter writer = new StringWriter();
 	    IOUtils.copy(is, writer, "UTF-8");
