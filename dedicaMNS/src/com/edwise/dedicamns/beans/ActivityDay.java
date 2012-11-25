@@ -5,13 +5,13 @@ package com.edwise.dedicamns.beans;
 
 import java.io.Serializable;
 
+import com.edwise.dedicamns.utils.DayUtils;
+
 /**
  * @author edwise
  * 
  */
 public class ActivityDay implements Serializable {
-
-    public static final String NBSP = "&nbsp;";
 
     /**
      * 
@@ -73,10 +73,9 @@ public class ActivityDay implements Serializable {
     }
 
     public void setTask(String task) {
-	if (!NBSP.equals(task)) {
+	if (!DayUtils.NBSP.equals(task)) {
 	    this.task = task;
-	}
-	else {
+	} else {
 	    this.task = "";
 	}
     }

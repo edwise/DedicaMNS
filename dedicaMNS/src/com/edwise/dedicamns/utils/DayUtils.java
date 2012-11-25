@@ -3,8 +3,9 @@ package com.edwise.dedicamns.utils;
 import org.apache.commons.lang3.StringUtils;
 
 public class DayUtils {
-    
+
     public static final String ZERO_HOUR = "00:00";
+    public static final String NBSP = "&nbsp;";
 
     public static boolean isWeekend(String dayName) {
 	return dayName.equalsIgnoreCase("Dom") || dayName.equalsIgnoreCase("Sáb");
@@ -27,10 +28,8 @@ public class DayUtils {
 	StringBuilder dateString = new StringBuilder();
 
 	// Formato: 22/11/2012 0:00:00
-	dateString.append(StringUtils.leftPad(String.valueOf(day), 2, '0'))
-		.append("/").append(StringUtils.leftPad(numMonth, 2, '0')).
-		append("/").append(year).
-		append(" 0:00:00");
+	dateString.append(StringUtils.leftPad(String.valueOf(day), 2, '0')).append("/")
+		.append(StringUtils.leftPad(numMonth, 2, '0')).append("/").append(year).append(" 0:00:00");
 	return dateString.toString();
     }
 
@@ -39,5 +38,17 @@ public class DayUtils {
 
 	return numString.trim();
     }
-    
+
+    public static String getTaskNameWithoutNBSP(String taskName) {
+	String resultString = null;
+	if (taskName.indexOf(NBSP) >= 0) {
+	    resultString = taskName.substring(0, taskName.indexOf(NBSP)).trim();	    
+	}
+	else {
+	    resultString = taskName.trim();
+	}
+	
+	return resultString;
+    }
+
 }

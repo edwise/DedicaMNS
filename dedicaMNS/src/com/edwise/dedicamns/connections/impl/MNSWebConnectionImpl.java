@@ -395,11 +395,9 @@ public class MNSWebConnectionImpl implements WebConnection {
 	    String projectId = liActivity.select("div.ActivityAccount span").html();
 	    String subProjectId = liActivity.select("div.ActivitySubaccount span").html();
 	    String task = liActivity.select("div.ActivityTask").html();
-	    // TODO OJO!!! SIEMPRE VIENE CON EL NBSP, AUNQUE TENGA ALGO!!
 	    if (activityDay.getProjectId().equals(projectId)
 		    && activityDay.getSubProjectId().equals(subProjectId)
-		    && (activityDay.getTask().equals(task) || (activityDay.getTask().equals("") && ActivityDay.NBSP
-			    .equals(task)))) {
+		    && activityDay.getTask().equals(DayUtils.getTaskNameWithoutNBSP(task))) {
 		// Encontrada, nos quedamos con su id
 		id = liActivity.select("input#id").val();
 		break;
@@ -440,7 +438,7 @@ public class MNSWebConnectionImpl implements WebConnection {
 		throw new ConnectionException("Error en la conexión, statusCode: "
 			+ resp.getStatusLine().getStatusCode());
 	    }
-	    
+
 	    InputStream is = resp.getEntity().getContent();
 	    StringWriter writer = new StringWriter();
 	    IOUtils.copy(is, writer, "UTF-8");
@@ -486,7 +484,7 @@ public class MNSWebConnectionImpl implements WebConnection {
 		throw new ConnectionException("Error en la conexión, statusCode: "
 			+ resp.getStatusLine().getStatusCode());
 	    }
-	    
+
 	    InputStream is = resp.getEntity().getContent();
 	    StringWriter writer = new StringWriter();
 	    IOUtils.copy(is, writer, "UTF-8");
