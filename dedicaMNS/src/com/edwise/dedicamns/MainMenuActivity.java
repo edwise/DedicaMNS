@@ -27,6 +27,18 @@ public class MainMenuActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.main_menu);
+	
+	boolean isLogout = getIntent().getBooleanExtra("isLogout", false);
+        if (isLogout) { // es logout, nos vamos al login, y cerramos esta
+            goToLogout();
+        }      
+    }
+
+    private void goToLogout() {
+	Intent intent = new Intent(this, LoginActivity.class);
+	intent.putExtra("isLogout", true);
+	startActivity(intent);
+	finish();
     }
 
     @Override
@@ -40,11 +52,14 @@ public class MainMenuActivity extends Activity {
 	boolean returned = false;
 	switch (item.getItemId()) {
 	case R.id.menu_logout:
-	    MenuUtils.doLogout(this);
+	    // En este caso podemos ir directos al LoginActivity, no hace falta pasar por la que ya estamos
+	    MenuUtils.doDirectLogout(this);	    
 	    returned = true;
+	    break;
 	case R.id.menu_about_us:
 	    MenuUtils.goToAbout(this);
 	    returned = true;
+	    break;
 	default:
 	    returned = super.onOptionsItemSelected(item);
 	}

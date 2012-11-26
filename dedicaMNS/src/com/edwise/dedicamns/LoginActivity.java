@@ -86,6 +86,7 @@ public class LoginActivity extends Activity {
 	case R.id.menu_about_us:
 	    MenuUtils.goToAbout(this);
 	    returned = true;
+	    break;
 	default:
 	    returned = super.onOptionsItemSelected(item);
 	}

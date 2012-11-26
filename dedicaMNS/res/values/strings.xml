@@ -15,6 +15,6 @@
     <string name="title_activity_main_menu">Dedica MNS</string>
     <string name="title_activity_batch_menu">Dedica MNS</string>
     <string name="title_activity_about">Acerca De</string>
-    <string name="about_text">Aplicación Android para imputar las horas en las dedicaciones de MediaNet Software. \nActualmente solo admite la imputación a un único proyecto diario. \n\nDesarrollada para minimizar el tiempo que perdemos en el apasionante mundo de la imputación de horas. \nTodos los accesos se hacen directamente a la web (de ahi el tiempo brutal que tarda en hacer algunas cosas&#8230;). \nEl user y password se guarda internamente de manera segura.\n</string>
+    <string name="about_text">Aplicación para imputar las horas en las dedicaciones de MediaNet Software. \nActualmente solo admite la imputación a un único proyecto diario. \n\nDesarrollada para minimizar el tiempo que perdemos en el apasionante mundo de la imputación de horas. \nTodos los accesos se hacen directamente a la web (de ahi el tiempo brutal que tarda en hacer algunas cosas&#8230;). \nEl user y password se guarda internamente de manera segura.\n</string>
 
 </resources>

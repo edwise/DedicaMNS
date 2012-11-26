@@ -72,9 +72,11 @@ public class MonthViewActivity extends Activity {
 	case R.id.menu_logout:
 	    MenuUtils.doLogout(this);
 	    returned = true;
+	    break;
 	case R.id.menu_about_us:
 	    MenuUtils.goToAbout(this);
 	    returned = true;
+	    break;
 	default:
 	    returned = super.onOptionsItemSelected(item);
 	}

@@ -8,6 +8,7 @@ import android.content.Intent;
 
 import com.edwise.dedicamns.AboutActivity;
 import com.edwise.dedicamns.LoginActivity;
+import com.edwise.dedicamns.MainMenuActivity;
 
 /**
  * @author edwise
@@ -16,7 +17,16 @@ import com.edwise.dedicamns.LoginActivity;
 public class MenuUtils {
 
     public static void doLogout(Activity source) {
+	Intent intent = new Intent(source, MainMenuActivity.class);
+	intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	intent.putExtra("isLogout", true);
+	source.startActivity(intent);
+	source.finish();
+    }
+    
+    public static void doDirectLogout(Activity source) {
 	Intent intent = new Intent(source, LoginActivity.class);
+	intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	intent.putExtra("isLogout", true);
 	source.startActivity(intent);
 	source.finish();
