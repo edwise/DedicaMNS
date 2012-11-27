@@ -68,6 +68,7 @@ public class MNSWebConnectionImpl implements WebConnection {
     private static final String URL_ACCOUNTS_STR = "http://dedicaciones.medianet.es/Home/Accounts";
     private static final String URL_STR_CREATE = "http://dedicaciones.medianet.es/Home/CreateActivity";
     private static final String URL_STR_MODIFY = "http://dedicaciones.medianet.es/Home/EditActivity";
+    private static final String URL_STR_DELETE = "http://dedicaciones.medianet.es/Home/DeleteActivity";
 
     private DefaultHttpClient httpClient = null;
     private String cookie = null;
@@ -185,6 +186,8 @@ public class MNSWebConnectionImpl implements WebConnection {
 		Element liParent = span.parent();
 		Element nextLiOrUl = liParent.nextElementSibling();
 
+		Log.d(LOGTAG, "-- Proyecto: " + projectId);
+		
 		List<String> subProjects = new ArrayList<String>();
 		subProjects.add(ProjectSubprojectBean.SUBPROJECT_DEFAULT);
 		if (nextLiOrUl != null) {
@@ -194,6 +197,7 @@ public class MNSWebConnectionImpl implements WebConnection {
 			while (subIt.hasNext()) {
 			    Element subSpan = subIt.next();
 			    subProjects.add(DayUtils.replaceAcutes(subSpan.html()));
+			    Log.d(LOGTAG, "---- SubProyecto: " + subSpan.html());
 			}
 		    }
 		}
@@ -270,6 +274,11 @@ public class MNSWebConnectionImpl implements WebConnection {
 
 	    Log.d(LOGTAG, "StatusCodeGET: " + resp.getStatusLine().getStatusCode() + " StatusLineGET: "
 		    + resp.getStatusLine().getReasonPhrase());
+
+	    if (resp.getStatusLine().getStatusCode() != 200) {
+		throw new ConnectionException("Error en la conexión, statusCode: "
+			+ resp.getStatusLine().getStatusCode());
+	    }
 
 	    InputStream is = resp.getEntity().getContent();
 	    StringWriter writer = new StringWriter();
@@ -409,8 +418,7 @@ public class MNSWebConnectionImpl implements WebConnection {
     }
 
     public Integer removeDay(DayRecord dayRecord) throws ConnectionException {
-	// TODO implementar!
-	return 1;
+	return dayRecord.getActivities().size() > 0 && doDelete(dayRecord.getActivities().get(0)) ? 1 : -4;
     }
 
     private String doPostCreate(ActivityDay activityDay, String dateActivity) throws ConnectionException {
@@ -501,5 +509,23 @@ public class MNSWebConnectionImpl implements WebConnection {
 	}
 
 	return html;
+    }
+
+    private boolean doDelete(ActivityDay activityDay) throws ConnectionException {
+	boolean deleted = false;
+	StringBuilder urlWithParams = new StringBuilder();
+	urlWithParams.append(URL_STR_DELETE).append("?id=").append(activityDay.getIdActivity())
+		.append("&ihdScroll").append(activityDay.getIdActivity()).append("=0");
+
+	String html = this.getHttpContent(urlWithParams.toString());
+	if (html == null || html.length() == 0) {
+	    Log.w(LOGTAG, "No se ha podido borrar correctamente la actividad: " + activityDay.getIdActivity());
+	    deleted = false;
+	}
+	else {
+	    deleted = true;
+	}
+	
+	return deleted;
     }
 }

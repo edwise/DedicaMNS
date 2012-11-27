@@ -21,6 +21,8 @@ public class ErrorUtils {
 	errorMessages.put(-2, "Error en la conexión: pete que flipas!");
 	
 	errorMessages.put(-3, "Error en el formato de hora");
+	
+	errorMessages.put(-4, "Error en el borrado de actividad diaria");
     }
 
     public static String getMessageError(int idError) {
