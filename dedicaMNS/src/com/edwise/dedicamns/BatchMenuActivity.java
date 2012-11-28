@@ -24,11 +24,15 @@ import android.widget.Toast;
 
 import com.edwise.dedicamns.asynctasks.MonthListAsyncTask;
 import com.edwise.dedicamns.beans.BatchDataBean;
+import com.edwise.dedicamns.beans.DayRecord;
+import com.edwise.dedicamns.beans.MonthListBean;
+import com.edwise.dedicamns.connections.ConnectionException;
 import com.edwise.dedicamns.connections.ConnectionFacade;
+import com.edwise.dedicamns.connections.WebConnection;
 import com.edwise.dedicamns.menu.MenuUtils;
-import com.edwise.dedicamns.mocks.DedicaHTMLParserMock;
 
 public class BatchMenuActivity extends Activity {
+    private static final String LOGTAG = BatchMenuActivity.class.toString();
 
     private Spinner monthSpinner = null;
     private Spinner yearSpinner = null;
@@ -41,7 +45,7 @@ public class BatchMenuActivity extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-	Log.d(BatchMenuActivity.class.toString(), "onCreate");
+	Log.d(LOGTAG, "onCreate");
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.batch_menu);
 
@@ -178,7 +182,7 @@ public class BatchMenuActivity extends Activity {
     }
 
     public void doLaunchBatch(View view) {
-	Log.d(BatchMenuActivity.class.toString(), "doLaunchBatch");
+	Log.d(LOGTAG, "doLaunchBatch");
 
 	if (!validateSpinnerProjectSelected()) {
 	    showToastMessage("Debe seleccionar algún proyecto");
@@ -221,7 +225,14 @@ public class BatchMenuActivity extends Activity {
     }
 
     private void showDialog() {
-	pDialog = ProgressDialog.show(this, "Ejecutando imputación en batch", "Por favor, espera...", true);
+	// pDialog = ProgressDialog.show(this, "Ejecutando imputación en batch", "Por favor, espera...",
+	// true);
+	pDialog = new ProgressDialog(this);
+	pDialog.setMessage("Ejecutando imputación en batch...");
+	pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+	pDialog.setMax(100);
+	pDialog.setCancelable(false);
+	pDialog.show();
     }
 
     private BatchDataBean fillDataBean() {
@@ -236,12 +247,12 @@ public class BatchMenuActivity extends Activity {
     }
 
     public void doBack(View view) {
-	Log.d(BatchMenuActivity.class.toString(), "doBack");
+	Log.d(LOGTAG, "doBack");
 	finish();
     }
 
     private void launchMonthActivity() {
-	Log.d(BatchMenuActivity.class.toString(), "launchMonthActivity");
+	Log.d(LOGTAG, "launchMonthActivity");
 
 	showDialog("Obteniendo datos del mes");
 	AsyncTask<Integer, Integer, Integer> monthListAsyncTask = new MonthListAsyncTask(this, pDialog);
@@ -264,10 +275,24 @@ public class BatchMenuActivity extends Activity {
 	@Override
 	protected Integer doInBackground(BatchDataBean... batchData) {
 	    Log.d(BatchAsyncTask.class.toString(), "doInBackground...");
-	    DedicaHTMLParserMock parser = DedicaHTMLParserMock.getInstance();
+	    WebConnection webConnection = ConnectionFacade.getWebConnection();
 	    this.batchData = batchData[0];
+
+	    try {
+		// TODO modificar el metodo para que acepte el mes!! crear otro mejor!
+		MonthListBean monthList = webConnection.getListDaysForMonth();
+		List<DayRecord> listDays = monthList.getListDays();
+		int dayProgressPercentaje = 100 / listDays.size();
+		for (DayRecord day : listDays) {
+		    webConnection.saveDayBatch(day);
+		    publishProgress(dayProgressPercentaje);
+		}
+	    } catch (ConnectionException e) {
+		Log.e(LOGTAG, "Error en el proceso de imputación de mes", e);
+		// TODO mandar error de resultado
+	    }
 	    // TODO revisar si devolver boolean o tener varios tipos de error
-	    return parser.proccesBatch(this.batchData);
+	    return 1;
 	}
 
 	@Override
@@ -309,8 +334,11 @@ public class BatchMenuActivity extends Activity {
 	@Override
 	protected void onProgressUpdate(Integer... values) {
 	    Log.d(BatchAsyncTask.class.toString(), "onProgressUpdate...");
-	    // TODO intentar actualizar esto...
 	    super.onProgressUpdate(values);
+
+	    // TODO revisarlo, porque de esta manera nunca llega a 100, se quedará cerca, por los redondeos
+	    // para abajo...
+	    pDialog.incrementProgressBy(values[0]);
 	}
 
 	private void showToastMessage(String message) {

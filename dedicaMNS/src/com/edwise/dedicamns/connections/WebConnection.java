@@ -29,5 +29,7 @@ public interface WebConnection {
 
     Integer saveDay(DayRecord dayRecord) throws ConnectionException;
 
+    Integer saveDayBatch(DayRecord dayRecord) throws ConnectionException;
+
     Integer removeDay(DayRecord dayRecord) throws ConnectionException;
 }

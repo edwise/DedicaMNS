@@ -187,7 +187,7 @@ public class MNSWebConnectionImpl implements WebConnection {
 		Element nextLiOrUl = liParent.nextElementSibling();
 
 		Log.d(LOGTAG, "-- Proyecto: " + projectId);
-		
+
 		List<String> subProjects = new ArrayList<String>();
 		subProjects.add(ProjectSubprojectBean.SUBPROJECT_DEFAULT);
 		if (nextLiOrUl != null) {
@@ -521,11 +521,16 @@ public class MNSWebConnectionImpl implements WebConnection {
 	if (html == null || html.length() == 0) {
 	    Log.w(LOGTAG, "No se ha podido borrar correctamente la actividad: " + activityDay.getIdActivity());
 	    deleted = false;
-	}
-	else {
+	} else {
 	    deleted = true;
 	}
-	
+
 	return deleted;
     }
+
+    public Integer saveDayBatch(DayRecord dayRecord) throws ConnectionException {
+	// TODO implementar!!
+	return 1;
+    }
+
 }

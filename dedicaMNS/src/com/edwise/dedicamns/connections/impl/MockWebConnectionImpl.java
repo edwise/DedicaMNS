@@ -11,6 +11,7 @@ import android.app.Activity;
 import com.edwise.dedicamns.beans.ActivityDay;
 import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.beans.MonthListBean;
+import com.edwise.dedicamns.connections.ConnectionException;
 import com.edwise.dedicamns.connections.WebConnection;
 import com.edwise.dedicamns.utils.DayUtils;
 
@@ -24,7 +25,6 @@ public class MockWebConnectionImpl implements WebConnection {
     private List<String> months = null;
     private List<String> years = null;
 
-    
     /*
      * (non-Javadoc)
      * 
@@ -130,8 +130,7 @@ public class MockWebConnectionImpl implements WebConnection {
 		activityDay.setSubProjectId("3");
 
 		dayRecord.getActivities().add(activityDay);
-	    }
-	    else {
+	    } else {
 		dayRecord.setHours("00:00");
 	    }
 
@@ -161,8 +160,13 @@ public class MockWebConnectionImpl implements WebConnection {
     public Integer saveDay(DayRecord dayRecord) {
 	return 1;
     }
-    
+
     public Integer removeDay(DayRecord dayRecord) {
 	return 1;
     }
+
+    public Integer saveDayBatch(DayRecord dayRecord) throws ConnectionException {
+	return 1;
+    }
+
 }
