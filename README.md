@@ -1,7 +1,7 @@
 DedicaMNS
 =========
 
-Aplicación android para la imputación de horas en Media Net Software, a traves de la web de dedicaciones corporativa: hhtp://dedicaciones.medianet.es
+Aplicación android para la imputación de horas en Media Net Software, a traves de la web de dedicaciones corporativa: http://dedicaciones.medianet.es
 
 El user y password se guardan en las sharedpreferences de la aplicación, si dejamos marcado el check de "recordarme". No se hace nada más con el pass (revisa el código si eres muy paranoico, ahi lo tienes ;) )
 
