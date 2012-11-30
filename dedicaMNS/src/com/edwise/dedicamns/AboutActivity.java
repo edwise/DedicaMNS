@@ -34,7 +34,7 @@ public class AboutActivity extends Activity {
 	    pinfo = getPackageManager().getPackageInfo(getPackageName(), 0);
 	    versionName = pinfo.versionName;
 	} catch (NameNotFoundException e) {
-	    Log.e(LOGTAG, "Error al obtener la versión de la app", e);
+	    Log.e(LOGTAG, "Error al obtener la versión de la app!", e);
 	}
 	return versionName;
     }
