@@ -4,6 +4,7 @@
 package com.edwise.dedicamns.asynctasks;
 
 import java.io.Serializable;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -15,10 +16,12 @@ import android.widget.Toast;
 
 import com.edwise.dedicamns.BatchMenuActivity;
 import com.edwise.dedicamns.MonthViewActivity;
+import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.beans.MonthListBean;
 import com.edwise.dedicamns.connections.ConnectionException;
 import com.edwise.dedicamns.connections.ConnectionFacade;
 import com.edwise.dedicamns.connections.WebConnection;
+import com.edwise.dedicamns.utils.DayUtils;
 
 /**
  * @author edwise
@@ -45,13 +48,23 @@ public class MonthListAsyncTask extends AsyncTask<Integer, Integer, Integer> {
 	Integer result = fillNeededDataCache(webConnection);
 
 	try {
-	    monthList = webConnection.getListDaysForMonth();
+	    if (params.length > 1) {
+		int month = params[0];
+		String year = String.valueOf(params[1]);
+		List<DayRecord> listDays = webConnection.getListDaysAndActivitiesForMonthAndYear(month, year,
+			true);
+		monthList = new MonthListBean(DayUtils.getMonthName(month), year, listDays);
+	    } else {
+		monthList = webConnection.getListDaysAndActivitiesForCurrentMonth();
+	    }
 	} catch (ConnectionException e) {
 	    Log.e(LOGTAG, "Error al obtener la lista de datos diarios", e);
 	    // TODO error en result?
 	}
 
-	return monthList.getListDays() != null && monthList.getListDays().size() > 0 ? 1 : -1; // TODO constantes de error
+	return monthList.getListDays() != null && monthList.getListDays().size() > 0 ? 1 : -1; // TODO
+											       // constantes
+											       // de error
     }
 
     private Integer fillNeededDataCache(WebConnection webConnection) {

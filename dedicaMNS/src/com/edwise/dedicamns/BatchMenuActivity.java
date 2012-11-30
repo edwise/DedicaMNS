@@ -25,11 +25,11 @@ import android.widget.Toast;
 import com.edwise.dedicamns.asynctasks.MonthListAsyncTask;
 import com.edwise.dedicamns.beans.BatchDataBean;
 import com.edwise.dedicamns.beans.DayRecord;
-import com.edwise.dedicamns.beans.MonthListBean;
 import com.edwise.dedicamns.connections.ConnectionException;
 import com.edwise.dedicamns.connections.ConnectionFacade;
 import com.edwise.dedicamns.connections.WebConnection;
 import com.edwise.dedicamns.menu.MenuUtils;
+import com.edwise.dedicamns.utils.DayUtils;
 
 public class BatchMenuActivity extends Activity {
     private static final String LOGTAG = BatchMenuActivity.class.toString();
@@ -61,13 +61,21 @@ public class BatchMenuActivity extends Activity {
 	taskEditText = (EditText) findViewById(R.id.batchTaskEditText);
 
 	markTodayMonthYearSelected();
+
+	initDialog();
+    }
+
+    private void initDialog() {
+	pDialog = new ProgressDialog(this);
+	pDialog.setMessage("Ejecutando imputación en batch...");
+	pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+	pDialog.setCancelable(false);
     }
 
     private void linkTypeHourSpinner() {
 	typeHourSpinner = (Spinner) findViewById(R.id.batchTypeHourSpinner);
 	ArrayAdapter<String> typeHouradapter = new ArrayAdapter<String>(this,
-		android.R.layout.simple_spinner_item, Arrays.asList(new String[] { "8:30 de L a J y 6:00 V",
-			"8:00 L a V" })); // TODO meter en otro lao
+		android.R.layout.simple_spinner_item, Arrays.asList(DayUtils.TYPE_HOURS));
 	typeHourSpinner.setAdapter(typeHouradapter);
 	typeHourSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 	    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -225,23 +233,18 @@ public class BatchMenuActivity extends Activity {
     }
 
     private void showDialog() {
-	// pDialog = ProgressDialog.show(this, "Ejecutando imputación en batch", "Por favor, espera...",
-	// true);
-	pDialog = new ProgressDialog(this);
-	pDialog.setMessage("Ejecutando imputación en batch...");
-	pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-	pDialog.setMax(100);
-	pDialog.setCancelable(false);
 	pDialog.show();
     }
 
     private BatchDataBean fillDataBean() {
 	BatchDataBean batchData = new BatchDataBean();
 	batchData.setMonth((String) this.monthSpinner.getSelectedItem());
+	batchData.setNumMonth(Integer.valueOf(this.monthSpinner.getSelectedItemPosition()) + 1);
+	batchData.setYear((String) this.yearSpinner.getSelectedItem());
 	batchData.setProject((String) this.projectSpinner.getSelectedItem());
 	batchData.setSubProject((String) this.subProjectSpinner.getSelectedItem());
 	batchData.setTask(this.taskEditText.getText().toString().trim());
-	batchData.setTypeHour((String) this.typeHourSpinner.getSelectedItem());
+	batchData.setTypeHour(Integer.valueOf(this.typeHourSpinner.getSelectedItemPosition()));
 
 	return batchData;
     }
@@ -278,21 +281,25 @@ public class BatchMenuActivity extends Activity {
 	    WebConnection webConnection = ConnectionFacade.getWebConnection();
 	    this.batchData = batchData[0];
 
+	    Integer result = 0;
 	    try {
-		// TODO modificar el metodo para que acepte el mes!! crear otro mejor!
-		MonthListBean monthList = webConnection.getListDaysForMonth();
-		List<DayRecord> listDays = monthList.getListDays();
-		int dayProgressPercentaje = 100 / listDays.size();
+		List<DayRecord> listDays = webConnection.getListDaysAndActivitiesForMonthAndYear(
+			this.batchData.getNumMonth(), this.batchData.getYear(), false);
+		listDays = DayUtils.fillListDaysWithOnlyActivityDay(listDays, this.batchData);
+		int total = listDays.size();
+		pDialog.setMax(total);
+		int processed = 0;
 		for (DayRecord day : listDays) {
 		    webConnection.saveDayBatch(day);
-		    publishProgress(dayProgressPercentaje);
+		    processed++;
+		    publishProgress(processed);
 		}
+		result = 1;
 	    } catch (ConnectionException e) {
 		Log.e(LOGTAG, "Error en el proceso de imputación de mes", e);
-		// TODO mandar error de resultado
+		result = -1;
 	    }
-	    // TODO revisar si devolver boolean o tener varios tipos de error
-	    return 1;
+	    return result;
 	}
 
 	@Override
@@ -304,8 +311,7 @@ public class BatchMenuActivity extends Activity {
 		this.showOkAlertDialog();
 	    } else {
 		this.closeDialog();
-		showToastMessage("Error en la imputación!");
-		// TODO mostrar otro AlertDialog?
+		showToastMessage("¡Error en la imputación batch!");
 	    }
 	}
 
@@ -336,9 +342,7 @@ public class BatchMenuActivity extends Activity {
 	    Log.d(BatchAsyncTask.class.toString(), "onProgressUpdate...");
 	    super.onProgressUpdate(values);
 
-	    // TODO revisarlo, porque de esta manera nunca llega a 100, se quedará cerca, por los redondeos
-	    // para abajo...
-	    pDialog.incrementProgressBy(values[0]);
+	    pDialog.setProgress(values[0]);
 	}
 
 	private void showToastMessage(String message) {

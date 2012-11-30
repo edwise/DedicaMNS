@@ -2,8 +2,6 @@ package com.edwise.dedicamns.adapters;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
@@ -15,7 +13,6 @@ import android.widget.TextView;
 
 import com.edwise.dedicamns.R;
 import com.edwise.dedicamns.beans.DayRecord;
-import com.edwise.dedicamns.utils.DayUtils;
 
 public class DayListAdapter extends ArrayAdapter<DayRecord> {
     private final Activity context;

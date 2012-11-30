@@ -15,12 +15,14 @@ public class BatchDataBean implements Serializable {
      * 
      */
     private static final long serialVersionUID = 5151335699616242005L;
-    
+
     private String month;
+    private int numMonth;
+    private String year;
     private String project;
     private String subProject;
     private String task;
-    private String typeHour;
+    private int typeHour;
 
     public BatchDataBean() {
     }
@@ -57,12 +59,28 @@ public class BatchDataBean implements Serializable {
 	this.task = task;
     }
 
-    public String getTypeHour() {
+    public int getTypeHour() {
 	return typeHour;
     }
 
-    public void setTypeHour(String typeHour) {
+    public void setTypeHour(int typeHour) {
 	this.typeHour = typeHour;
+    }
+
+    public int getNumMonth() {
+	return numMonth;
+    }
+
+    public void setNumMonth(int numMonth) {
+	this.numMonth = numMonth;
+    }
+
+    public String getYear() {
+	return year;
+    }
+
+    public void setYear(String year) {
+	this.year = year;
     }
 
 }

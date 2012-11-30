@@ -1,5 +1,7 @@
 package com.edwise.dedicamns;
 
+import java.util.Calendar;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -27,11 +29,11 @@ public class MainMenuActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.main_menu);
-	
+
 	boolean isLogout = getIntent().getBooleanExtra("isLogout", false);
-        if (isLogout) { // es logout, nos vamos al login, y cerramos esta
-            goToLogout();
-        }      
+	if (isLogout) { // es logout, nos vamos al login, y cerramos esta
+	    goToLogout();
+	}
     }
 
     private void goToLogout() {
@@ -53,7 +55,7 @@ public class MainMenuActivity extends Activity {
 	switch (item.getItemId()) {
 	case R.id.menu_logout:
 	    // En este caso podemos ir directos al LoginActivity, no hace falta pasar por la que ya estamos
-	    MenuUtils.doDirectLogout(this);	    
+	    MenuUtils.doDirectLogout(this);
 	    returned = true;
 	    break;
 	case R.id.menu_about_us:
@@ -69,10 +71,11 @@ public class MainMenuActivity extends Activity {
 
     public void doShowListMonth(View view) {
 	Log.d(MainMenuActivity.class.toString(), "doShowListMonth");
-
 	showDialog("Obteniendo datos del mes");
+	Calendar today = Calendar.getInstance();
+
 	AsyncTask<Integer, Integer, Integer> monthListAsyncTask = new MonthListAsyncTask(this, pDialog);
-	monthListAsyncTask.execute(1);
+	monthListAsyncTask.execute(new Integer[] { today.get(Calendar.MONTH) + 1, today.get(Calendar.YEAR) });
     }
 
     public void doShowBatchMenu(View view) {

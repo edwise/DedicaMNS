@@ -15,6 +15,7 @@ import com.edwise.dedicamns.beans.DayRecord;
  * @author edwise
  * 
  */
+@Deprecated
 public class DedicaHTMLParserMock {
 
     private static DedicaHTMLParserMock htmlParser;
@@ -63,14 +64,10 @@ public class DedicaHTMLParserMock {
 	arrayProjects.add("NIELHUEVO32");
 	arrayProjects.add("ISBAN12");
 
-	// TODO llamar aquí a un cacheador de subrpoyectos??
-
 	return arrayProjects;
     }
 
     public List<String> getArraySubProjects(String projectId) {
-	// TODO habrá que hacer una carga en algún lado con todos los subproyectos, y luego de ahi sacar los
-	// que sean...
 	List<String> arraySubProjects = new ArrayList<String>();
 	if (projectId != null && projectId.equals("BBVA58")) {
 	    arraySubProjects.add("1 - Tarea mierda");

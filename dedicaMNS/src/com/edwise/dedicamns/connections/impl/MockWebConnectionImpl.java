@@ -5,8 +5,10 @@ package com.edwise.dedicamns.connections.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
+import android.util.Log;
 
 import com.edwise.dedicamns.beans.ActivityDay;
 import com.edwise.dedicamns.beans.DayRecord;
@@ -100,17 +102,25 @@ public class MockWebConnectionImpl implements WebConnection {
 	years.add("2013");
     }
 
-    public MonthListBean getListDaysForMonth() {
+    public MonthListBean getListDaysAndActivitiesForCurrentMonth() {
 	List<DayRecord> list = new ArrayList<DayRecord>();
 
-	fillListMock(list);
+	fillListMock(list, true);
 
 	MonthListBean monthList = new MonthListBean("Noviembre", "2012", list);
 
 	return monthList;
     }
 
-    private void fillListMock(List<DayRecord> list) {
+    public List<DayRecord> getListDaysAndActivitiesForMonthAndYear(int month, String year, boolean withActivities) {
+	List<DayRecord> list = new ArrayList<DayRecord>();
+
+	fillListMock(list, false);
+
+	return list;
+    }
+
+    private void fillListMock(List<DayRecord> list, boolean withActivity) {
 	for (int i = 1; i < 31; i++) {
 	    DayRecord dayRecord = new DayRecord();
 	    dayRecord.setDayNum(i);
@@ -123,13 +133,14 @@ public class MockWebConnectionImpl implements WebConnection {
 	    if (i < 10 && !DayUtils.isWeekend(dayRecord.getDayName())) {
 		dayRecord.setHours("08:30");
 
-		ActivityDay activityDay = new ActivityDay();
-		activityDay.setHours("08:30");
-		activityDay.setProjectId("BBVA58");
-		activityDay.setSubProject("3 - Calentar silla");
-		activityDay.setSubProjectId("3");
-
-		dayRecord.getActivities().add(activityDay);
+		if (withActivity) {
+		    ActivityDay activityDay = new ActivityDay();
+		    activityDay.setHours("08:30");
+		    activityDay.setProjectId("BBVA58");
+		    activityDay.setSubProject("3 - Calentar silla");
+		    activityDay.setSubProjectId("3");
+		    dayRecord.getActivities().add(activityDay);
+		}
 	    } else {
 		dayRecord.setHours("00:00");
 	    }
@@ -166,6 +177,12 @@ public class MockWebConnectionImpl implements WebConnection {
     }
 
     public Integer saveDayBatch(DayRecord dayRecord) throws ConnectionException {
+	try {
+	    TimeUnit.SECONDS.sleep(1);
+	} catch (InterruptedException e) {
+	    Log.e(MockWebConnectionImpl.class.toString(), "saveDayBatch: Error en TimeUnit...", e);
+	    e.printStackTrace();
+	}
 	return 1;
     }
 

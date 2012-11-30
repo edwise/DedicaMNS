@@ -69,6 +69,7 @@ public class MNSWebConnectionImpl implements WebConnection {
     private static final String URL_STR_CREATE = "http://dedicaciones.medianet.es/Home/CreateActivity";
     private static final String URL_STR_MODIFY = "http://dedicaciones.medianet.es/Home/EditActivity";
     private static final String URL_STR_DELETE = "http://dedicaciones.medianet.es/Home/DeleteActivity";
+    private static final String URL_STR_CHANGE_DATE = "http://dedicaciones.medianet.es/Home/ChangeDate";
 
     private DefaultHttpClient httpClient = null;
     private String cookie = null;
@@ -298,11 +299,9 @@ public class MNSWebConnectionImpl implements WebConnection {
 	return html;
     }
 
-    // TODO refactorizar bien y constantizar
-    public MonthListBean getListDaysForMonth() throws ConnectionException {
+    public MonthListBean getListDaysAndActivitiesForCurrentMonth() throws ConnectionException {
 	long beginTime = System.currentTimeMillis();
 
-	List<DayRecord> listDays = new ArrayList<DayRecord>();
 	String html = this.getHttpContent(URL_STR);
 	Document document = Jsoup.parse(html);
 
@@ -315,6 +314,68 @@ public class MNSWebConnectionImpl implements WebConnection {
 	Element optionYear = optionsYear.first();
 	String year = optionYear.html();
 
+	List<DayRecord> listDays = getListDaysMonth(document, numMonth, year, true);
+
+	MonthListBean monthList = new MonthListBean(month, year, listDays);
+
+	long endTime = System.currentTimeMillis();
+	Log.d(LOGTAG, "Tiempo carga lista mensual: " + (endTime - beginTime));
+
+	return monthList;
+    }
+
+    public List<DayRecord> getListDaysAndActivitiesForMonthAndYear(int month, String year,
+	    boolean withActivities) throws ConnectionException {
+	long beginTime = System.currentTimeMillis();
+
+	String html = doPostChangeDate(month, year);
+	Document document = Jsoup.parse(html);
+
+	List<DayRecord> listDays = getListDaysMonth(document, Integer.toString(month), year, withActivities);
+
+	long endTime = System.currentTimeMillis();
+	Log.d(LOGTAG, "Tiempo carga lista mensual: " + (endTime - beginTime));
+
+	return listDays;
+    }
+
+    private String doPostChangeDate(int month, String year) throws ConnectionException {
+	String html = null;
+	try {
+	    URL urlObject = new URL(URL_STR_CHANGE_DATE);
+	    HttpPost post = new HttpPost(urlObject.toURI());
+	    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+	    nameValuePairs.add(new BasicNameValuePair("IsValidation", "False"));
+	    nameValuePairs.add(new BasicNameValuePair("ActiveView", "Index"));
+	    nameValuePairs.add(new BasicNameValuePair("month", Integer.toString(month)));
+	    nameValuePairs.add(new BasicNameValuePair("year", year));
+
+	    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+	    HttpResponse resp = httpClient.execute(post);
+
+	    if (resp.getStatusLine().getStatusCode() != 200) {
+		throw new ConnectionException("Error en la conexión, statusCode: "
+			+ resp.getStatusLine().getStatusCode());
+	    }
+
+	    InputStream is = resp.getEntity().getContent();
+	    StringWriter writer = new StringWriter();
+	    IOUtils.copy(is, writer, "UTF-8");
+	    html = writer.toString();
+	} catch (URISyntaxException e) {
+	    Log.d(LOGTAG, "Error de URI en el acceso doPostChangeDate a " + URL_STR_CHANGE_DATE, e);
+	    throw new ConnectionException(e);
+	} catch (IOException e) {
+	    Log.d(LOGTAG, "Error IO en el acceso doPostChangeDate a " + URL_STR_CHANGE_DATE, e);
+	    throw new ConnectionException(e);
+	}
+
+	return html;
+    }
+
+    private List<DayRecord> getListDaysMonth(Document document, String numMonth, String year,
+	    boolean withActivities) throws ConnectionException {
+	List<DayRecord> listDays = new ArrayList<DayRecord>();
 	Elements selectUlDays = document.select("#ListOfDays");
 	if (selectUlDays != null) {
 	    Element ulDays = selectUlDays.first();
@@ -334,36 +395,31 @@ public class MNSWebConnectionImpl implements WebConnection {
 		dayRecord.setDayName(DayUtils.replaceAcutes(spanDayNInitials.first().html()));
 		dayRecord.setDateForm(DayUtils.createDateString(dayRecord.getDayNum(), numMonth, year));
 
-		Elements selectUlActivities = liDay.select("ul.Activities");
-		Element ulActivities = selectUlActivities.first();
-		Elements liActivities = ulActivities.children();
-		Iterator<Element> itAct = liActivities.iterator();
-		while (itAct.hasNext()) {
-		    Element liActivity = itAct.next();
-		    ActivityDay activityDay = new ActivityDay();
-		    activityDay.setIdActivity(liActivity.select("input#id").val());
-		    activityDay.setHours(liActivity.select("div.ActivityHours").html());
-		    activityDay.setProjectId(liActivity.select("div.ActivityAccount span").html());
-		    activityDay.setSubProject("");
-		    activityDay.setSubProjectId(liActivity.select("div.ActivitySubaccount span").html());
-		    activityDay.setTask(liActivity.select("div.ActivityTask").html());
-		    activityDay.setUpdate(true); // Para marcarla como a actualizar, si la modificamos
+		if (withActivities) {
+		    Elements selectUlActivities = liDay.select("ul.Activities");
+		    Element ulActivities = selectUlActivities.first();
+		    Elements liActivities = ulActivities.children();
+		    Iterator<Element> itAct = liActivities.iterator();
+		    while (itAct.hasNext()) {
+			Element liActivity = itAct.next();
+			ActivityDay activityDay = new ActivityDay();
+			activityDay.setIdActivity(liActivity.select("input#id").val());
+			activityDay.setHours(liActivity.select("div.ActivityHours").html());
+			activityDay.setProjectId(liActivity.select("div.ActivityAccount span").html());
+			activityDay.setSubProject("");
+			activityDay.setSubProjectId(liActivity.select("div.ActivitySubaccount span").html());
+			activityDay.setTask(liActivity.select("div.ActivityTask").html());
+			activityDay.setUpdate(true); // Para marcarla como a actualizar, si la modificamos
 
-		    dayRecord.getActivities().add(activityDay);
+			dayRecord.getActivities().add(activityDay);
+		    }
 		}
-
 		listDays.add(dayRecord);
 	    }
 	} else {
 	    throw new ConnectionException("No existen datos de días en la página recibida!");
 	}
-
-	MonthListBean monthList = new MonthListBean(month, year, listDays);
-
-	long endTime = System.currentTimeMillis();
-	Log.d(LOGTAG, "Tiempo carga lista mensual: " + (endTime - beginTime));
-
-	return monthList;
+	return listDays;
     }
 
     public Integer saveDay(DayRecord dayRecord) throws ConnectionException {
@@ -529,8 +585,17 @@ public class MNSWebConnectionImpl implements WebConnection {
     }
 
     public Integer saveDayBatch(DayRecord dayRecord) throws ConnectionException {
-	// TODO implementar!!
-	return 1;
+	Integer result = 0;
+	String html = this.doPostCreate(dayRecord.getActivities().get(0), dayRecord.getDateForm());
+	Document document = Jsoup.parse(html);
+	Elements errors = document.select(".input-validation-error");
+	if (errors != null && errors.size() > 0) {
+	    result = -3;
+	} else { // Ok
+	    result = 1;
+	}
+
+	return result;
     }
 
 }

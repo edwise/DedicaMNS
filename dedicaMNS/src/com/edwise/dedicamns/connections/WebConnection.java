@@ -25,11 +25,14 @@ public interface WebConnection {
 
     void fillMonthsAndYearsCached();
 
-    MonthListBean getListDaysForMonth() throws ConnectionException;
+    MonthListBean getListDaysAndActivitiesForCurrentMonth() throws ConnectionException;
 
     Integer saveDay(DayRecord dayRecord) throws ConnectionException;
 
     Integer saveDayBatch(DayRecord dayRecord) throws ConnectionException;
 
     Integer removeDay(DayRecord dayRecord) throws ConnectionException;
+
+    List<DayRecord> getListDaysAndActivitiesForMonthAndYear(int month, String year, boolean withActivities)
+	    throws ConnectionException;
 }

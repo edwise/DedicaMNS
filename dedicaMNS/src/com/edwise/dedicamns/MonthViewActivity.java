@@ -91,17 +91,8 @@ public class MonthViewActivity extends Activity {
 	    if (resultCode == RESULT_OK) {
 		DayRecord dayRecord = (DayRecord) data.getSerializableExtra("dayRecordModif");
 		this.reDrawList(dayRecord);
-	    } else {
-		// TODO hacer algo??
-		this.showToastMessage("Nada!!");
 	    }
 	}
-    }
-
-    private void showToastMessage(String message) {
-	Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
-	toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER, 0, -10);
-	toast.show();
     }
 
     private void reDrawList(DayRecord dayRecord) {
@@ -116,7 +107,6 @@ public class MonthViewActivity extends Activity {
     private void changeDayRecordInList(DayRecord dayRecord) {
 	for (DayRecord oldDayRecord : monthList.getListDays()) {
 	    if (oldDayRecord.getDayNum() == dayRecord.getDayNum()) {
-		// TODO vaciar activities al borrar todas??
 		if (dayRecord.getActivities().size() > 0 && dayRecord.getActivities().get(0).isToRemove()) {
 		    oldDayRecord.clearDay();
 		} else {
