@@ -12,7 +12,7 @@
         android:layout_marginTop="10dp"
         android:ems="14"
         android:gravity="center"
-        android:text="Imputación en Batch"
+        android:text="@string/batchTitle"
         android:textSize="28sp" >
     </TextView>
 
@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="Mes: "
+                android:text="@string/monthLabelBatch"
                 android:textSize="14sp" >
             </TextView>
 
@@ -55,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="Año: "
+                android:text="@string/yearLabelBatch"
                 android:textSize="14sp" >
             </TextView>
 
@@ -74,7 +74,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="Proyecto: "
+                android:text="@string/projectLabelBatch"
                 android:textSize="14sp" >
             </TextView>
 
@@ -93,7 +93,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="Subproyecto: "
+                android:text="@string/subprojectLabelBatch"
                 android:textSize="14sp" >
             </TextView>
 
@@ -112,7 +112,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="Tarea: "
+                android:text="@string/taskLabelBatch"
                 android:textSize="14sp" >
             </TextView>
 
@@ -131,7 +131,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="Tipo horario: "
+                android:text="@string/hourTypeLabelBatch"
                 android:textSize="14sp" >
             </TextView>
 
@@ -153,20 +153,20 @@
         android:layout_marginTop="30dp" >
 
         <Button
-            android:id="@+id/batchSaveButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="15dp"
-            android:onClick="doLaunchBatch"
-            android:text="Imputar" />
-
-        <Button
             android:id="@+id/batchRemoveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:onClick="doBack"
-            android:text="Cancelar" />
+            android:text="@string/cancelBatchButton" />
+
+        <Button
+            android:id="@+id/batchSaveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:onClick="doLaunchBatch"
+            android:text="@string/inputBatchButton" />
     </LinearLayout>
-    
+
 </RelativeLayout>

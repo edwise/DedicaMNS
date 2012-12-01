@@ -19,7 +19,7 @@ public class DayRecord implements Serializable {
     private Boolean isWeekend = Boolean.FALSE;
     private Boolean isHoliday = Boolean.FALSE;
 
-    private String dateForm;    
+    private String dateForm;
 
     public int getDayNum() {
 	return dayNum;
@@ -47,19 +47,6 @@ public class DayRecord implements Serializable {
 
     public List<ActivityDay> getActivities() {
 	return activities;
-    }
-
-    // TODO quitar estos getters, que están por ahora para que funcionen ciertos mockeos.
-    public String getProjectId() {
-	return this.activities.size() == 0 ? null : this.activities.get(0).getProjectId();
-    }
-
-    public String getSubProject() {
-	return this.activities.size() == 0 ? null : this.activities.get(0).getSubProject();
-    }
-
-    public String getTask() {
-	return this.activities.size() == 0 ? null : this.activities.get(0).getTask();
     }
 
     public Boolean getIsWeekend() {

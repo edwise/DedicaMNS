@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.edwise.dedicamns.asynctasks.ConnectionAsyncTask;
+import com.edwise.dedicamns.asynctasks.LoginConstants;
 import com.edwise.dedicamns.connections.ConnectionFacade;
 import com.edwise.dedicamns.menu.MenuUtils;
 
@@ -56,9 +57,9 @@ public class LoginActivity extends Activity {
 
     private void chargeSavedData() {
 	SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-	String user = sharedPref.getString("user", null);
-	String pass = sharedPref.getString("pass", null);
-	Boolean remember = sharedPref.getBoolean("remember", false);
+	String user = sharedPref.getString(LoginConstants.USER_TAG, null);
+	String pass = sharedPref.getString(LoginConstants.PASS_TAG, null);
+	Boolean remember = sharedPref.getBoolean(LoginConstants.REMEMBER_TAG, false);
 
 	if (user != null) {
 	    userLoginEditText.setText(user);
@@ -70,7 +71,7 @@ public class LoginActivity extends Activity {
     }
 
     private boolean checkIfLogout() {
-	return getIntent().getBooleanExtra("isLogout", false);
+	return getIntent().getBooleanExtra(LoginConstants.IS_LOGOUT_TAG, false);
     }
 
     @Override
@@ -100,8 +101,7 @@ public class LoginActivity extends Activity {
 	if (checkFieldsFilled()) {
 	    accesWebWithLoginData();
 	} else {
-	    Toast toast = Toast.makeText(this, "Introduce tu usuario y contraseña de Medianet",
-		    Toast.LENGTH_LONG);
+	    Toast toast = Toast.makeText(this, getString(R.string.msgUserPassError), Toast.LENGTH_LONG);
 	    toast.setGravity(Gravity.CENTER, 0, 100);
 	    toast.show();
 
@@ -111,20 +111,20 @@ public class LoginActivity extends Activity {
     private void accesWebWithLoginData() {
 	HashMap<String, String> accessData = new HashMap<String, String>();
 	String userLogin = userLoginEditText.getText().toString();
-	accessData.put("user", userLogin); // TODO constantes o enum
+	accessData.put(LoginConstants.USER_TAG, userLogin);
 
 	String passLogin = passLoginEditText.getText().toString();
-	accessData.put("pass", passLogin); // TODO constantes o enum
+	accessData.put(LoginConstants.PASS_TAG, passLogin);
 
 	String checked = Boolean.toString(rememberMeCheckBox.isChecked());
-	accessData.put("check", checked); // TODO constantes o enum
+	accessData.put(LoginConstants.CHECK_TAG, checked);
 
 	Log.d(LOGTAG, "doLogin: User y pass insertado: " + userLogin + " / " + passLogin + " / " + checked);
 
 	hideKeyboard();
 
-	pDialog = ProgressDialog.show(LoginActivity.this, "Conectando...",
-		"Conexión en progreso, por favor, espera", true);
+	pDialog = ProgressDialog.show(LoginActivity.this, getString(R.string.msgConnecting),
+		getString(R.string.msgConnectingAlert), true);
 
 	callConnectionAsyncTask(accessData);
     }
@@ -153,7 +153,7 @@ public class LoginActivity extends Activity {
     protected void onDestroy() {
 	super.onStop();
 	Log.d(LOGTAG, "onDestroy: en el onDestroy...");
-	// Borrar preferences si el check está desactivado
+	// Borra preferences si el check está desactivado
 	removeLoginDataIfNeeded();
     }
 

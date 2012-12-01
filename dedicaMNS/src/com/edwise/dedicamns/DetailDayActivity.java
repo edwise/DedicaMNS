@@ -35,11 +35,6 @@ import com.edwise.dedicamns.utils.Time24HoursValidator;
 public class DetailDayActivity extends Activity {
     private static final String LOGTAG = DetailDayActivity.class.toString();
 
-    private static final String MESSAGE_SAVE_OK = "Guardado registro de horas correctamente";
-    private static final String MESSAGE_REMOVE_OK = "Borrado registro de horas correctamente";
-    private static final String DIALOG_SAVING = "Guardando datos";
-    private static final String DIALOG_REMOVING = "Borrando datos";
-
     enum DetailDayActionEnum {
 	SAVE, REMOVE;
     }
@@ -74,7 +69,8 @@ public class DetailDayActivity extends Activity {
 	    linkSubProjectSpinner((String) this.projectSpinner.getSelectedItem());
 
 	    taskEditText = (EditText) findViewById(R.id.detailTaskEditText);
-	    taskEditText.setText(dayRecord.getTask());
+	    taskEditText.setText(dayRecord.getActivities().size() > 0 ? dayRecord.getActivities().get(0)
+		    .getTask() : null);
 	} else {
 	    dayRecord = new DayRecord();
 	}
@@ -111,8 +107,10 @@ public class DetailDayActivity extends Activity {
 	ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
 		projectsArray);
 	projectSpinner.setAdapter(adapter);
-	if (StringUtils.isNotBlank(dayRecord.getProjectId())) {
-	    int spinnerPosition = adapter.getPosition(dayRecord.getProjectId());
+	String projectId = dayRecord.getActivities().size() > 0 ? dayRecord.getActivities().get(0)
+		.getProjectId() : null;
+	if (StringUtils.isNotBlank(projectId)) {
+	    int spinnerPosition = adapter.getPosition(projectId);
 	    projectSpinner.setSelection(spinnerPosition);
 	}
 	projectSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -138,8 +136,10 @@ public class DetailDayActivity extends Activity {
 	ArrayAdapter<String> subProjectAdapter = new ArrayAdapter<String>(this,
 		android.R.layout.simple_spinner_item, subProjectArray);
 	subProjectSpinner.setAdapter(subProjectAdapter);
-	if (StringUtils.isNotBlank(dayRecord.getSubProject()) && isFirstChargeSubprojectSpinner) {
-	    int spinnerPosition = subProjectAdapter.getPosition(dayRecord.getSubProject());
+	String subProject = dayRecord.getActivities().size() > 0 ? dayRecord.getActivities().get(0)
+		.getSubProject() : null;
+	if (StringUtils.isNotBlank(subProject) && isFirstChargeSubprojectSpinner) {
+	    int spinnerPosition = subProjectAdapter.getPosition(subProject);
 	    subProjectSpinner.setSelection(spinnerPosition);
 	}
 	subProjectSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -155,9 +155,9 @@ public class DetailDayActivity extends Activity {
 	Log.d(LOGTAG, "doSaveDay");
 
 	if (!Time24HoursValidator.validateTime(hoursEditText.getText().toString().trim())) {
-	    showToastMessage("El formato de horas es incorrecto");
+	    showToastMessage(getString(R.string.msgErrorFormatHour));
 	} else if (!validateSpinnerProjectSelected()) {
-	    showToastMessage("Debe seleccionar algún proyecto");
+	    showToastMessage(getString(R.string.msgErrorSelectProject));
 	} else {
 	    showDialog(DetailDayActionEnum.SAVE);
 	    fillDayRecord();
@@ -206,11 +206,11 @@ public class DetailDayActivity extends Activity {
     }
 
     private void showDialog(DetailDayActionEnum actionEnum) {
-	String messageDialog = DIALOG_SAVING;
+	String messageDialog = getString(R.string.msgSaving);
 	if (actionEnum == DetailDayActionEnum.REMOVE) {
-	    messageDialog = DIALOG_REMOVING;
+	    messageDialog = getString(R.string.msgRemoving);
 	}
-	pDialog = ProgressDialog.show(this, messageDialog, "Por favor, espera...", true);
+	pDialog = ProgressDialog.show(this, messageDialog, getString(R.string.msgPleaseWait), true);
     }
 
     @Override
@@ -293,9 +293,9 @@ public class DetailDayActivity extends Activity {
 	}
 
 	private void returnMonthActivity() {
-	    String message = MESSAGE_SAVE_OK;
+	    String message = getString(R.string.msgSaveOK);
 	    if (this.action == DetailDayActionEnum.REMOVE) {
-		message = MESSAGE_REMOVE_OK;
+		message = getString(R.string.msgRemoveOK);
 	    }
 
 	    Intent returnIntent = new Intent();

@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.edwise.dedicamns.asynctasks.LoginConstants;
 import com.edwise.dedicamns.asynctasks.MonthListAsyncTask;
 import com.edwise.dedicamns.connections.ConnectionException;
 import com.edwise.dedicamns.connections.ConnectionFacade;
@@ -30,7 +31,7 @@ public class MainMenuActivity extends Activity {
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.main_menu);
 
-	boolean isLogout = getIntent().getBooleanExtra("isLogout", false);
+	boolean isLogout = getIntent().getBooleanExtra(LoginConstants.IS_LOGOUT_TAG, false);
 	if (isLogout) { // es logout, nos vamos al login, y cerramos esta
 	    goToLogout();
 	}
@@ -38,7 +39,7 @@ public class MainMenuActivity extends Activity {
 
     private void goToLogout() {
 	Intent intent = new Intent(this, LoginActivity.class);
-	intent.putExtra("isLogout", true);
+	intent.putExtra(LoginConstants.IS_LOGOUT_TAG, true);
 	startActivity(intent);
 	finish();
     }
@@ -81,13 +82,13 @@ public class MainMenuActivity extends Activity {
     public void doShowBatchMenu(View view) {
 	Log.d(MainMenuActivity.class.toString(), "doShowBatchMenu");
 
-	showDialog("Obteniendo datos necesarios");
+	showDialog(getString(R.string.msgGettingData));
 	AsyncTask<Integer, Integer, Integer> batchMenuAsyncTask = new BatchMenuAsyncTask(this);
 	batchMenuAsyncTask.execute(1);
     }
 
     private void showDialog(String message) {
-	pDialog = ProgressDialog.show(this, message, "Por favor, espera...", true);
+	pDialog = ProgressDialog.show(this, message, getString(R.string.msgPleaseWait), true);
     }
 
     private class BatchMenuAsyncTask extends AsyncTask<Integer, Integer, Integer> {
@@ -112,7 +113,6 @@ public class MainMenuActivity extends Activity {
 		result = -1;
 	    }
 
-	    // TODO constantes de error
 	    return result;
 	}
 
@@ -126,7 +126,7 @@ public class MainMenuActivity extends Activity {
 		this.closeDialog();
 	    } else {
 		this.closeDialog();
-		showToastMessage("Error en la conexión con la web de dedicaciones");
+		showToastMessage(getString(R.string.msgWebError));
 	    }
 	}
 

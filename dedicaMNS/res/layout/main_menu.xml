@@ -10,7 +10,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
-        android:contentDescription="Listado mensual"
+        android:contentDescription="@string/monthListTitle"
         android:onClick="doShowListMonth"
         android:src="@drawable/calendar_img" />
 
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageButtonListMonth"
         android:layout_centerHorizontal="true"
-        android:text="Consulta e imputación por día" />
+        android:text="@string/inputAndCheckByDayButton" />
 
     <ImageButton
         android:id="@+id/imageButtonBatch"
@@ -29,7 +29,7 @@
         android:layout_below="@+id/ListMonthTextView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
-        android:contentDescription="Imputacion BATCH"
+        android:contentDescription="@string/batchInputButton"
         android:onClick="doShowBatchMenu"
         android:src="@drawable/batch_img" />
 
@@ -39,6 +39,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageButtonBatch"
         android:layout_centerHorizontal="true"
-        android:text="Imputación batch mensual" />
+        android:text="@string/monthBatchInputButton" />
 
 </RelativeLayout>

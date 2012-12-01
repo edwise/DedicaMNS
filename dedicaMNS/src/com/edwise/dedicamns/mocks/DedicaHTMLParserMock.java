@@ -92,7 +92,6 @@ public class DedicaHTMLParserMock {
     }
 
     public int proccesBatch(BatchDataBean batchData) {
-	// TODO procesado de batch: obtener web del mes, e ir imputando cada dia con los datos pasados
 	try {
 	    TimeUnit.SECONDS.sleep(5);
 	} catch (InterruptedException e) {

@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.edwise.dedicamns.BatchMenuActivity;
 import com.edwise.dedicamns.MonthViewActivity;
+import com.edwise.dedicamns.R;
 import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.beans.MonthListBean;
 import com.edwise.dedicamns.connections.ConnectionException;
@@ -28,8 +29,10 @@ import com.edwise.dedicamns.utils.DayUtils;
  * 
  */
 public class MonthListAsyncTask extends AsyncTask<Integer, Integer, Integer> {
+    private static final int OK = 1;
+    private static final int ERROR = -1;
+
     private static final String LOGTAG = MonthListAsyncTask.class.toString();
-    // TODO que reciba el mes como parametro!!
 
     private Activity activity;
     private MonthListBean monthList = null;
@@ -59,22 +62,21 @@ public class MonthListAsyncTask extends AsyncTask<Integer, Integer, Integer> {
 	    }
 	} catch (ConnectionException e) {
 	    Log.e(LOGTAG, "Error al obtener la lista de datos diarios", e);
-	    // TODO error en result?
+	    result = ERROR;
 	}
 
-	return monthList.getListDays() != null && monthList.getListDays().size() > 0 ? 1 : -1; // TODO
-											       // constantes
-											       // de error
+	return result == 1 && monthList.getListDays() != null && monthList.getListDays().size() > 0 ? OK
+		: ERROR;
     }
 
     private Integer fillNeededDataCache(WebConnection webConnection) {
-	Integer result = 1;
+	Integer result = OK;
 	try {
 	    webConnection.fillProyectsAndSubProyectsCached();
 	    webConnection.fillMonthsAndYearsCached();
 	} catch (ConnectionException e) {
 	    Log.e(LOGTAG, "Error al obtener datos de cacheo (proyectos, meses y años)", e);
-	    result = -1; // TODO usar este result en el return
+	    result = ERROR;
 	}
 	return result;
     }
@@ -84,13 +86,13 @@ public class MonthListAsyncTask extends AsyncTask<Integer, Integer, Integer> {
 	Log.d(LOGTAG, "onPostExecute...");
 	super.onPostExecute(result);
 
-	if (result == 1) {
+	if (result == OK) {
 	    this.launchMonthActivity();
 	    this.closeDialog();
 	    finalizeActivityIfBatch();
 	} else {
 	    this.closeDialog();
-	    showToastMessage("Error de la web de dedicaciones");
+	    showToastMessage(activity.getString(R.string.msgWebError));
 	}
     }
 

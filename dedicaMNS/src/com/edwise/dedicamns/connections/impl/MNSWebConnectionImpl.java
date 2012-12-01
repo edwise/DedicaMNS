@@ -24,7 +24,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
@@ -63,7 +62,7 @@ public class MNSWebConnectionImpl implements WebConnection {
     private static final int FIRST_YEAR = 2004;
 
     private static final String DOMAIN = "medianet2k";
-    private static final String COOKIE_SESSION = "ASP.NET_SessionId";
+//    private static final String COOKIE_SESSION = "ASP.NET_SessionId";
     private static final String URL_STR = "http://dedicaciones.medianet.es";
     private static final String URL_ACCOUNTS_STR = "http://dedicaciones.medianet.es/Home/Accounts";
     private static final String URL_STR_CREATE = "http://dedicaciones.medianet.es/Home/CreateActivity";
@@ -72,7 +71,7 @@ public class MNSWebConnectionImpl implements WebConnection {
     private static final String URL_STR_CHANGE_DATE = "http://dedicaciones.medianet.es/Home/ChangeDate";
 
     private DefaultHttpClient httpClient = null;
-    private String cookie = null;
+    // private String cookie = null;
     private MonthYearBean monthYears = null;
     private ProjectSubprojectBean projects = null;
 
@@ -100,7 +99,6 @@ public class MNSWebConnectionImpl implements WebConnection {
 	    responseCode = doLoginAndGetCookie(URL_STR, DOMAIN, userName, password);
 	    Log.d(LOGTAG, "connectWeb... fin...");
 	} catch (Exception e) {
-	    // TODO controlar el error devolviendo un responsecode erroneo?
 	    Log.e(LOGTAG, "Error en el acceso web", e);
 	    throw new ConnectionException(e);
 	}
@@ -117,13 +115,14 @@ public class MNSWebConnectionImpl implements WebConnection {
 	HttpGet get = new HttpGet(url.toURI());
 
 	HttpResponse resp = httpClient.execute(get);
-	List<Cookie> cookies = httpClient.getCookieStore().getCookies();
-	for (Cookie c : cookies) {
-	    Log.d(LOGTAG, "Cookie - Name: " + c.getName() + " Value: " + c.getValue());
-	    if (COOKIE_SESSION.equals(c.getName())) {
-		cookie = c.getValue();
-	    }
-	}
+	// No necesitamos la cookie :S
+	// List<Cookie> cookies = httpClient.getCookieStore().getCookies();
+	// for (Cookie c : cookies) {
+	// Log.d(LOGTAG, "Cookie - Name: " + c.getName() + " Value: " + c.getValue());
+	// if (COOKIE_SESSION.equals(c.getName())) {
+	// cookie = c.getValue();
+	// }
+	// }
 
 	Log.d(LOGTAG, "StatusCode: " + resp.getStatusLine().getStatusCode() + " StatusLine: "
 		+ resp.getStatusLine().getReasonPhrase());

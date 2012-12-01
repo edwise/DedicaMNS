@@ -55,18 +55,17 @@ public class DayListAdapter extends ArrayAdapter<DayRecord> {
 	holder.dayNum.setText(String.valueOf(record.getDayNum()));
 	holder.dayName.setText(record.getDayName());
 	holder.hours.setText(record.getHours());
-	holder.projectId.setText(record.getProjectId());
+	holder.projectId.setText(record.getActivities().size() > 0 ? record.getActivities().get(0)
+		.getProjectId() : null);
 
 	Drawable drawable = null;
 	if (record.getIsHoliday()) {
 	    // Sky Blue
 	    drawable = rowView.getResources().getDrawable(R.drawable.selector_holiday);
-	} 
-	else if (record.getIsWeekend()) {
-	 // Light Sky Blue
+	} else if (record.getIsWeekend()) {
+	    // Light Sky Blue
 	    drawable = rowView.getResources().getDrawable(R.drawable.selector_weekend);
-	}
-	else {
+	} else {
 	    if (record.getActivities().size() == 0) {
 		// Azure
 		drawable = rowView.getResources().getDrawable(R.drawable.selector_blank);

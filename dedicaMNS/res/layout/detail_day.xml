@@ -35,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="Horas: "
+                android:text="@string/hourLabelDetail"
                 android:textSize="14sp" >
             </TextView>
 
@@ -55,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="Proyecto: "
+                android:text="@string/projectLabelDetail"
                 android:textSize="14sp" >
             </TextView>
 
@@ -74,7 +74,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="Subproyecto: "
+                android:text="@string/subprojectLabelDetail"
                 android:textSize="14sp" >
             </TextView>
 
@@ -93,7 +93,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="Tarea: "
+                android:text="@string/taskLabelDetail"
                 android:textSize="14sp" >
             </TextView>
 
@@ -120,7 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="15dp"
             android:onClick="doSaveDay"
-            android:text="Guardar" />
+            android:text="@string/saveButtonDetail" />
 
         <Button
             android:id="@+id/detailRemoveButton"
@@ -128,7 +128,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:onClick="doRemoveDay"
-            android:text="Borrar" />
+            android:text="@string/removeButtonDetail" />
     </LinearLayout>
 
 </RelativeLayout>

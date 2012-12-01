@@ -115,7 +115,7 @@ public class MockWebConnectionImpl implements WebConnection {
     public List<DayRecord> getListDaysAndActivitiesForMonthAndYear(int month, String year, boolean withActivities) {
 	List<DayRecord> list = new ArrayList<DayRecord>();
 
-	fillListMock(list, false);
+	fillListMock(list, withActivities);
 
 	return list;
     }

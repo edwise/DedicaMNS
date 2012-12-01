@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.edwise.dedicamns.adapters.DayListAdapter;
 import com.edwise.dedicamns.beans.DayRecord;
@@ -37,12 +35,15 @@ public class MonthViewActivity extends Activity {
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.month_view);
 
-	// TODO un poco de refactor...
 	monthList = (MonthListBean) getIntent().getSerializableExtra("monthList");
 
 	monthYearTextView = (TextView) findViewById(R.id.monthAndYearTextView);
 	monthYearTextView.setText(monthList.getMonthName() + " " + monthList.getYear());
 
+	configureListView();
+    }
+
+    private void configureListView() {
 	listView = (ListView) findViewById(R.id.listV_main);
 	listView.setAdapter(new DayListAdapter(this, monthList.getListDays()));
 

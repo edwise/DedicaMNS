@@ -16,6 +16,7 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 import com.edwise.dedicamns.MainMenuActivity;
+import com.edwise.dedicamns.R;
 import com.edwise.dedicamns.connections.ConnectionException;
 import com.edwise.dedicamns.connections.ConnectionFacade;
 import com.edwise.dedicamns.utils.ErrorUtils;
@@ -24,7 +25,7 @@ import com.edwise.dedicamns.utils.ErrorUtils;
  * @author edwise
  * 
  */
-public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer, Integer> {
+public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer, Integer> implements LoginConstants {
     private static final String LOGTAG = ConnectionAsyncTask.class.toString();
 
     private ProgressDialog pDialog;
@@ -44,8 +45,8 @@ public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer,
 	int result = -1; // Si no hay conexión a internet, devolveremos -1
 	if (ConnectionFacade.getWebConnection().isOnline(activity)) {
 	    try {
-		result = ConnectionFacade.getWebConnection().connectWeb(dataLogin.get("user"),
-		    dataLogin.get("pass"));
+		result = ConnectionFacade.getWebConnection().connectWeb(dataLogin.get(USER_TAG),
+			dataLogin.get(PASS_TAG));
 	    } catch (ConnectionException e) {
 		Log.e(LOGTAG, "Error en la conexión al intentar logarse", e);
 		result = -2;
@@ -57,12 +58,11 @@ public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer,
 
     private void saveSharedPreferences(Map<String, String> dataLogin) {
 	SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-	if (dataLogin.get("check").equals("true")) { // Guardamos todo
+	if (dataLogin.get(CHECK_TAG).equals(LoginConstants.TRUE)) { // Guardamos todo
 	    SharedPreferences.Editor editor = sharedPref.edit();
-	    editor.putString("user", dataLogin.get("user")); // TODO constantes
-							     // y demás!!
-	    editor.putString("pass", dataLogin.get("pass"));
-	    editor.putBoolean("remember", Boolean.valueOf(dataLogin.get("check")));
+	    editor.putString(USER_TAG, dataLogin.get(USER_TAG));
+	    editor.putString(PASS_TAG, dataLogin.get(PASS_TAG));
+	    editor.putBoolean(REMEMBER_TAG, Boolean.valueOf(dataLogin.get(CHECK_TAG)));
 	    editor.commit();
 	} else { // borramos todo
 	    sharedPref.edit().clear().commit();
@@ -103,7 +103,8 @@ public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer,
     }
 
     private void showToastConnected() {
-	Toast toast = Toast.makeText(this.activity, "¡Conectado!", Toast.LENGTH_LONG);
+	Toast toast = Toast.makeText(this.activity, activity.getString(R.string.msgConnected),
+		Toast.LENGTH_LONG);
 	toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 20);
 	toast.show();
     }

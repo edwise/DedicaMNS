@@ -18,8 +18,8 @@
         android:drawablePadding="15dp"
         android:ems="10"
         android:gravity="center_vertical"
-        android:text="Version"
-        android:textSize="18sp" >
+        android:text="@string/versionLabelAbout"
+        android:textSize="16sp" >
     </TextView>
 
     <TextView
