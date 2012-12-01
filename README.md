@@ -15,5 +15,5 @@ Consideraciones importantes a tener en cuenta:
 Futuras ampliaciones / evolutivos:
   - Permitir más de un proyecto por día en el listado mensual y ventana de detalle.
   - Optimización de carga de proyectos ¿? guardandolos en una bd, quizá?
-  - Elegir mes y año en listado mensual, para poder consultar otros meses.
+  - Elegir mes y año en listado mensual, para poder consultar otros meses. (HECHO!)
 
