@@ -41,6 +41,7 @@
     <string name="msgConnecting">Connecting&#8230;</string>
     <string name="msgConnectingAlert">Connection in progress, please, wait</string>
     <string name="msgGettingData">Getting needed data</string>
+    <string name="msgGettingMonthData">Getting month data</string>
     <string name="msgPleaseWait">Please, wait&#8230;</string>
     <string name="msgErrorFormatHour">The hour format is incorrect</string>
     <string name="msgErrorSelectProject">You have to select a project</string>

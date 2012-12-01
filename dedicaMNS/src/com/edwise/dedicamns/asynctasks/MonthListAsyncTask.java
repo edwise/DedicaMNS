@@ -29,14 +29,16 @@ import com.edwise.dedicamns.utils.DayUtils;
  * 
  */
 public class MonthListAsyncTask extends AsyncTask<Integer, Integer, Integer> {
+    private static final String LOGTAG = MonthListAsyncTask.class.toString();
+
     private static final int OK = 1;
     private static final int ERROR = -1;
-
-    private static final String LOGTAG = MonthListAsyncTask.class.toString();
+    public static final int IS_UPDATE_LIST = 11;
 
     private Activity activity;
     private MonthListBean monthList = null;
     private ProgressDialog pDialog = null;
+    private boolean isUpdateList = false;
 
     public MonthListAsyncTask(Activity activity, ProgressDialog pDialog) {
 	this.activity = activity;
@@ -57,6 +59,11 @@ public class MonthListAsyncTask extends AsyncTask<Integer, Integer, Integer> {
 		List<DayRecord> listDays = webConnection.getListDaysAndActivitiesForMonthAndYear(month, year,
 			true);
 		monthList = new MonthListBean(DayUtils.getMonthName(month), year, listDays);
+
+		if (params.length > 2 && params[2] == IS_UPDATE_LIST) {
+		    // Es actualizacion de mes y año en la lista mensual
+		    isUpdateList = true;
+		}
 	    } else {
 		monthList = webConnection.getListDaysAndActivitiesForCurrentMonth();
 	    }
@@ -87,12 +94,21 @@ public class MonthListAsyncTask extends AsyncTask<Integer, Integer, Integer> {
 	super.onPostExecute(result);
 
 	if (result == OK) {
-	    this.launchMonthActivity();
-	    this.closeDialog();
-	    finalizeActivityIfBatch();
+	    finalizeTaskOk();
 	} else {
 	    this.closeDialog();
 	    showToastMessage(activity.getString(R.string.msgWebError));
+	}
+    }
+
+    private void finalizeTaskOk() {
+	if (isUpdateList) {
+	    ((MonthViewActivity) this.activity).updateList(monthList);
+	    this.closeDialog();
+	} else { // Es acceso normal, o que viene del batch
+	    this.launchMonthActivity();
+	    this.closeDialog();
+	    finalizeActivityIfBatch();
 	}
     }
 

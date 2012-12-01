@@ -72,7 +72,7 @@ public class MainMenuActivity extends Activity {
 
     public void doShowListMonth(View view) {
 	Log.d(MainMenuActivity.class.toString(), "doShowListMonth");
-	showDialog("Obteniendo datos del mes");
+	showDialog(getString(R.string.msgGettingMonthData));
 	Calendar today = Calendar.getInstance();
 
 	AsyncTask<Integer, Integer, Integer> monthListAsyncTask = new MonthListAsyncTask(this, pDialog);

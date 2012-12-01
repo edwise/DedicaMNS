@@ -73,11 +73,7 @@ public class ActivityDay implements Serializable {
     }
 
     public void setTask(String task) {
-	if (!DayUtils.NBSP.equals(task)) {
-	    this.task = task;
-	} else {
-	    this.task = "";
-	}
+	this.task = DayUtils.getTaskNameWithoutNBSP(task);	
     }
 
     public boolean isUpdate() {

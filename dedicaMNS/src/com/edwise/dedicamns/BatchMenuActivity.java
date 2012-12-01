@@ -239,7 +239,7 @@ public class BatchMenuActivity extends Activity {
     private BatchDataBean fillDataBean() {
 	BatchDataBean batchData = new BatchDataBean();
 	batchData.setMonth((String) this.monthSpinner.getSelectedItem());
-	batchData.setNumMonth(Integer.valueOf(this.monthSpinner.getSelectedItemPosition()) + 1);
+	batchData.setNumMonth(this.monthSpinner.getSelectedItemPosition() + 1);
 	batchData.setYear((String) this.yearSpinner.getSelectedItem());
 	batchData.setProject((String) this.projectSpinner.getSelectedItem());
 	batchData.setSubProject((String) this.subProjectSpinner.getSelectedItem());

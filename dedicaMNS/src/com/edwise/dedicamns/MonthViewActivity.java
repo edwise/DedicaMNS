@@ -1,7 +1,11 @@
 package com.edwise.dedicamns;
 
+import java.util.List;
+
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -10,12 +14,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.Spinner;
 
 import com.edwise.dedicamns.adapters.DayListAdapter;
+import com.edwise.dedicamns.asynctasks.MonthListAsyncTask;
 import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.beans.MonthListBean;
+import com.edwise.dedicamns.connections.ConnectionFacade;
 import com.edwise.dedicamns.menu.MenuUtils;
 
 public class MonthViewActivity extends Activity {
@@ -26,7 +34,10 @@ public class MonthViewActivity extends Activity {
     private ListView listView = null;
     private MonthListBean monthList = null;
     private Parcelable listState = null;
-    private TextView monthYearTextView = null;
+    private Spinner monthSpinner = null;
+    private Spinner yearSpinner = null;
+
+    private ProgressDialog pDialog = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,14 +48,18 @@ public class MonthViewActivity extends Activity {
 
 	monthList = (MonthListBean) getIntent().getSerializableExtra("monthList");
 
-	monthYearTextView = (TextView) findViewById(R.id.monthAndYearTextView);
-	monthYearTextView.setText(monthList.getMonthName() + " " + monthList.getYear());
+	List<String> listMonths = ConnectionFacade.getWebConnection().getMonths();
+	List<String> listYears = ConnectionFacade.getWebConnection().getYears();
+	linkMonthSpinner(listMonths);
+	linkYearsSpinner(listYears);
 
-	configureListView();
+	this.markMonthYearSelected(monthList.getMonthName(), monthList.getYear());
+
+	listView = (ListView) findViewById(R.id.listV_main);
+	initListView();
     }
 
-    private void configureListView() {
-	listView = (ListView) findViewById(R.id.listV_main);
+    private void initListView() {
 	listView.setAdapter(new DayListAdapter(this, monthList.getListDays()));
 
 	listView.setOnItemClickListener(new OnItemClickListener() {
@@ -58,6 +73,47 @@ public class MonthViewActivity extends Activity {
 	    }
 
 	});
+    }
+
+    private void linkMonthSpinner(List<String> listMonths) {
+	monthSpinner = (Spinner) findViewById(R.id.listMonthsSpinner);
+	ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
+		listMonths);
+	monthSpinner.setAdapter(adapter);
+	monthSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+	    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+	    }
+
+	    public void onNothingSelected(AdapterView<?> parent) {
+	    }
+
+	});
+    }
+
+    private void linkYearsSpinner(List<String> listYears) {
+	yearSpinner = (Spinner) findViewById(R.id.listYearsSpinner);
+	ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
+		listYears);
+	yearSpinner.setAdapter(adapter);
+	yearSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+	    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+	    }
+
+	    public void onNothingSelected(AdapterView<?> parent) {
+	    }
+
+	});
+    }
+
+    @SuppressWarnings("unchecked")
+    private void markMonthYearSelected(String month, String year) {
+	ArrayAdapter<String> yearSpinnerAdapter = (ArrayAdapter<String>) yearSpinner.getAdapter();
+	int spinnerPosition = yearSpinnerAdapter.getPosition(year);
+	yearSpinner.setSelection(spinnerPosition);
+
+	ArrayAdapter<String> monthSpinnerAdapter = (ArrayAdapter<String>) monthSpinner.getAdapter();
+	spinnerPosition = monthSpinnerAdapter.getPosition(month);
+	monthSpinner.setSelection(spinnerPosition);
     }
 
     @Override
@@ -83,6 +139,21 @@ public class MonthViewActivity extends Activity {
 	}
 
 	return returned;
+    }
+
+    public void doUpdateList(View view) {
+	Log.d(LOGTAG, "doUpdateList: Click en actualizar...");
+	showDialog(getString(R.string.msgGettingMonthData));
+
+	Integer month = this.monthSpinner.getSelectedItemPosition() + 1;
+	Integer year = Integer.valueOf((String) this.yearSpinner.getSelectedItem());
+
+	AsyncTask<Integer, Integer, Integer> monthListAsyncTask = new MonthListAsyncTask(this, pDialog);
+	monthListAsyncTask.execute(new Integer[] { month, year, MonthListAsyncTask.IS_UPDATE_LIST });
+    }
+
+    private void showDialog(String message) {
+	pDialog = ProgressDialog.show(this, message, getString(R.string.msgPleaseWait), true);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -116,6 +187,11 @@ public class MonthViewActivity extends Activity {
 		break;
 	    }
 	}
+    }
+
+    public void updateList(MonthListBean monthListBean) {
+	this.monthList = monthListBean;
+	initListView();
     }
 
 }
