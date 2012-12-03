@@ -18,6 +18,7 @@ Futuras ampliaciones / evolutivos:
   - Elegir mes y año en listado mensual, para poder consultar otros meses. (HECHO!)
   - Permitir más de un proyecto por día en el listado mensual y ventana de detalle.
   - Optimización de carga de proyectos ¿? guardandolos en una bd, quizá?
-  - Permitir introducir la hora en más formatos (ahora solo permite "HH:MI")
+  - Permitir introducir la hora en más formatos (ahora solo permite "HH:MI") o meter las horas por combo
+  - Perfiles en la imputación batch
   
 
