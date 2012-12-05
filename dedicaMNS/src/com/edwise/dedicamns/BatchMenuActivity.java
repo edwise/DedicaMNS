@@ -193,7 +193,7 @@ public class BatchMenuActivity extends Activity {
 	Log.d(LOGTAG, "doLaunchBatch");
 
 	if (!validateSpinnerProjectSelected()) {
-	    showToastMessage("Debe seleccionar algún proyecto");
+	    showToastMessage(getString(R.string.msgSelectOneProject));
 	} else {
 	    launchBatchProcessWithAlertDialog();
 	}
@@ -205,17 +205,19 @@ public class BatchMenuActivity extends Activity {
 
     private void launchBatchProcessWithAlertDialog() {
 	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-	alertDialogBuilder.setTitle("Se va a ejecutar el proceso de imputación");
-	alertDialogBuilder.setMessage("¿Continuar?");
-	alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-	    public void onClick(DialogInterface dialog, int which) {
-		launchBatchProcess();
-	    }
-	});
-	alertDialogBuilder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-	    public void onClick(DialogInterface dialog, int which) {
-	    }
-	});
+	alertDialogBuilder.setTitle(getString(R.string.msgInputProcessToExecute));
+	alertDialogBuilder.setMessage(getString(R.string.msgContinue));
+	alertDialogBuilder.setPositiveButton(getString(R.string.msgAlertOK),
+		new DialogInterface.OnClickListener() {
+		    public void onClick(DialogInterface dialog, int which) {
+			launchBatchProcess();
+		    }
+		});
+	alertDialogBuilder.setNegativeButton(getString(R.string.msgAlertCancel),
+		new DialogInterface.OnClickListener() {
+		    public void onClick(DialogInterface dialog, int which) {
+		    }
+		});
 	alertDialogBuilder.show();
     }
 
@@ -257,13 +259,13 @@ public class BatchMenuActivity extends Activity {
     private void launchMonthActivity() {
 	Log.d(LOGTAG, "launchMonthActivity");
 
-	showDialog("Obteniendo datos del mes");
+	showDialog(getString(R.string.msgGettingDataMonth));
 	AsyncTask<Integer, Integer, Integer> monthListAsyncTask = new MonthListAsyncTask(this, pDialog);
 	monthListAsyncTask.execute(1);
     }
 
     private void showDialog(String message) {
-	pDialog = ProgressDialog.show(this, message, "Por favor, espera...", true);
+	pDialog = ProgressDialog.show(this, message, getString(R.string.msgPleaseWait), true);
     }
 
     private class BatchAsyncTask extends AsyncTask<BatchDataBean, Integer, Integer> {
@@ -311,7 +313,7 @@ public class BatchMenuActivity extends Activity {
 		this.showOkAlertDialog();
 	    } else {
 		this.closeDialog();
-		showToastMessage("¡Error en la imputación batch!");
+		showToastMessage(activity.getString(R.string.msgInputBatchError));
 	    }
 	}
 
@@ -322,18 +324,20 @@ public class BatchMenuActivity extends Activity {
 
 	private void showOkAlertDialog() {
 	    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.activity);
-	    alertDialogBuilder.setTitle("Proceso de imputación terminado!");
-	    alertDialogBuilder.setMessage("¿Desea ver el listado mensual de horas imputadas?");
-	    alertDialogBuilder.setPositiveButton("SI", new DialogInterface.OnClickListener() {
-		public void onClick(DialogInterface dialog, int which) {
-		    launchMonthActivity();
-		}
-	    });
-	    alertDialogBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-		public void onClick(DialogInterface dialog, int which) {
-		    finish();
-		}
-	    });
+	    alertDialogBuilder.setTitle(activity.getString(R.string.msgInputBatchProccessFinished));
+	    alertDialogBuilder.setMessage(activity.getString(R.string.msgSeeInputHours));
+	    alertDialogBuilder.setPositiveButton(activity.getString(R.string.msgYES),
+		    new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+			    launchMonthActivity();
+			}
+		    });
+	    alertDialogBuilder.setNegativeButton(activity.getString(R.string.msgNO),
+		    new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+			    finish();
+			}
+		    });
 	    alertDialogBuilder.show();
 	}
 

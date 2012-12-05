@@ -1,0 +1,137 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".GeneralDetailDayActivity" >
+
+    <RelativeLayout
+        android:id="@+id/generalDayInfo"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal" >
+
+        <TextView
+            android:id="@+id/gDayInfoTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:gravity="center_horizontal"
+            android:textSize="28sp" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/gTotalHoursLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_toRightOf="@+id/gDayInfoTextView"
+            android:gravity="right|center_vertical"
+            android:text="@string/totalHours"
+            android:textSize="14sp" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/gTotalHoursTextView"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="2dp"
+            android:layout_toRightOf="@+id/gTotalHoursLabel"
+            android:gravity="right"
+            android:textSize="16sp" >
+        </TextView>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/generalListHeaders"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/generalDayInfo"
+        android:gravity="center_horizontal" >
+
+        <TextView
+            android:id="@+id/actHoursHeader"
+            android:layout_width="60sp"
+            android:layout_height="35sp"
+            android:background="@drawable/back"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="5sp"
+            android:paddingTop="3sp"
+            android:text="@string/hours"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/actProjectIdHeader"
+            android:layout_width="95sp"
+            android:layout_height="35sp"
+            android:layout_toRightOf="@+id/actHoursHeader"
+            android:background="@drawable/back"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="5sp"
+            android:paddingTop="3sp"
+            android:text="@string/project"
+            android:textSize="14sp" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/actSubProjectIdHeader"
+            android:layout_width="35sp"
+            android:layout_height="35sp"
+            android:layout_toRightOf="@+id/actProjectIdHeader"
+            android:background="@drawable/back"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="5sp"
+            android:paddingTop="3sp"
+            android:text="@string/sub"
+            android:textSize="14sp" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/actTaskHeader"
+            android:layout_width="160sp"
+            android:layout_height="35sp"
+            android:layout_toRightOf="@+id/actSubProjectIdHeader"
+            android:background="@drawable/back"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="5sp"
+            android:paddingTop="3sp"
+            android:text="@string/task"
+            android:textSize="14sp" >
+        </TextView>
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/gListActivities"
+        android:layout_width="fill_parent"
+        android:layout_height="300sp"
+        android:layout_below="@+id/generalListHeaders"
+        android:drawSelectorOnTop="false" />
+
+    <RelativeLayout
+        android:id="@+id/generalDayButtons"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/gListActivities"
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal" >
+
+        <Button
+            android:id="@+id/generalAddButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
+            android:onClick="doAddActivity"
+            android:text="@string/addButton" />
+
+        <Button
+            android:id="@+id/generalRemoveAllButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@+id/generalAddButton"
+            android:onClick="doRemoveAllActivities"
+            android:text="@string/removeAllButton" />
+    </RelativeLayout>
+
+</RelativeLayout>

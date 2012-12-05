@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.app.Activity;
 
+import com.edwise.dedicamns.beans.ActivityDay;
 import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.beans.MonthListBean;
 
@@ -27,11 +28,11 @@ public interface WebConnection {
 
     MonthListBean getListDaysAndActivitiesForCurrentMonth() throws ConnectionException;
 
-    Integer saveDay(DayRecord dayRecord) throws ConnectionException;
+    Integer saveDay(ActivityDay activityDay, String dateForm, int dayNum) throws ConnectionException;
 
     Integer saveDayBatch(DayRecord dayRecord) throws ConnectionException;
 
-    Integer removeDay(DayRecord dayRecord) throws ConnectionException;
+    Integer removeDay(ActivityDay activityDay) throws ConnectionException;
 
     List<DayRecord> getListDaysAndActivitiesForMonthAndYear(int month, String year, boolean withActivities)
 	    throws ConnectionException;

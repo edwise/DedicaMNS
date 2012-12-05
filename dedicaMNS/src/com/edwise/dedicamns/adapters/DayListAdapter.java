@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.edwise.dedicamns.R;
 import com.edwise.dedicamns.beans.DayRecord;
+import com.edwise.dedicamns.utils.DayUtils;
 
 public class DayListAdapter extends ArrayAdapter<DayRecord> {
     private final Activity context;
@@ -55,8 +56,7 @@ public class DayListAdapter extends ArrayAdapter<DayRecord> {
 	holder.dayNum.setText(String.valueOf(record.getDayNum()));
 	holder.dayName.setText(record.getDayName());
 	holder.hours.setText(record.getHours());
-	holder.projectId.setText(record.getActivities().size() > 0 ? record.getActivities().get(0)
-		.getProjectId() : null);
+	holder.projectId.setText(DayUtils.getSomeProjectIds(record.getActivities()));
 
 	Drawable drawable = null;
 	if (record.getIsHoliday()) {

@@ -10,7 +10,7 @@
     <string name="passMNTextS">Password</string>
     <string name="mnLogoS">MediaNet Logo</string>
     <string name="title_activity_month_view">Month list</string>
-    <string name="title_activity_detail_day">Day Detail</string>
+    <string name="title_activity_detail_day">Activity detail</string>
     <string name="title_activity_main_menu">Dedica MNS</string>
     <string name="title_activity_batch_menu">Dedica MNS</string>
     <string name="title_activity_about">About</string>
@@ -49,5 +49,27 @@
     <string name="msgRemoveOK">Removed successful hour record</string>
     <string name="msgSaving">Saving data</string>
     <string name="msgRemoving">Removing data</string>
+    <string name="title_activity_general_detail_day">Day Detail</string>
+    <string name="msgRemoveAllActivities">It will delete all the day\'s activities</string>
+    <string name="msgContinue">Continue?</string>
+    <string name="msgAlertOK">OK</string>
+    <string name="msgAlertCancel">Cancel</string>
+    <string name="msgRemovingActivities">Removing activities</string>
+    <string name="msgInputProcessToExecute">Input process is going to execute</string>
+    <string name="msgSelectOneProject">You have to select a project</string>
+    <string name="msgGettingDataMonth">Getting data month</string>
+    <string name="msgInputBatchError">Input batch error!</string>
+    <string name="msgInputBatchProccessFinished">Input Batch Process Finished!</string>
+    <string name="msgSeeInputHours">Want to see the list of hours charged monthly?</string>
+    <string name="msgYES">YES</string>
+    <string name="msgNO">NO</string>
+    <string name="totalHours">Total hours:</string>
+    <string name="hours">Hours</string>
+    <string name="project">Project</string>
+    <string name="sub">Sub</string>
+    <string name="task">Task</string>
+    <string name="addButton">Add</string>
+    <string name="removeAllButton">Remove all</string>
+    <string name="updateButton">Update</string>
 
 </resources>

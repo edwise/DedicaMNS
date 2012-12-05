@@ -139,7 +139,140 @@ public class MockWebConnectionImpl implements WebConnection {
 		    activityDay.setProjectId("BBVA58");
 		    activityDay.setSubProject("3 - Calentar silla");
 		    activityDay.setSubProjectId("3");
+		    activityDay.setUpdate(true);
+		    activityDay.setIdActivity(Math.random() + "");
 		    dayRecord.getActivities().add(activityDay);
+		}
+	    } else if (i == 15) {
+		dayRecord.setHours("16:30");
+		
+		if (withActivity) {
+		    ActivityDay activityDay = new ActivityDay();
+		    activityDay.setHours("06:30");
+		    activityDay.setProjectId("BBVA58");
+		    activityDay.setSubProject("3 - Calentar silla");
+		    activityDay.setSubProjectId("3");
+		    activityDay.setUpdate(true);
+		    activityDay.setIdActivity(Math.random() + "");
+		    dayRecord.getActivities().add(activityDay);
+		    
+		    ActivityDay activityDay2 = new ActivityDay();
+		    activityDay2.setHours("05:00");
+		    activityDay2.setProjectId("BBVA58");
+		    activityDay2.setSubProject("2 - Marronacos");
+		    activityDay2.setSubProjectId("2");
+		    activityDay2.setUpdate(true);
+		    activityDay2.setIdActivity(Math.random() + "");
+		    dayRecord.getActivities().add(activityDay2);
+		    
+		    ActivityDay activityDay3 = new ActivityDay();
+		    activityDay3.setHours("04:30");
+		    activityDay3.setProjectId("Educared09");
+		    activityDay3.setSubProject("0 - Sin cuenta");
+		    activityDay3.setSubProjectId("0");
+		    activityDay3.setTask("Hacer el tonto");
+		    activityDay3.setUpdate(true);
+		    activityDay3.setIdActivity(Math.random() + "");
+		    dayRecord.getActivities().add(activityDay3);
+		}
+	    }  else if (i == 16) {
+		dayRecord.setHours("23:30");
+		
+		if (withActivity) {
+		    ActivityDay activityDay = new ActivityDay();
+		    activityDay.setHours("01:30");
+		    activityDay.setProjectId("BBVA58");
+		    activityDay.setSubProject("3 - Calentar silla");
+		    activityDay.setSubProjectId("3");
+		    activityDay.setUpdate(true);
+		    activityDay.setIdActivity(Math.random() + "");
+		    dayRecord.getActivities().add(activityDay);
+		    
+		    ActivityDay activityDay2 = new ActivityDay();
+		    activityDay2.setHours("04:00");
+		    activityDay2.setProjectId("BBVA58");
+		    activityDay2.setSubProject("2 - Marronacos");
+		    activityDay2.setSubProjectId("2");
+		    activityDay2.setUpdate(true);
+		    activityDay2.setIdActivity(Math.random() + "");
+		    dayRecord.getActivities().add(activityDay2);
+		    
+		    ActivityDay activityDay3 = new ActivityDay();
+		    activityDay3.setHours("04:30");
+		    activityDay3.setProjectId("Educared09");
+		    activityDay3.setSubProject("0 - Sin cuenta");
+		    activityDay3.setSubProjectId("0");
+		    activityDay3.setTask("Hacer el tonto");
+		    activityDay3.setUpdate(true);
+		    activityDay3.setIdActivity(Math.random() + "");
+		    dayRecord.getActivities().add(activityDay3);
+		    
+		    ActivityDay activityDay4 = new ActivityDay();
+		    activityDay4.setHours("03:30");
+		    activityDay4.setProjectId("ISBAN12");
+		    activityDay4.setSubProject("0 - Sin cuenta");
+		    activityDay4.setSubProjectId("0");
+		    activityDay4.setUpdate(true);
+		    activityDay4.setIdActivity(Math.random() + "");
+		    dayRecord.getActivities().add(activityDay4);
+		    
+		    ActivityDay activityDay5 = new ActivityDay();
+		    activityDay5.setHours("02:00");
+		    activityDay5.setProjectId("BBVA58");
+		    activityDay5.setSubProject("2 - Marronacos");
+		    activityDay5.setSubProjectId("2");
+		    activityDay5.setUpdate(true);
+		    activityDay5.setIdActivity(Math.random() + "");
+		    dayRecord.getActivities().add(activityDay5);
+		    
+		    ActivityDay activityDay6 = new ActivityDay();
+		    activityDay6.setHours("01:30");
+		    activityDay6.setProjectId("Educared09");
+		    activityDay6.setSubProject("0 - Sin cuenta");
+		    activityDay6.setSubProjectId("0");
+		    activityDay6.setTask("Hacer el tonto");
+		    activityDay6.setUpdate(true);
+		    activityDay6.setIdActivity(Math.random() + "");
+		    dayRecord.getActivities().add(activityDay6);
+		    
+		    ActivityDay activityDay7 = new ActivityDay();
+		    activityDay7.setHours("03:30");
+		    activityDay7.setProjectId("BBVA58");
+		    activityDay7.setSubProject("1 - Tarea mierda");
+		    activityDay7.setSubProjectId("1");
+		    activityDay7.setUpdate(true);
+		    activityDay7.setIdActivity(Math.random() + "");
+		    dayRecord.getActivities().add(activityDay7);
+		    
+		    ActivityDay activityDay8 = new ActivityDay();
+		    activityDay8.setHours("01:00");
+		    activityDay8.setProjectId("BBVA58");
+		    activityDay8.setSubProject("2 - Marronacos");
+		    activityDay8.setSubProjectId("2");
+		    activityDay8.setUpdate(true);
+		    activityDay8.setIdActivity(Math.random() + "");
+		    dayRecord.getActivities().add(activityDay8);
+		    
+		    ActivityDay activityDay9 = new ActivityDay();
+		    activityDay9.setHours("01:30");
+		    activityDay9.setProjectId("Educared09");
+		    activityDay9.setSubProject("0 - Sin cuenta");
+		    activityDay9.setSubProjectId("0");
+		    activityDay9.setTask("Hacer el tonto");
+		    activityDay9.setUpdate(true);
+		    activityDay9.setIdActivity(Math.random() + "");
+		    dayRecord.getActivities().add(activityDay9);
+		    
+		    ActivityDay activityDay10 = new ActivityDay();
+		    activityDay10.setHours("00:30");
+		    activityDay10.setProjectId("Educared09");
+		    activityDay10.setSubProject("0 - Sin cuenta");
+		    activityDay10.setSubProjectId("0");
+		    activityDay10.setTask("Hacer el tonto más");
+		    activityDay10.setUpdate(true);
+		    activityDay10.setIdActivity(Math.random() + "");
+		    dayRecord.getActivities().add(activityDay10);
+		    
 		}
 	    } else {
 		dayRecord.setHours("00:00");
@@ -168,11 +301,14 @@ public class MockWebConnectionImpl implements WebConnection {
 	return dayName;
     }
 
-    public Integer saveDay(DayRecord dayRecord) {
+    public Integer saveDay(ActivityDay activityDay, String dateForm, int dayNum) {
+	if (!activityDay.isUpdate()) {
+	    activityDay.setIdActivity(Math.random() + "");
+	}
 	return 1;
     }
 
-    public Integer removeDay(DayRecord dayRecord) {
+    public Integer removeDay(ActivityDay activityDay) {
 	return 1;
     }
 

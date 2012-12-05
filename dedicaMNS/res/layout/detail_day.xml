@@ -3,23 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/detailDayInfoTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:ems="14"
-        android:gravity="center"
-        android:textSize="28sp" >
-    </TextView>
-
     <TableLayout
         android:id="@+id/mainTable"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/detailDayInfoTextView"
         android:layout_marginLeft="1dip"
         android:layout_marginRight="1dip"
         android:layout_marginTop="15dip"
@@ -119,7 +106,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="15dp"
-            android:onClick="doSaveDay"
+            android:onClick="doSaveActivity"
             android:text="@string/saveButtonDetail" />
 
         <Button
@@ -127,7 +114,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
-            android:onClick="doRemoveDay"
+            android:onClick="doRemoveActivity"
             android:text="@string/removeButtonDetail" />
     </LinearLayout>
 

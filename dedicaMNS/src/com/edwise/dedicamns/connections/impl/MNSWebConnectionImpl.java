@@ -62,7 +62,7 @@ public class MNSWebConnectionImpl implements WebConnection {
     private static final int FIRST_YEAR = 2004;
 
     private static final String DOMAIN = "medianet2k";
-//    private static final String COOKIE_SESSION = "ASP.NET_SessionId";
+    // private static final String COOKIE_SESSION = "ASP.NET_SessionId";
     private static final String URL_STR = "http://dedicaciones.medianet.es";
     private static final String URL_ACCOUNTS_STR = "http://dedicaciones.medianet.es/Home/Accounts";
     private static final String URL_STR_CREATE = "http://dedicaciones.medianet.es/Home/CreateActivity";
@@ -186,8 +186,6 @@ public class MNSWebConnectionImpl implements WebConnection {
 		Element liParent = span.parent();
 		Element nextLiOrUl = liParent.nextElementSibling();
 
-		Log.d(LOGTAG, "-- Proyecto: " + projectId);
-
 		List<String> subProjects = new ArrayList<String>();
 		subProjects.add(ProjectSubprojectBean.SUBPROJECT_DEFAULT);
 		if (nextLiOrUl != null) {
@@ -196,8 +194,7 @@ public class MNSWebConnectionImpl implements WebConnection {
 			Iterator<Element> subIt = selectSpansSubAccounts.iterator();
 			while (subIt.hasNext()) {
 			    Element subSpan = subIt.next();
-			    subProjects.add(DayUtils.replaceAcutes(subSpan.html()));
-			    Log.d(LOGTAG, "---- SubProyecto: " + subSpan.html());
+			    subProjects.add(DayUtils.replaceAcutes(subSpan.html()));			    
 			}
 		    }
 		}
@@ -421,14 +418,13 @@ public class MNSWebConnectionImpl implements WebConnection {
 	return listDays;
     }
 
-    public Integer saveDay(DayRecord dayRecord) throws ConnectionException {
+    public Integer saveDay(ActivityDay activityDay, String dateForm, int dayNum) throws ConnectionException {
 	Integer result = 0;
 	String html = null;
-	ActivityDay activityDay = dayRecord.getActivities().get(0);
 	if (activityDay.isUpdate()) {
-	    html = this.doPostModify(activityDay, dayRecord.getDateForm());
+	    html = this.doPostModify(activityDay, dateForm);
 	} else {
-	    html = this.doPostCreate(activityDay, dayRecord.getDateForm());
+	    html = this.doPostCreate(activityDay, dateForm);
 	}
 
 	Document document = Jsoup.parse(html);
@@ -438,8 +434,7 @@ public class MNSWebConnectionImpl implements WebConnection {
 	} else { // Ok
 	    if (!activityDay.isUpdate()) {
 		// Tenemos que obtener en este caso el id
-		activityDay.setIdActivity(getIdFromActivityCreated(dayRecord.getDayNum(), document,
-			activityDay));
+		activityDay.setIdActivity(getIdFromActivityCreated(dayNum, document, activityDay));
 	    }
 
 	    result = 1;
@@ -472,8 +467,8 @@ public class MNSWebConnectionImpl implements WebConnection {
 	return id;
     }
 
-    public Integer removeDay(DayRecord dayRecord) throws ConnectionException {
-	return dayRecord.getActivities().size() > 0 && doDelete(dayRecord.getActivities().get(0)) ? 1 : -4;
+    public Integer removeDay(ActivityDay activityDay) throws ConnectionException {
+	return doDelete(activityDay) ? 1 : -4;
     }
 
     private String doPostCreate(ActivityDay activityDay, String dateActivity) throws ConnectionException {

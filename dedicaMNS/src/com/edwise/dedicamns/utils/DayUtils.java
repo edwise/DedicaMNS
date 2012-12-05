@@ -15,6 +15,9 @@ public class DayUtils {
 
     public static final String ZERO_HOUR = "00:00";
     public static final String NBSP = "&nbsp;";
+    public static final int HOUR_MINUTES = 60;
+
+    public static final int MAX_SIZE_STRING = 15;
 
     public static final String[] TYPE_HOURS = new String[] { "8:30 de L a J y 6:00 V", "8:00 L a V" };
     public static final int TYPE_COOL_FRIDAY = 0; // 8:30 de L a J y 6:00 V
@@ -128,5 +131,46 @@ public class DayUtils {
 
     public static String getMonthName(int numMonth) {
 	return MONTH_NAMES.get(numMonth);
+    }
+
+    public static String addHours(String hour1, String hour2) {
+	String[] hour1Splitted = hour1.split(":");
+	String[] hour2Splitted = hour2.split(":");
+	Integer hours = Integer.valueOf(hour1Splitted[0]) + Integer.valueOf(hour2Splitted[0]);
+	Integer minutes = Integer.valueOf(hour1Splitted[1]) + Integer.valueOf(hour2Splitted[1]);
+	if (minutes >= HOUR_MINUTES) {
+	    hours = hours + (minutes / HOUR_MINUTES);
+	    minutes = minutes % HOUR_MINUTES;
+	}
+
+	return StringUtils.leftPad(String.valueOf(hours), 2, '0') + ":"
+		+ StringUtils.leftPad(String.valueOf(minutes), 2, '0');
+    }
+
+    public static String limitSizeString(String text) {
+	String textResult = null;
+	if (text != null && text.length() > MAX_SIZE_STRING) {
+	    textResult = text.substring(0, MAX_SIZE_STRING) + "...";
+	} else {
+	    textResult = text;
+	}
+
+	return textResult;
+    }
+
+    public static String getSomeProjectIds(List<ActivityDay> activities) {
+	StringBuilder projectIds = new StringBuilder();
+
+	if (activities.size() > 0) {
+	    projectIds.append(activities.get(0).getProjectId());
+	    if (activities.size() > 1) {
+		projectIds.append(", ").append(activities.get(1).getProjectId());
+		if (activities.size() > 2) {
+		    projectIds.append(", ...");
+		}
+	    }
+	}
+
+	return projectIds.toString();
     }
 }

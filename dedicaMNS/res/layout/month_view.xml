@@ -31,7 +31,7 @@
             android:onClick="doUpdateList"
             android:textSize="14sp"
             android:gravity="center_vertical"
-            android:text="Actualizar" />
+            android:text="@string/updateButton" />
         
     </RelativeLayout>
 

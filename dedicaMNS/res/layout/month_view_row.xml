@@ -5,7 +5,7 @@
 
     <TextView
         android:id="@+id/dayNum"
-        android:layout_width="40dp"
+        android:layout_width="40sp"
         android:layout_height="wrap_content"
         android:background="@drawable/back"
         android:gravity="right"
@@ -26,7 +26,7 @@
 
     <TextView
         android:id="@+id/projectId"
-        android:layout_width="110dp"
+        android:layout_width="210sp"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@+id/hours"
         android:gravity="center_vertical|right"
@@ -36,7 +36,7 @@
 
     <TextView
         android:id="@+id/hours"
-        android:layout_width="68dp"
+        android:layout_width="68sp"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:gravity="right"

@@ -29,7 +29,7 @@ import com.edwise.dedicamns.menu.MenuUtils;
 public class MonthViewActivity extends Activity {
     private static final String LOGTAG = MonthViewActivity.class.toString();
 
-    static final int DAY_REQUEST = 0;
+    final static int DAY_REQUEST = 0;
 
     private ListView listView = null;
     private MonthListBean monthList = null;
@@ -66,8 +66,12 @@ public class MonthViewActivity extends Activity {
 	    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 		listState = listView.onSaveInstanceState();
 
+		// DayRecord dayRecord = (DayRecord) listView.getItemAtPosition(position);
+		// Intent intent = new Intent(MonthViewActivity.this, DetailDayActivity.class);
+		// intent.putExtra("dayRecord", dayRecord);
+		// startActivityForResult(intent, DAY_REQUEST);
 		DayRecord dayRecord = (DayRecord) listView.getItemAtPosition(position);
-		Intent intent = new Intent(MonthViewActivity.this, DetailDayActivity.class);
+		Intent intent = new Intent(MonthViewActivity.this, GeneralDetailDayActivity.class);
 		intent.putExtra("dayRecord", dayRecord);
 		startActivityForResult(intent, DAY_REQUEST);
 	    }
@@ -156,6 +160,7 @@ public class MonthViewActivity extends Activity {
 	pDialog = ProgressDialog.show(this, message, getString(R.string.msgPleaseWait), true);
     }
 
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	Log.d(LOGTAG, "onActivityResult...");
 
@@ -179,7 +184,7 @@ public class MonthViewActivity extends Activity {
     private void changeDayRecordInList(DayRecord dayRecord) {
 	for (DayRecord oldDayRecord : monthList.getListDays()) {
 	    if (oldDayRecord.getDayNum() == dayRecord.getDayNum()) {
-		if (dayRecord.getActivities().size() > 0 && dayRecord.getActivities().get(0).isToRemove()) {
+		if (dayRecord.getActivities().size() == 0) {
 		    oldDayRecord.clearDay();
 		} else {
 		    oldDayRecord.copyDayData(dayRecord);

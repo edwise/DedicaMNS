@@ -73,7 +73,7 @@ public class ActivityDay implements Serializable {
     }
 
     public void setTask(String task) {
-	this.task = DayUtils.getTaskNameWithoutNBSP(task);	
+	this.task = DayUtils.getTaskNameWithoutNBSP(task);
     }
 
     public boolean isUpdate() {
@@ -90,6 +90,15 @@ public class ActivityDay implements Serializable {
 
     public void setToRemove(boolean toRemove) {
 	this.toRemove = toRemove;
+    }
+
+    public void copyActivityDayData(ActivityDay activityDay) {
+	this.hours = activityDay.getHours();
+	this.projectId = activityDay.getProjectId();
+	this.subProjectId = activityDay.getSubProjectId();
+	this.subProject = activityDay.getSubProject();
+	this.task = activityDay.getTask();
+
     }
 
 }

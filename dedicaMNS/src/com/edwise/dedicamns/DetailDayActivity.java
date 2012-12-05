@@ -19,11 +19,9 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.edwise.dedicamns.beans.ActivityDay;
-import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.connections.ConnectionException;
 import com.edwise.dedicamns.connections.ConnectionFacade;
 import com.edwise.dedicamns.connections.WebConnection;
@@ -39,10 +37,11 @@ public class DetailDayActivity extends Activity {
 	SAVE, REMOVE;
     }
 
-    private DayRecord dayRecord = null;
+    private ActivityDay activityDay = null;
+    private Integer dayNum = null;
+    private String dateForm = null;
     private ProgressDialog pDialog = null;
 
-    private TextView dayNumTextView = null;
     private EditText hoursEditText = null;
     private Spinner projectSpinner = null;
     private Spinner subProjectSpinner = null;
@@ -56,23 +55,23 @@ public class DetailDayActivity extends Activity {
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.detail_day);
 
-	this.dayRecord = (DayRecord) getIntent().getSerializableExtra("dayRecord");
-	if (dayRecord != null) {
-	    dayNumTextView = (TextView) findViewById(R.id.detailDayInfoTextView);
-	    dayNumTextView.setText(dayRecord.getDayNum() + " - " + dayRecord.getDayName());
+	this.activityDay = (ActivityDay) getIntent().getSerializableExtra("activityDay");
+	this.dateForm = getIntent().getStringExtra("dateForm");
+	this.dayNum = getIntent().getIntExtra("dayNum", 0);
+	if (activityDay != null) {
 	    hoursEditText = (EditText) findViewById(R.id.detailHoursEditText);
-	    hoursEditText
-		    .setText(DayUtils.ZERO_HOUR.equals(dayRecord.getHours()) ? "" : dayRecord.getHours());
+	    hoursEditText.setText(DayUtils.ZERO_HOUR.equals(activityDay.getHours()) ? "" : activityDay
+		    .getHours());
 
 	    isFirstChargeSubprojectSpinner = true;
 	    linkProjectSpinner();
 	    linkSubProjectSpinner((String) this.projectSpinner.getSelectedItem());
 
 	    taskEditText = (EditText) findViewById(R.id.detailTaskEditText);
-	    taskEditText.setText(dayRecord.getActivities().size() > 0 ? dayRecord.getActivities().get(0)
-		    .getTask() : null);
+	    taskEditText.setText(activityDay.getTask());
 	} else {
-	    dayRecord = new DayRecord();
+	    Log.e(LOGTAG, "ActivityDay ha venido nulo");
+	    throw new UnsupportedOperationException("ActivityDay ha venido nulo!");
 	}
     }
 
@@ -107,8 +106,7 @@ public class DetailDayActivity extends Activity {
 	ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
 		projectsArray);
 	projectSpinner.setAdapter(adapter);
-	String projectId = dayRecord.getActivities().size() > 0 ? dayRecord.getActivities().get(0)
-		.getProjectId() : null;
+	String projectId = activityDay.getProjectId();
 	if (StringUtils.isNotBlank(projectId)) {
 	    int spinnerPosition = adapter.getPosition(projectId);
 	    projectSpinner.setSelection(spinnerPosition);
@@ -136,8 +134,7 @@ public class DetailDayActivity extends Activity {
 	ArrayAdapter<String> subProjectAdapter = new ArrayAdapter<String>(this,
 		android.R.layout.simple_spinner_item, subProjectArray);
 	subProjectSpinner.setAdapter(subProjectAdapter);
-	String subProject = dayRecord.getActivities().size() > 0 ? dayRecord.getActivities().get(0)
-		.getSubProject() : null;
+	String subProject = activityDay.getSubProject();
 	if (StringUtils.isNotBlank(subProject) && isFirstChargeSubprojectSpinner) {
 	    int spinnerPosition = subProjectAdapter.getPosition(subProject);
 	    subProjectSpinner.setSelection(spinnerPosition);
@@ -151,8 +148,8 @@ public class DetailDayActivity extends Activity {
 	});
     }
 
-    public void doSaveDay(View view) {
-	Log.d(LOGTAG, "doSaveDay");
+    public void doSaveActivity(View view) {
+	Log.d(LOGTAG, "doSaveActivity");
 
 	if (!Time24HoursValidator.validateTime(hoursEditText.getText().toString().trim())) {
 	    showToastMessage(getString(R.string.msgErrorFormatHour));
@@ -160,8 +157,8 @@ public class DetailDayActivity extends Activity {
 	    showToastMessage(getString(R.string.msgErrorSelectProject));
 	} else {
 	    showDialog(DetailDayActionEnum.SAVE);
-	    fillDayRecord();
-	    AsyncTask<DetailDayActionEnum, Integer, Integer> connectionAsyncTask = new SaveRemoveDayAsyncTask(
+	    fillActivityDay();
+	    AsyncTask<DetailDayActionEnum, Integer, Integer> connectionAsyncTask = new SaveRemoveActivityAsyncTask(
 		    this);
 	    connectionAsyncTask.execute(DetailDayActionEnum.SAVE);
 	}
@@ -177,16 +174,8 @@ public class DetailDayActivity extends Activity {
 	return projectSpinner.getSelectedItemPosition() != 0;
     }
 
-    private void fillDayRecord() {
-	this.dayRecord.setHours(hoursEditText.getText().toString().trim());
-	ActivityDay activityDay = null;
-	if (this.dayRecord.getActivities().size() == 0) {
-	    activityDay = new ActivityDay();
-	    activityDay.setUpdate(false);
-	    this.dayRecord.getActivities().add(activityDay);
-	} else {
-	    activityDay = this.dayRecord.getActivities().get(0);
-	}
+    private void fillActivityDay() {
+	activityDay.setHours(hoursEditText.getText().toString().trim());
 	activityDay.setHours(hoursEditText.getText().toString().trim());
 	activityDay.setProjectId((String) this.projectSpinner.getSelectedItem());
 	activityDay.setSubProject((String) this.subProjectSpinner.getSelectedItem());
@@ -195,12 +184,12 @@ public class DetailDayActivity extends Activity {
 	activityDay.setTask(this.taskEditText.getText().toString().trim());
     }
 
-    public void doRemoveDay(View view) {
-	Log.d(LOGTAG, "doRemoveDay");
+    public void doRemoveActivity(View view) {
+	Log.d(LOGTAG, "doRemoveActivity");
 
 	showDialog(DetailDayActionEnum.REMOVE);
 
-	AsyncTask<DetailDayActionEnum, Integer, Integer> connectionAsyncTask = new SaveRemoveDayAsyncTask(
+	AsyncTask<DetailDayActionEnum, Integer, Integer> connectionAsyncTask = new SaveRemoveActivityAsyncTask(
 		this);
 	connectionAsyncTask.execute(DetailDayActionEnum.REMOVE);
     }
@@ -223,40 +212,37 @@ public class DetailDayActivity extends Activity {
 	finish();
     }
 
-    private class SaveRemoveDayAsyncTask extends AsyncTask<DetailDayActionEnum, Integer, Integer> {
+    private class SaveRemoveActivityAsyncTask extends AsyncTask<DetailDayActionEnum, Integer, Integer> {
 
 	private Activity activity;
 	private DetailDayActionEnum action;
 
-	public SaveRemoveDayAsyncTask(Activity activity) {
+	public SaveRemoveActivityAsyncTask(Activity activity) {
 	    this.activity = activity;
 	}
 
 	@Override
 	protected Integer doInBackground(DetailDayActionEnum... action) {
-	    Log.d(SaveRemoveDayAsyncTask.class.toString(), "doInBackground...");
+	    Log.d(SaveRemoveActivityAsyncTask.class.toString(), "doInBackground...");
 	    WebConnection webConnection = ConnectionFacade.getWebConnection();
 	    this.action = action[0];
 	    Integer result = 0;
 	    switch (this.action) {
 	    case SAVE:
 		try {
-		    result = webConnection.saveDay(dayRecord);
-		    dayRecord.getActivities().get(0).setUpdate(true);
+		    result = webConnection.saveDay(activityDay, dateForm, dayNum);
 		} catch (ConnectionException e) {
-		    Log.e(LOGTAG, "Error al guardar datos de un día", e);
+		    Log.e(LOGTAG, "Error al guardar datos de una actividad", e);
 		    result = -2;
 		}
 		break;
 
 	    case REMOVE:
-		if (dayRecord.getActivities().size() > 0) {
-		    dayRecord.getActivities().get(0).setToRemove(true);
-		}
+		activityDay.setToRemove(true);
 		try {
-		    result = webConnection.removeDay(dayRecord);
+		    result = webConnection.removeDay(activityDay);
 		} catch (ConnectionException e) {
-		    Log.e(LOGTAG, "Error al borrar datos de un día", e);
+		    Log.e(LOGTAG, "Error al borrar datos de una actividad", e);
 		    result = -2;
 		}
 		break;
@@ -269,10 +255,10 @@ public class DetailDayActivity extends Activity {
 
 	@Override
 	protected void onPostExecute(Integer result) {
-	    Log.d(SaveRemoveDayAsyncTask.class.toString(), "onPostExecute...");
+	    Log.d(SaveRemoveActivityAsyncTask.class.toString(), "onPostExecute...");
 
 	    if (result == 1) {
-		this.returnMonthActivity();
+		this.returnGeneralDayActivity();
 		this.closeDialog();
 	    } else {
 		this.closeDialog();
@@ -287,19 +273,19 @@ public class DetailDayActivity extends Activity {
 
 	@Override
 	protected void onProgressUpdate(Integer... values) {
-	    Log.d(SaveRemoveDayAsyncTask.class.toString(), "onProgressUpdate...");
+	    Log.d(SaveRemoveActivityAsyncTask.class.toString(), "onProgressUpdate...");
 
 	    super.onProgressUpdate(values);
 	}
 
-	private void returnMonthActivity() {
+	private void returnGeneralDayActivity() {
 	    String message = getString(R.string.msgSaveOK);
 	    if (this.action == DetailDayActionEnum.REMOVE) {
 		message = getString(R.string.msgRemoveOK);
 	    }
 
 	    Intent returnIntent = new Intent();
-	    returnIntent.putExtra("dayRecordModif", dayRecord);
+	    returnIntent.putExtra("activityModif", activityDay);
 	    setResult(RESULT_OK, returnIntent);
 
 	    showToastMessage(message);

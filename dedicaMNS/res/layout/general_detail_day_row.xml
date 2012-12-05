@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <TextView
+        android:id="@+id/actHours"
+        android:layout_width="60sp"
+        android:layout_height="35sp"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="5sp"
+        android:paddingTop="3sp"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/actProjectId"
+        android:layout_width="95sp"
+        android:layout_height="35sp"
+        android:layout_toRightOf="@+id/actHours"
+        android:gravity="right|center_vertical"
+        android:paddingRight="5sp"
+        android:paddingTop="3sp"
+        android:textSize="16sp" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/actSubProjectId"
+        android:layout_width="35sp"
+        android:layout_height="35sp"
+        android:layout_toRightOf="@+id/actProjectId"
+        android:gravity="right|center_vertical"
+        android:paddingRight="5sp"
+        android:paddingTop="3sp"
+        android:textSize="16sp" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/actTask"
+        android:layout_width="160sp"
+        android:layout_height="35sp"
+        android:layout_toRightOf="@+id/actSubProjectId"
+        android:gravity="right|center_vertical"
+        android:paddingRight="5sp"
+        android:paddingTop="3sp"
+        android:textSize="16sp" >
+    </TextView>
+
+</RelativeLayout>

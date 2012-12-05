@@ -11,11 +11,11 @@
     <string name="passMNTextS">Contraseña</string>
     <string name="mnLogoS">Logo MediaNet</string>
     <string name="title_activity_month_view">Listado mes</string>
-    <string name="title_activity_detail_day">Detalle día</string>
+    <string name="title_activity_detail_day">Detalle Actividad</string>
     <string name="title_activity_main_menu">Dedica MNS</string>
     <string name="title_activity_batch_menu">Dedica MNS</string>
     <string name="title_activity_about">Acerca De</string>
-    <string name="about_text">Aplicación para imputar las horas en las dedicaciones de MediaNet Software. \nActualmente solo admite la imputación a un único proyecto diario. \n\nDesarrollada para minimizar el tiempo que perdemos en el apasionante mundo de la imputación de horas. \nTodos los accesos se hacen directamente a la web (de ahi el tiempo brutal que tarda en hacer algunas cosas&#8230;). \nEl user y password se guarda internamente de manera segura.\n</string>
+    <string name="about_text">Aplicación para imputar las horas en las dedicaciones de MediaNet Software. \nAhora admite varios proyectos por día. \n\nDesarrollada para minimizar el tiempo que perdemos en el apasionante mundo de la imputación de horas. \nTodos los accesos se hacen directamente a la web (de ahi el tiempo brutal que tarda en hacer algunas cosas&#8230;). \nEl user y password se guarda internamente de manera segura.\n</string>
     <string name="batchTitle">Imputación en Batch</string>
     <string name="monthLabelBatch">"Mes: "</string>
     <string name="yearLabelBatch">"Año: "</string>
@@ -42,7 +42,7 @@
     <string name="msgConnecting">Conectando&#8230;</string>
     <string name="msgConnectingAlert">Conexión en progreso, por favor, espera</string>
     <string name="msgGettingData">Obteniendo datos necesarios</string>
-    <string name="msgGettingMonthData">Obteniendo datos del mes</string>    
+    <string name="msgGettingMonthData">Obteniendo datos del mes</string>
     <string name="msgPleaseWait">Por favor, espera&#8230;</string>
     <string name="msgErrorFormatHour">El formato de horas es incorrecto</string>
     <string name="msgErrorSelectProject">Debe seleccionar algún proyecto</string>
@@ -50,5 +50,27 @@
     <string name="msgRemoveOK">Borrado registro de horas correctamente</string>
     <string name="msgSaving">Guardando datos</string>
     <string name="msgRemoving">Borrando datos</string>
+    <string name="title_activity_general_detail_day">Detalle día</string>
+    <string name="msgRemoveAllActivities">Se van a borrar todas las actividades del día</string>
+    <string name="msgContinue">¿Continuar?</string>
+    <string name="msgAlertOK">OK</string>
+    <string name="msgAlertCancel">Cancelar</string>
+    <string name="msgRemovingActivities">Borrando actividades</string>
+    <string name="msgInputProcessToExecute">Se va a ejecutar el proceso de imputación</string>
+    <string name="msgSelectOneProject">Debe seleccionar algún proyecto</string>
+    <string name="msgGettingDataMonth">Obteniendo datos del mes</string>
+    <string name="msgInputBatchError">¡Error en la imputación batch!</string>
+    <string name="msgInputBatchProccessFinished">¡Proceso de imputación terminado!</string>
+    <string name="msgSeeInputHours">¿Desea ver el listado mensual de horas imputadas?</string>
+    <string name="msgYES">SI</string>
+    <string name="msgNO">NO</string>
+    <string name="totalHours">Horas totales:</string>
+    <string name="hours">Horas</string>
+    <string name="project">Proyecto</string>
+    <string name="sub">Sub</string>
+    <string name="task">Tarea</string>
+    <string name="addButton">Añadir</string>
+    <string name="removeAllButton">Borrar todas</string>
+    <string name="updateButton">Actualizar</string>
 
 </resources>
