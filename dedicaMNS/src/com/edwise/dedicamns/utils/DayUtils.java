@@ -13,7 +13,9 @@ import com.edwise.dedicamns.beans.DayRecord;
 
 public class DayUtils {
 
+    private static final String HOUR_MINUTES_SEPARATOR = ":";
     public static final String ZERO_HOUR = "00:00";
+    public static final String ZERO_MINUTES = ":00";
     public static final String NBSP = "&nbsp;";
     public static final int HOUR_MINUTES = 60;
 
@@ -133,17 +135,20 @@ public class DayUtils {
 	return MONTH_NAMES.get(numMonth);
     }
 
-    public static String addHours(String hour1, String hour2) {
-	String[] hour1Splitted = hour1.split(":");
-	String[] hour2Splitted = hour2.split(":");
-	Integer hours = Integer.valueOf(hour1Splitted[0]) + Integer.valueOf(hour2Splitted[0]);
-	Integer minutes = Integer.valueOf(hour1Splitted[1]) + Integer.valueOf(hour2Splitted[1]);
+    public static String addHours(String hour, String newHour) {
+	String[] hourSplitted = hour.split(HOUR_MINUTES_SEPARATOR);
+	String[] newHourSplitted = newHour.split(HOUR_MINUTES_SEPARATOR);
+	Integer hours = Integer.valueOf(hourSplitted[0]) + Integer.valueOf(newHourSplitted[0]);
+	Integer minutes = Integer.valueOf(hourSplitted[1]);
+	if (newHourSplitted.length > 1) {
+	    minutes = minutes + Integer.valueOf(newHourSplitted[1]);
+	}
 	if (minutes >= HOUR_MINUTES) {
 	    hours = hours + (minutes / HOUR_MINUTES);
 	    minutes = minutes % HOUR_MINUTES;
 	}
 
-	return StringUtils.leftPad(String.valueOf(hours), 2, '0') + ":"
+	return StringUtils.leftPad(String.valueOf(hours), 2, '0') + HOUR_MINUTES_SEPARATOR
 		+ StringUtils.leftPad(String.valueOf(minutes), 2, '0');
     }
 
@@ -172,5 +177,18 @@ public class DayUtils {
 	}
 
 	return projectIds.toString();
+    }
+
+    public static String formatHour(String hours) {
+	String[] hourSplitted = hours.split(HOUR_MINUTES_SEPARATOR);
+	String hoursFormatted = StringUtils.leftPad(hourSplitted[0], 2, '0');
+	if (hourSplitted.length > 1) {
+	    hoursFormatted = hoursFormatted + HOUR_MINUTES_SEPARATOR
+		    + StringUtils.leftPad(hourSplitted[1], 2, '0');
+	} else {
+	    hoursFormatted = hoursFormatted + ZERO_MINUTES;
+	}
+
+	return hoursFormatted;
     }
 }

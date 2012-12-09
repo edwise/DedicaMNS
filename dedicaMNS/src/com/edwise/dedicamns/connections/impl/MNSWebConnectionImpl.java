@@ -115,15 +115,6 @@ public class MNSWebConnectionImpl implements WebConnection {
 	HttpGet get = new HttpGet(url.toURI());
 
 	HttpResponse resp = httpClient.execute(get);
-	// No necesitamos la cookie :S
-	// List<Cookie> cookies = httpClient.getCookieStore().getCookies();
-	// for (Cookie c : cookies) {
-	// Log.d(LOGTAG, "Cookie - Name: " + c.getName() + " Value: " + c.getValue());
-	// if (COOKIE_SESSION.equals(c.getName())) {
-	// cookie = c.getValue();
-	// }
-	// }
-
 	Log.d(LOGTAG, "StatusCode: " + resp.getStatusLine().getStatusCode() + " StatusLine: "
 		+ resp.getStatusLine().getReasonPhrase());
 
@@ -194,7 +185,7 @@ public class MNSWebConnectionImpl implements WebConnection {
 			Iterator<Element> subIt = selectSpansSubAccounts.iterator();
 			while (subIt.hasNext()) {
 			    Element subSpan = subIt.next();
-			    subProjects.add(DayUtils.replaceAcutes(subSpan.html()));			    
+			    subProjects.add(DayUtils.replaceAcutes(subSpan.html()));
 			}
 		    }
 		}

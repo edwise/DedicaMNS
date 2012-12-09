@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -59,6 +60,7 @@ public class DetailDayActivity extends Activity {
 	this.dateForm = getIntent().getStringExtra("dateForm");
 	this.dayNum = getIntent().getIntExtra("dayNum", 0);
 	if (activityDay != null) {
+	    hideRemoveButtonIfNew();
 	    hoursEditText = (EditText) findViewById(R.id.detailHoursEditText);
 	    hoursEditText.setText(DayUtils.ZERO_HOUR.equals(activityDay.getHours()) ? "" : activityDay
 		    .getHours());
@@ -72,6 +74,13 @@ public class DetailDayActivity extends Activity {
 	} else {
 	    Log.e(LOGTAG, "ActivityDay ha venido nulo");
 	    throw new UnsupportedOperationException("ActivityDay ha venido nulo!");
+	}
+    }
+
+    private void hideRemoveButtonIfNew() {
+	if (StringUtils.isBlank(activityDay.getProjectId())) {
+	    Button removeButton = (Button) findViewById(R.id.detailRemoveButton);
+	    removeButton.setVisibility(View.GONE);
 	}
     }
 
@@ -175,8 +184,7 @@ public class DetailDayActivity extends Activity {
     }
 
     private void fillActivityDay() {
-	activityDay.setHours(hoursEditText.getText().toString().trim());
-	activityDay.setHours(hoursEditText.getText().toString().trim());
+	activityDay.setHours(DayUtils.formatHour(hoursEditText.getText().toString().trim()));
 	activityDay.setProjectId((String) this.projectSpinner.getSelectedItem());
 	activityDay.setSubProject((String) this.subProjectSpinner.getSelectedItem());
 	activityDay.setSubProjectId(DayUtils.getNumSubProject((String) this.subProjectSpinner

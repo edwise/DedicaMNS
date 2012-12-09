@@ -119,7 +119,7 @@ public class LoginActivity extends Activity {
 	String checked = Boolean.toString(rememberMeCheckBox.isChecked());
 	accessData.put(LoginConstants.CHECK_TAG, checked);
 
-	Log.d(LOGTAG, "doLogin: User y pass insertado: " + userLogin + " / " + passLogin + " / " + checked);
+	Log.d(LOGTAG, "doLogin: User insertado: " + userLogin + " / " + checked);
 
 	hideKeyboard();
 
