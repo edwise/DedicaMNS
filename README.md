@@ -16,8 +16,9 @@ Consideraciones importantes a tener en cuenta:
 Futuras ampliaciones / evolutivos:
   - Elegir mes y año en listado mensual, para poder consultar otros meses. (HECHO!)
   - Permitir más de un proyecto por día en el listado mensual y ventana de detalle. (HECHO!)
-  - Optimización de carga de proyectos ¿? guardandolos en una bd, quizá?
-  - Permitir introducir la hora en más formatos (ahora solo permite "HH:MI") o meter las horas por combo
+  - Permitir introducir la hora en más formatos (ahora solo permite "HH:MI"). (HECHO!)
+  - Optimización de carga de proyectos ¿? guardandolos en una bd, quizá?  
   - Perfiles en la imputación batch
+  - Adaptar toda la app para "landscape" (actualmente hay pantallas que no salen bien en apaisado)
   
 
