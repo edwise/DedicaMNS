@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="10sp"
         android:ems="14"
         android:gravity="center"
         android:text="@string/batchTitle"
@@ -35,16 +35,16 @@
                 android:id="@+id/batchMonthsTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="10sp"
                 android:text="@string/monthLabelBatch"
                 android:textSize="14sp" >
             </TextView>
 
             <Spinner
                 android:id="@+id/batchMonthsSpinner"
-                android:layout_width="200dp"
+                android:layout_width="200sp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="5sp"
                 android:textSize="8sp" />
         </TableRow>
 
@@ -54,16 +54,16 @@
                 android:id="@+id/batchYearsTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="10sp"
                 android:text="@string/yearLabelBatch"
                 android:textSize="14sp" >
             </TextView>
 
             <Spinner
                 android:id="@+id/batchYearsSpinner"
-                android:layout_width="200dp"
+                android:layout_width="200sp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="5sp"
                 android:textSize="8sp" />
         </TableRow>
 
@@ -73,16 +73,16 @@
                 android:id="@+id/batchProjectTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="10sp"
                 android:text="@string/projectLabelBatch"
                 android:textSize="14sp" >
             </TextView>
 
             <Spinner
                 android:id="@+id/batchProjectSpinner"
-                android:layout_width="200dp"
+                android:layout_width="200sp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="5sp"
                 android:textSize="8sp" />
         </TableRow>
 
@@ -92,16 +92,16 @@
                 android:id="@+id/batchSubprojectTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="10sp"
                 android:text="@string/subprojectLabelBatch"
                 android:textSize="14sp" >
             </TextView>
 
             <Spinner
                 android:id="@+id/batchSubprojectSpinner"
-                android:layout_width="200dp"
+                android:layout_width="200sp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="5sp"
                 android:textSize="8sp" />
         </TableRow>
 
@@ -111,16 +111,16 @@
                 android:id="@+id/batchTaskTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="10sp"
                 android:text="@string/taskLabelBatch"
                 android:textSize="14sp" >
             </TextView>
 
             <EditText
                 android:id="@+id/batchTaskEditText"
-                android:layout_width="200dp"
+                android:layout_width="200sp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="5sp"
                 android:inputType="text" />
         </TableRow>
 
@@ -130,16 +130,16 @@
                 android:id="@+id/batchTypeHourTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="10sp"
                 android:text="@string/hourTypeLabelBatch"
                 android:textSize="14sp" >
             </TextView>
 
             <Spinner
                 android:id="@+id/batchTypeHourSpinner"
-                android:layout_width="200dp"
+                android:layout_width="200sp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="5sp"
                 android:textSize="8sp" />
         </TableRow>
     </TableLayout>
@@ -150,13 +150,13 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/batchMenuTable"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp" >
+        android:layout_marginTop="30sp" >
 
         <Button
             android:id="@+id/batchRemoveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="15dp"
+            android:layout_marginRight="15sp"
             android:onClick="doBack"
             android:text="@string/cancelBatchButton" />
 
@@ -164,7 +164,7 @@
             android:id="@+id/batchSaveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
+            android:layout_marginLeft="15sp"
             android:onClick="doLaunchBatch"
             android:text="@string/inputBatchButton" />
     </LinearLayout>

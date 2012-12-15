@@ -1,0 +1,57 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center_horizontal"
+    android:orientation="horizontal" >
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingBottom="10sp"
+        android:paddingRight="25sp" >
+
+        <ImageButton
+            android:id="@+id/imageButtonListMonth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/monthListTitle"
+            android:onClick="doShowListMonth"
+            android:src="@drawable/calendar_img" />
+
+        <TextView
+            android:id="@+id/ListMonthTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/inputAndCheckByDayButton"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingBottom="10sp"
+        android:paddingLeft="25sp" >
+
+        <ImageButton
+            android:id="@+id/imageButtonBatch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/batchInputButton"
+            android:onClick="doShowBatchMenu"
+            android:src="@drawable/batch_img" />
+
+        <TextView
+            android:id="@+id/BatchTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/monthBatchInputButton"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+</LinearLayout>

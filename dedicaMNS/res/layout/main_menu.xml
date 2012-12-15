@@ -20,7 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageButtonListMonth"
         android:layout_centerHorizontal="true"
-        android:text="@string/inputAndCheckByDayButton" />
+        android:text="@string/inputAndCheckByDayButton"
+        android:textSize="12sp" />
 
     <ImageButton
         android:id="@+id/imageButtonBatch"
@@ -39,6 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageButtonBatch"
         android:layout_centerHorizontal="true"
-        android:text="@string/monthBatchInputButton" />
+        android:text="@string/monthBatchInputButton"
+        android:textSize="12sp" />
 
 </RelativeLayout>
