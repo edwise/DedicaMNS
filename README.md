@@ -22,6 +22,7 @@ Futuras ampliaciones / evolutivos:
   - Adaptar toda la app para "landscape" (actualmente hay pantallas que no salen bien en apaisado) (HECHO!)
   - Optimización de carga de proyectos ¿? guardandolos en una bd, quizá?  
   - Perfiles en la imputación batch
+  - Mostrar informe mensual de horas
   
   
 
