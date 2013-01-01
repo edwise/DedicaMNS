@@ -72,5 +72,6 @@
     <string name="addButton">Añadir</string>
     <string name="removeAllButton">Borrar todas</string>
     <string name="updateButton">Actualizar</string>
+    <string name="msgInputProcessExecuting">Ejecutando imputación en batch&#8230;</string>    
 
 </resources>

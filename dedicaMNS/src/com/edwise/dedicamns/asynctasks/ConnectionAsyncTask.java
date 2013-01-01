@@ -5,8 +5,6 @@ package com.edwise.dedicamns.asynctasks;
 
 import java.util.Map;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,6 +13,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
+import com.edwise.dedicamns.LoginActivity;
 import com.edwise.dedicamns.MainMenuActivity;
 import com.edwise.dedicamns.R;
 import com.edwise.dedicamns.connections.ConnectionException;
@@ -25,16 +24,9 @@ import com.edwise.dedicamns.utils.ErrorUtils;
  * @author edwise
  * 
  */
-public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer, Integer> implements LoginConstants {
+public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer, Integer> implements
+	LoginConstants {
     private static final String LOGTAG = ConnectionAsyncTask.class.toString();
-
-    private ProgressDialog pDialog;
-    private Activity activity;
-
-    public ConnectionAsyncTask(Activity activity, ProgressDialog pDialog) {
-	this.activity = activity;
-	this.pDialog = pDialog;
-    }
 
     @Override
     protected Integer doInBackground(Map<String, String>... data) {
@@ -43,7 +35,7 @@ public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer,
 	saveSharedPreferences(dataLogin);
 
 	int result = -1; // Si no hay conexión a internet, devolveremos -1
-	if (ConnectionFacade.getWebConnection().isOnline(activity)) {
+	if (ConnectionFacade.getWebConnection().isOnline(AppData.getCurrentActivity())) {
 	    try {
 		result = ConnectionFacade.getWebConnection().connectWeb(dataLogin.get(USER_TAG),
 			dataLogin.get(PASS_TAG));
@@ -57,7 +49,7 @@ public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer,
     }
 
     private void saveSharedPreferences(Map<String, String> dataLogin) {
-	SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+	SharedPreferences sharedPref = AppData.getCurrentActivity().getPreferences(Context.MODE_PRIVATE);
 	if (dataLogin.get(CHECK_TAG).equals(LoginConstants.TRUE)) { // Guardamos todo
 	    SharedPreferences.Editor editor = sharedPref.edit();
 	    editor.putString(USER_TAG, dataLogin.get(USER_TAG));
@@ -83,8 +75,8 @@ public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer,
     }
 
     private void closeDialog() {
-	pDialog.dismiss();
-	pDialog = null;
+	LoginActivity activity = (LoginActivity) AppData.getCurrentActivity();
+	activity.closeDialog();	
     }
 
     @Override
@@ -93,24 +85,24 @@ public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer,
     }
 
     private void startNextActivity() {
-	Intent intent = new Intent(this.activity, MainMenuActivity.class);
+	Intent intent = new Intent(AppData.getCurrentActivity(), MainMenuActivity.class);
 
-	this.activity.startActivity(intent);
-	this.activity.finish();
+	AppData.getCurrentActivity().startActivity(intent);
+	AppData.getCurrentActivity().finish();
 
 	showToastConnected();
 
     }
 
     private void showToastConnected() {
-	Toast toast = Toast.makeText(this.activity, activity.getString(R.string.msgConnected),
-		Toast.LENGTH_LONG);
+	Toast toast = Toast.makeText(AppData.getCurrentActivity(),
+		AppData.getCurrentActivity().getString(R.string.msgConnected), Toast.LENGTH_LONG);
 	toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 20);
 	toast.show();
     }
 
     private void showToastErrorConnection(String msg) {
-	Toast toast = Toast.makeText(this.activity, msg, Toast.LENGTH_LONG);
+	Toast toast = Toast.makeText(AppData.getCurrentActivity(), msg, Toast.LENGTH_LONG);
 	toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 40);
 	toast.show();
     }

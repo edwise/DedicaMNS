@@ -177,7 +177,7 @@
             android:layout_marginRight="15sp"
             android:onClick="doBack"
             android:text="@string/cancelBatchButton"
-            android:textSize="12sp" />
+            android:textSize="14sp" />
 
         <Button
             android:id="@+id/batchSaveButton"
@@ -186,7 +186,7 @@
             android:layout_marginLeft="15sp"
             android:onClick="doLaunchBatch"
             android:text="@string/inputBatchButton"
-            android:textSize="12sp" />
+            android:textSize="14sp" />
     </LinearLayout>
 
 </RelativeLayout>

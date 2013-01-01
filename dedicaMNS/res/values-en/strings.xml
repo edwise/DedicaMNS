@@ -71,5 +71,6 @@
     <string name="addButton">Add</string>
     <string name="removeAllButton">Remove all</string>
     <string name="updateButton">Update</string>
+    <string name="msgInputProcessExecuting">Batch execution&#8230;</string>
 
 </resources>

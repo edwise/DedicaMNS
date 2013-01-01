@@ -22,6 +22,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.edwise.dedicamns.asynctasks.AppData;
 import com.edwise.dedicamns.asynctasks.ConnectionAsyncTask;
 import com.edwise.dedicamns.asynctasks.LoginConstants;
 import com.edwise.dedicamns.connections.ConnectionFacade;
@@ -30,7 +31,7 @@ import com.edwise.dedicamns.menu.MenuUtils;
 public class LoginActivity extends Activity {
     private static final String LOGTAG = LoginActivity.class.toString();
 
-    private ProgressDialog pDialog;
+    private ProgressDialog pDialog = null;
 
     private EditText userLoginEditText;
     private EditText passLoginEditText;
@@ -41,8 +42,15 @@ public class LoginActivity extends Activity {
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.login);
 	Log.d(LOGTAG, "onCreate: Comenzando...");
+	AppData.setCurrentActivity(this);
 
 	initFields();
+
+	if (savedInstanceState != null && savedInstanceState.getBoolean("pDialogON")) {
+	    // El pDialog estaba activo, mostrarlo otra vez
+	    showDialog();
+	}
+
 	if (!checkIfLogout()) {
 	    chargeSavedData();
 	    ConnectionFacade.createWebConnection(this);
@@ -122,11 +130,14 @@ public class LoginActivity extends Activity {
 	Log.d(LOGTAG, "doLogin: User insertado: " + userLogin + " / " + checked);
 
 	hideKeyboard();
-
-	pDialog = ProgressDialog.show(LoginActivity.this, getString(R.string.msgConnecting),
-		getString(R.string.msgConnectingAlert), true);
+	showDialog();
 
 	callConnectionAsyncTask(accessData);
+    }
+
+    private void showDialog() {
+	pDialog = ProgressDialog.show(LoginActivity.this, getString(R.string.msgConnecting),
+		getString(R.string.msgConnectingAlert), true);
     }
 
     private void hideKeyboard() {
@@ -138,8 +149,7 @@ public class LoginActivity extends Activity {
     private void callConnectionAsyncTask(Map<String, String> accessData) {
 	Log.d(LOGTAG, "callConnectionAsyncTask: Llamada al asyncTask...");
 
-	AsyncTask<Map<String, String>, Integer, Integer> connectionAsyncTask = new ConnectionAsyncTask(this,
-		this.pDialog);
+	AsyncTask<Map<String, String>, Integer, Integer> connectionAsyncTask = new ConnectionAsyncTask();
 	connectionAsyncTask.execute(accessData);
     }
 
@@ -161,6 +171,29 @@ public class LoginActivity extends Activity {
     public void onBackPressed() {
 	moveTaskToBack(true);
 	super.onBackPressed();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+	Log.d(LOGTAG, "onSaveInstanceState");
+	if (pDialog != null) {
+	    pDialog.cancel();
+	    outState.putBoolean("pDialogON", true);
+	}
+	super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestart() {
+	super.onRestart();
+	AppData.setCurrentActivity(this);
+    }
+
+    public void closeDialog() {
+	if (pDialog != null) {
+	    pDialog.dismiss();
+	    pDialog = null;
+	}
     }
 
     private void removeLoginDataIfNeeded() {

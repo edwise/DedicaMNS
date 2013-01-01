@@ -42,6 +42,12 @@ public class MockWebConnectionImpl implements WebConnection {
      * @see com.edwise.dedicamns.connections.WebConnection#connectWeb(java.lang.String , java.lang.String)
      */
     public Integer connectWeb(String userName, String password) {
+	try {
+	    TimeUnit.SECONDS.sleep(3);
+	} catch (InterruptedException e) {
+	    Log.e(MockWebConnectionImpl.class.toString(), "connectWeb: Error en TimeUnit...", e);
+	    e.printStackTrace();
+	}
 	return 200;
     }
 
@@ -53,7 +59,7 @@ public class MockWebConnectionImpl implements WebConnection {
 	return years;
     }
 
-    public List<String> getArrayProjects() {
+    public List<String> getArrayProjects() {	
 	return arrayProjects;
     }
 
@@ -71,6 +77,13 @@ public class MockWebConnectionImpl implements WebConnection {
     }
 
     public void fillProyectsAndSubProyectsCached() {
+	try {
+	    TimeUnit.SECONDS.sleep(3);
+	} catch (InterruptedException e) {
+	    Log.e(MockWebConnectionImpl.class.toString(), "fillListMock: Error en TimeUnit...", e);
+	    e.printStackTrace();
+	}
+	
 	arrayProjects = new ArrayList<String>();
 
 	arrayProjects.add("Selecciona proyecto...");
@@ -121,6 +134,13 @@ public class MockWebConnectionImpl implements WebConnection {
     }
 
     private void fillListMock(List<DayRecord> list, boolean withActivity) {
+	try {
+	    TimeUnit.SECONDS.sleep(3);
+	} catch (InterruptedException e) {
+	    Log.e(MockWebConnectionImpl.class.toString(), "fillListMock: Error en TimeUnit...", e);
+	    e.printStackTrace();
+	}
+	
 	for (int i = 1; i < 31; i++) {
 	    DayRecord dayRecord = new DayRecord();
 	    dayRecord.setDayNum(i);
@@ -302,6 +322,13 @@ public class MockWebConnectionImpl implements WebConnection {
     }
 
     public Integer saveDay(ActivityDay activityDay, String dateForm, int dayNum) {
+	try {
+	    TimeUnit.SECONDS.sleep(3);
+	} catch (InterruptedException e) {
+	    Log.e(MockWebConnectionImpl.class.toString(), "fillListMock: Error en TimeUnit...", e);
+	    e.printStackTrace();
+	}
+	
 	if (!activityDay.isUpdate()) {
 	    activityDay.setIdActivity(Math.random() + "");
 	}
@@ -309,6 +336,13 @@ public class MockWebConnectionImpl implements WebConnection {
     }
 
     public Integer removeDay(ActivityDay activityDay) {
+	try {
+	    TimeUnit.SECONDS.sleep(3);
+	} catch (InterruptedException e) {
+	    Log.e(MockWebConnectionImpl.class.toString(), "fillListMock: Error en TimeUnit...", e);
+	    e.printStackTrace();
+	}
+	
 	return 1;
     }
 

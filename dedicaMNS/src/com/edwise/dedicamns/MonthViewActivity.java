@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.edwise.dedicamns.adapters.DayListAdapter;
+import com.edwise.dedicamns.asynctasks.AppData;
 import com.edwise.dedicamns.asynctasks.MonthListAsyncTask;
 import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.beans.MonthListBean;
@@ -45,6 +46,9 @@ public class MonthViewActivity extends Activity {
 
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.month_view);
+	AppData.setCurrentActivity(this);
+
+	restoreFromChangeOrientation(savedInstanceState);
 
 	monthList = (MonthListBean) getIntent().getSerializableExtra("monthList");
 
@@ -59,6 +63,43 @@ public class MonthViewActivity extends Activity {
 	initListView();
     }
 
+    private void restoreFromChangeOrientation(Bundle savedInstanceState) {
+	if (savedInstanceState != null) {
+	    if (savedInstanceState.getBoolean("pDialogON")) {
+		showDialog(getString(R.string.msgGettingMonthData));
+	    }
+	    listState = savedInstanceState.getParcelable("listState");
+	}
+    }
+
+    @Override
+    protected void onRestart() {
+	super.onRestart();
+	AppData.setCurrentActivity(this);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+	Log.d(LOGTAG, "onSaveInstanceState");
+	if (pDialog != null) {
+	    pDialog.cancel();
+	    outState.putBoolean("pDialogON", true);
+	}
+
+	if (listState != null) {
+	    outState.putParcelable("listState", listState);
+	}
+
+	super.onSaveInstanceState(outState);
+    }
+
+    public void closeDialog() {
+	if (pDialog != null) {
+	    pDialog.dismiss();
+	    pDialog = null;
+	}
+    }
+
     private void initListView() {
 	listView.setAdapter(new DayListAdapter(this, monthList.getListDays()));
 
@@ -66,10 +107,6 @@ public class MonthViewActivity extends Activity {
 	    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 		listState = listView.onSaveInstanceState();
 
-		// DayRecord dayRecord = (DayRecord) listView.getItemAtPosition(position);
-		// Intent intent = new Intent(MonthViewActivity.this, DetailDayActivity.class);
-		// intent.putExtra("dayRecord", dayRecord);
-		// startActivityForResult(intent, DAY_REQUEST);
 		DayRecord dayRecord = (DayRecord) listView.getItemAtPosition(position);
 		Intent intent = new Intent(MonthViewActivity.this, GeneralDetailDayActivity.class);
 		intent.putExtra("dayRecord", dayRecord);
@@ -152,7 +189,7 @@ public class MonthViewActivity extends Activity {
 	Integer month = this.monthSpinner.getSelectedItemPosition() + 1;
 	Integer year = Integer.valueOf((String) this.yearSpinner.getSelectedItem());
 
-	AsyncTask<Integer, Integer, Integer> monthListAsyncTask = new MonthListAsyncTask(this, pDialog);
+	AsyncTask<Integer, Integer, Integer> monthListAsyncTask = new MonthListAsyncTask();
 	monthListAsyncTask.execute(new Integer[] { month, year, MonthListAsyncTask.IS_UPDATE_LIST });
     }
 

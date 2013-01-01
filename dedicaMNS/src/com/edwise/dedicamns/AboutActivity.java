@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.edwise.dedicamns.asynctasks.AppData;
+
 public class AboutActivity extends Activity {
     private static final String LOGTAG = AboutActivity.class.toString();
 
@@ -15,6 +17,8 @@ public class AboutActivity extends Activity {
 	Log.d(LOGTAG, "onCreate");
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.about);
+	AppData.setCurrentActivity(this);
+
 	fillTextViewVersion();
     }
 
@@ -45,6 +49,12 @@ public class AboutActivity extends Activity {
 	super.onBackPressed();
 
 	finish();
+    }
+
+    @Override
+    protected void onRestart() {
+	super.onRestart();
+	AppData.setCurrentActivity(this);
     }
 
 }

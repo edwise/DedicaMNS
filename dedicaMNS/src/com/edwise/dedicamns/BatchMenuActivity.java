@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.edwise.dedicamns.asynctasks.AppData;
 import com.edwise.dedicamns.asynctasks.MonthListAsyncTask;
 import com.edwise.dedicamns.beans.BatchDataBean;
 import com.edwise.dedicamns.beans.DayRecord;
@@ -34,6 +35,14 @@ import com.edwise.dedicamns.utils.DayUtils;
 public class BatchMenuActivity extends Activity {
     private static final String LOGTAG = BatchMenuActivity.class.toString();
 
+    private static final int NO_DIALOG = 0;
+    private static final int INIT_ALERT_DIALOG = 1;
+    private static final int MONTH_ALERT_DIALOG = 2;
+    private static final int BATCH_PROGRESS_DIALOG = 1;
+    private static final int MONTH_PROGRESS_DIALOG = 2;
+
+    private static final int DEFAULT_MAX_PROGRESS_DIALOG = 100;
+
     private Spinner monthSpinner = null;
     private Spinner yearSpinner = null;
     private Spinner projectSpinner = null;
@@ -42,12 +51,18 @@ public class BatchMenuActivity extends Activity {
     private Spinner typeHourSpinner = null;
 
     private ProgressDialog pDialog = null;
+    private AlertDialog alertDialog = null;
+    private int alertDialogActiveType = NO_DIALOG;
+    private int progressDialogActiveType = NO_DIALOG;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 	Log.d(LOGTAG, "onCreate");
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.batch_menu);
+	AppData.setCurrentActivity(this);
+
+	restoreFromChangeOrientation(savedInstanceState);
 
 	List<String> listMonths = ConnectionFacade.getWebConnection().getMonths();
 	List<String> listYears = ConnectionFacade.getWebConnection().getYears();
@@ -61,15 +76,72 @@ public class BatchMenuActivity extends Activity {
 	taskEditText = (EditText) findViewById(R.id.batchTaskEditText);
 
 	markTodayMonthYearSelected();
-
-	initDialog();
     }
 
-    private void initDialog() {
-	pDialog = new ProgressDialog(this);
-	pDialog.setMessage("Ejecutando imputación en batch...");
-	pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-	pDialog.setCancelable(false);
+    private void restoreFromChangeOrientation(Bundle savedInstanceState) {
+	if (savedInstanceState != null) {
+	    int pDialogType = savedInstanceState.getInt("pDialogOnType");
+	    if (pDialogType != NO_DIALOG) {
+		showProgressDialogFromType(pDialogType);
+	    }
+	    int alertDialogType = savedInstanceState.getInt("alertDialogType");
+	    if (alertDialogType != NO_DIALOG) {
+		showAlertDialogFromType(alertDialogType);
+	    }
+	}
+    }
+
+    private void showAlertDialogFromType(int alertDialogType) {
+	switch (alertDialogType) {
+	case INIT_ALERT_DIALOG:
+	    launchBatchProcessWithAlertDialog();
+	    break;
+	case MONTH_ALERT_DIALOG:
+	    showOkAlertDialog();
+	    break;
+	default:
+	    throw new IllegalArgumentException();
+	}
+    }
+
+    private void showProgressDialogFromType(int pDialogType) {
+	switch (pDialogType) {
+	case BATCH_PROGRESS_DIALOG:
+	    showDialogWithProgress();
+	    break;
+	case MONTH_PROGRESS_DIALOG:
+	    showMonthProgressDialog();
+	    break;
+	default:
+	    throw new IllegalArgumentException();
+	}
+    }
+
+    @Override
+    protected void onRestart() {
+	super.onRestart();
+	AppData.setCurrentActivity(this);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+	Log.d(LOGTAG, "onSaveInstanceState");
+	if (pDialog != null) {
+	    pDialog.cancel();
+	    outState.putInt("pDialogOnType", progressDialogActiveType);
+	} else if (alertDialogActiveType != NO_DIALOG) {
+	    alertDialog.dismiss();
+	    outState.putInt("alertDialogType", alertDialogActiveType);
+	}
+	super.onSaveInstanceState(outState);
+    }
+
+    public void closeDialog() {
+	if (pDialog != null) {
+	    pDialog.dismiss();
+	    pDialog = null;
+	    this.progressDialogActiveType = NO_DIALOG;
+	}
     }
 
     private void linkTypeHourSpinner() {
@@ -204,27 +276,53 @@ public class BatchMenuActivity extends Activity {
     }
 
     private void launchBatchProcessWithAlertDialog() {
+	this.alertDialogActiveType = INIT_ALERT_DIALOG;
 	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 	alertDialogBuilder.setTitle(getString(R.string.msgInputProcessToExecute));
 	alertDialogBuilder.setMessage(getString(R.string.msgContinue));
 	alertDialogBuilder.setPositiveButton(getString(R.string.msgAlertOK),
 		new DialogInterface.OnClickListener() {
 		    public void onClick(DialogInterface dialog, int which) {
+			BatchMenuActivity.this.alertDialogActiveType = NO_DIALOG;
 			launchBatchProcess();
 		    }
 		});
 	alertDialogBuilder.setNegativeButton(getString(R.string.msgAlertCancel),
 		new DialogInterface.OnClickListener() {
 		    public void onClick(DialogInterface dialog, int which) {
+			BatchMenuActivity.this.alertDialogActiveType = NO_DIALOG;
 		    }
 		});
-	alertDialogBuilder.show();
+	alertDialog = alertDialogBuilder.show();
+    }
+
+    private void showOkAlertDialog() {
+	this.alertDialogActiveType = MONTH_ALERT_DIALOG;
+	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(AppData.getCurrentActivity());
+	alertDialogBuilder.setTitle(AppData.getCurrentActivity().getString(
+		R.string.msgInputBatchProccessFinished));
+	alertDialogBuilder.setMessage(AppData.getCurrentActivity().getString(R.string.msgSeeInputHours));
+	alertDialogBuilder.setPositiveButton(AppData.getCurrentActivity().getString(R.string.msgYES),
+		new DialogInterface.OnClickListener() {
+		    public void onClick(DialogInterface dialog, int which) {
+			BatchMenuActivity.this.alertDialogActiveType = NO_DIALOG;
+			launchMonthActivity();
+		    }
+		});
+	alertDialogBuilder.setNegativeButton(AppData.getCurrentActivity().getString(R.string.msgNO),
+		new DialogInterface.OnClickListener() {
+		    public void onClick(DialogInterface dialog, int which) {
+			BatchMenuActivity.this.alertDialogActiveType = NO_DIALOG;
+			finish();
+		    }
+		});
+	alertDialog = alertDialogBuilder.show();
     }
 
     private void launchBatchProcess() {
-	showDialog();
+	showDialogWithProgress();
 	BatchDataBean batchData = fillDataBean();
-	AsyncTask<BatchDataBean, Integer, Integer> batchTask = new BatchAsyncTask(this);
+	AsyncTask<BatchDataBean, Integer, Integer> batchTask = new BatchAsyncTask();
 	batchTask.execute(batchData);
     }
 
@@ -234,8 +332,13 @@ public class BatchMenuActivity extends Activity {
 	toast.show();
     }
 
-    private void showDialog() {
+    private void showDialogWithProgress() {
+	pDialog = new ProgressDialog(this);
+	pDialog.setMessage(getString(R.string.msgInputProcessExecuting));
+	pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+	pDialog.setCancelable(false);
 	pDialog.show();
+	this.progressDialogActiveType = BATCH_PROGRESS_DIALOG;
     }
 
     private BatchDataBean fillDataBean() {
@@ -259,23 +362,21 @@ public class BatchMenuActivity extends Activity {
     private void launchMonthActivity() {
 	Log.d(LOGTAG, "launchMonthActivity");
 
-	showDialog(getString(R.string.msgGettingDataMonth));
-	AsyncTask<Integer, Integer, Integer> monthListAsyncTask = new MonthListAsyncTask(this, pDialog);
+	showMonthProgressDialog();
+	AsyncTask<Integer, Integer, Integer> monthListAsyncTask = new MonthListAsyncTask();
 	monthListAsyncTask.execute(1);
     }
 
-    private void showDialog(String message) {
-	pDialog = ProgressDialog.show(this, message, getString(R.string.msgPleaseWait), true);
+    private void showMonthProgressDialog() {
+	pDialog = ProgressDialog.show(this, getString(R.string.msgGettingDataMonth),
+		getString(R.string.msgPleaseWait), true);
+	this.progressDialogActiveType = MONTH_PROGRESS_DIALOG;
     }
 
     private class BatchAsyncTask extends AsyncTask<BatchDataBean, Integer, Integer> {
 
-	private Activity activity;
 	private BatchDataBean batchData;
-
-	public BatchAsyncTask(Activity activity) {
-	    this.activity = activity;
-	}
+	private int totalDays;
 
 	@Override
 	protected Integer doInBackground(BatchDataBean... batchData) {
@@ -288,8 +389,11 @@ public class BatchMenuActivity extends Activity {
 		List<DayRecord> listDays = webConnection.getListDaysAndActivitiesForMonthAndYear(
 			this.batchData.getNumMonth(), this.batchData.getYear(), false);
 		listDays = DayUtils.fillListDaysWithOnlyActivityDay(listDays, this.batchData);
-		int total = listDays.size();
-		pDialog.setMax(total);
+
+		totalDays = listDays.size();
+		BatchMenuActivity activity = (BatchMenuActivity) AppData.getCurrentActivity();
+		activity.pDialog.setMax(totalDays);
+
 		int processed = 0;
 		for (DayRecord day : listDays) {
 		    webConnection.saveDayBatch(day);
@@ -308,37 +412,18 @@ public class BatchMenuActivity extends Activity {
 	protected void onPostExecute(Integer result) {
 	    Log.d(BatchAsyncTask.class.toString(), "onPostExecute...");
 
+	    this.closeDialog();
 	    if (result == 1) {
-		this.closeDialog();
-		this.showOkAlertDialog();
+		BatchMenuActivity activity = (BatchMenuActivity) AppData.getCurrentActivity();
+		activity.showOkAlertDialog();
 	    } else {
-		this.closeDialog();
-		showToastMessage(activity.getString(R.string.msgInputBatchError));
+		showToastMessage(AppData.getCurrentActivity().getString(R.string.msgInputBatchError));
 	    }
 	}
 
 	private void closeDialog() {
-	    pDialog.dismiss();
-	    pDialog = null;
-	}
-
-	private void showOkAlertDialog() {
-	    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.activity);
-	    alertDialogBuilder.setTitle(activity.getString(R.string.msgInputBatchProccessFinished));
-	    alertDialogBuilder.setMessage(activity.getString(R.string.msgSeeInputHours));
-	    alertDialogBuilder.setPositiveButton(activity.getString(R.string.msgYES),
-		    new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-			    launchMonthActivity();
-			}
-		    });
-	    alertDialogBuilder.setNegativeButton(activity.getString(R.string.msgNO),
-		    new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-			    finish();
-			}
-		    });
-	    alertDialogBuilder.show();
+	    BatchMenuActivity activity = (BatchMenuActivity) AppData.getCurrentActivity();
+	    activity.closeDialog();
 	}
 
 	@Override
@@ -346,11 +431,15 @@ public class BatchMenuActivity extends Activity {
 	    Log.d(BatchAsyncTask.class.toString(), "onProgressUpdate...");
 	    super.onProgressUpdate(values);
 
-	    pDialog.setProgress(values[0]);
+	    BatchMenuActivity activity = (BatchMenuActivity) AppData.getCurrentActivity();
+	    if (activity.pDialog.getMax() == DEFAULT_MAX_PROGRESS_DIALOG) {
+		activity.pDialog.setMax(totalDays);
+	    }
+	    activity.pDialog.setProgress(values[0]);
 	}
 
 	private void showToastMessage(String message) {
-	    Toast toast = Toast.makeText(this.activity, message, Toast.LENGTH_LONG);
+	    Toast toast = Toast.makeText(AppData.getCurrentActivity(), message, Toast.LENGTH_LONG);
 	    toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 20);
 	    toast.show();
 	}

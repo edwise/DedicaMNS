@@ -6,8 +6,6 @@ package com.edwise.dedicamns.asynctasks;
 import java.io.Serializable;
 import java.util.List;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -15,6 +13,7 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 import com.edwise.dedicamns.BatchMenuActivity;
+import com.edwise.dedicamns.MainMenuActivity;
 import com.edwise.dedicamns.MonthViewActivity;
 import com.edwise.dedicamns.R;
 import com.edwise.dedicamns.beans.DayRecord;
@@ -35,15 +34,8 @@ public class MonthListAsyncTask extends AsyncTask<Integer, Integer, Integer> {
     private static final int ERROR = -1;
     public static final int IS_UPDATE_LIST = 11;
 
-    private Activity activity;
     private MonthListBean monthList = null;
-    private ProgressDialog pDialog = null;
     private boolean isUpdateList = false;
-
-    public MonthListAsyncTask(Activity activity, ProgressDialog pDialog) {
-	this.activity = activity;
-	this.pDialog = pDialog;
-    }
 
     @Override
     protected Integer doInBackground(Integer... params) {
@@ -97,13 +89,13 @@ public class MonthListAsyncTask extends AsyncTask<Integer, Integer, Integer> {
 	    finalizeTaskOk();
 	} else {
 	    this.closeDialog();
-	    showToastMessage(activity.getString(R.string.msgWebError));
+	    showToastMessage(AppData.getCurrentActivity().getString(R.string.msgWebError));
 	}
     }
 
     private void finalizeTaskOk() {
 	if (isUpdateList) {
-	    ((MonthViewActivity) this.activity).updateList(monthList);
+	    ((MonthViewActivity) AppData.getCurrentActivity()).updateList(monthList);
 	    this.closeDialog();
 	} else { // Es acceso normal, o que viene del batch
 	    this.launchMonthActivity();
@@ -113,25 +105,33 @@ public class MonthListAsyncTask extends AsyncTask<Integer, Integer, Integer> {
     }
 
     protected void finalizeActivityIfBatch() {
-	if (this.activity instanceof BatchMenuActivity) {
-	    this.activity.finish();
+	if (AppData.getCurrentActivity() instanceof BatchMenuActivity) {
+	    AppData.getCurrentActivity().finish();
 	}
     }
 
     private void closeDialog() {
-	pDialog.dismiss();
-	pDialog = null;
+	if (AppData.getCurrentActivity() instanceof BatchMenuActivity) {
+	    BatchMenuActivity activity = (BatchMenuActivity) AppData.getCurrentActivity();
+	    activity.closeDialog();
+	} else if (AppData.getCurrentActivity() instanceof MonthViewActivity) {
+	    MonthViewActivity activity = (MonthViewActivity) AppData.getCurrentActivity();
+	    activity.closeDialog();
+	} else if (AppData.getCurrentActivity() instanceof MainMenuActivity) {
+	    MainMenuActivity activity = (MainMenuActivity) AppData.getCurrentActivity();
+	    activity.closeDialog();
+	}
     }
 
     private void launchMonthActivity() {
-	Intent intent = new Intent(this.activity, MonthViewActivity.class);
+	Intent intent = new Intent(AppData.getCurrentActivity(), MonthViewActivity.class);
 	intent.putExtra("monthList", (Serializable) monthList);
 
-	this.activity.startActivity(intent);
+	AppData.getCurrentActivity().startActivity(intent);
     }
 
     private void showToastMessage(String message) {
-	Toast toast = Toast.makeText(this.activity, message, Toast.LENGTH_LONG);
+	Toast toast = Toast.makeText(AppData.getCurrentActivity(), message, Toast.LENGTH_LONG);
 	toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 20);
 	toast.show();
     }

@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.edwise.dedicamns.adapters.ActivityListAdapter;
+import com.edwise.dedicamns.asynctasks.AppData;
 import com.edwise.dedicamns.beans.ActivityDay;
 import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.connections.ConnectionException;
@@ -41,11 +42,17 @@ public class GeneralDetailDayActivity extends Activity {
     private ListView listView = null;
 
     private ProgressDialog pDialog = null;
+    private AlertDialog alertDialog = null;
+    private boolean alertDialogActive = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.general_detail_day);
+	Log.d(LOGTAG, "onCreate");
+	AppData.setCurrentActivity(this);
+
+	restoreDialogs(savedInstanceState);
 
 	this.dayRecord = (DayRecord) getIntent().getSerializableExtra("dayRecord");
 	this.dayModif = false;
@@ -60,6 +67,41 @@ public class GeneralDetailDayActivity extends Activity {
 	} else {
 	    Log.e(LOGTAG, "DayRecord ha venido nulo");
 	    throw new UnsupportedOperationException("DayRecord ha venido nulo!");
+	}
+    }
+
+    private void restoreDialogs(Bundle savedInstanceState) {
+	if (savedInstanceState != null && savedInstanceState.getBoolean("pDialogON")) {
+	    showDialog();
+	} else if (savedInstanceState != null && savedInstanceState.getBoolean("alertDialogON")) {
+	    launchRemoveProcessWithAlertDialog();
+	}
+
+    }
+
+    @Override
+    protected void onRestart() {
+	super.onRestart();
+	AppData.setCurrentActivity(this);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+	Log.d(LOGTAG, "onSaveInstanceState");
+	if (pDialog != null) {
+	    pDialog.cancel();
+	    outState.putBoolean("pDialogON", true);
+	} else if (alertDialogActive) {
+	    alertDialog.dismiss();
+	    outState.putBoolean("alertDialogON", true);
+	}
+	super.onSaveInstanceState(outState);
+    }
+
+    public void closeDialog() {
+	if (pDialog != null) {
+	    pDialog.dismiss();
+	    pDialog = null;
 	}
     }
 
@@ -199,34 +241,30 @@ public class GeneralDetailDayActivity extends Activity {
     }
 
     private void launchRemoveProcessWithAlertDialog() {
+	this.alertDialogActive = true;
 	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 	alertDialogBuilder.setTitle(getString(R.string.msgRemoveAllActivities));
 	alertDialogBuilder.setMessage(getString(R.string.msgContinue));
 	alertDialogBuilder.setPositiveButton(getString(R.string.msgAlertOK),
 		new DialogInterface.OnClickListener() {
 		    public void onClick(DialogInterface dialog, int which) {
+			GeneralDetailDayActivity.this.alertDialogActive = false;
 			showDialog();
 			GeneralDetailDayActivity.this.dayModif = true;
-			AsyncTask<Integer, Integer, Integer> connectionAsyncTask = new RemoveAllActivitiesAsyncTask(
-				GeneralDetailDayActivity.this);
+			AsyncTask<Integer, Integer, Integer> connectionAsyncTask = new RemoveAllActivitiesAsyncTask();
 			connectionAsyncTask.execute(1);
 		    }
 		});
 	alertDialogBuilder.setNegativeButton(getString(R.string.msgAlertCancel),
 		new DialogInterface.OnClickListener() {
 		    public void onClick(DialogInterface dialog, int which) {
+			GeneralDetailDayActivity.this.alertDialogActive = false;
 		    }
 		});
-	alertDialogBuilder.show();
+	alertDialog = alertDialogBuilder.show();
     }
 
     private class RemoveAllActivitiesAsyncTask extends AsyncTask<Integer, Integer, Integer> {
-
-	private Activity activity;
-
-	public RemoveAllActivitiesAsyncTask(Activity activity) {
-	    this.activity = activity;
-	}
 
 	@Override
 	protected Integer doInBackground(Integer... param) {
@@ -257,7 +295,7 @@ public class GeneralDetailDayActivity extends Activity {
 
 	    this.closeDialog();
 	    if (result == 1) {
-		((GeneralDetailDayActivity) activity).emptyListAndRedraw();
+		((GeneralDetailDayActivity) AppData.getCurrentActivity()).emptyListAndRedraw();
 		showToastMessage(getString(R.string.msgRemoveOK));
 	    } else {
 		showToastMessage(ErrorUtils.getMessageError(result));
@@ -265,12 +303,12 @@ public class GeneralDetailDayActivity extends Activity {
 	}
 
 	private void closeDialog() {
-	    pDialog.dismiss();
-	    pDialog = null;
+	    GeneralDetailDayActivity activity = (GeneralDetailDayActivity) AppData.getCurrentActivity();
+	    activity.closeDialog();
 	}
 
 	private void showToastMessage(String message) {
-	    Toast toast = Toast.makeText(this.activity, message, Toast.LENGTH_LONG);
+	    Toast toast = Toast.makeText(AppData.getCurrentActivity(), message, Toast.LENGTH_LONG);
 	    toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 20);
 	    toast.show();
 	}

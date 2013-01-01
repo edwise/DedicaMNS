@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.edwise.dedicamns.asynctasks.AppData;
 import com.edwise.dedicamns.beans.ActivityDay;
 import com.edwise.dedicamns.connections.ConnectionException;
 import com.edwise.dedicamns.connections.ConnectionFacade;
@@ -42,6 +43,7 @@ public class DetailDayActivity extends Activity {
     private Integer dayNum = null;
     private String dateForm = null;
     private ProgressDialog pDialog = null;
+    private String messageDialog = null;
 
     private EditText hoursEditText = null;
     private Spinner projectSpinner = null;
@@ -55,6 +57,12 @@ public class DetailDayActivity extends Activity {
 	Log.d(LOGTAG, "onCreate");
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.detail_day);
+	AppData.setCurrentActivity(this);
+
+	if (savedInstanceState != null && savedInstanceState.getBoolean("pDialogON")) {
+	    String message = savedInstanceState.getString("messageDialog");
+	    showDialog(message);
+	}
 
 	this.activityDay = (ActivityDay) getIntent().getSerializableExtra("activityDay");
 	this.dateForm = getIntent().getStringExtra("dateForm");
@@ -74,6 +82,30 @@ public class DetailDayActivity extends Activity {
 	} else {
 	    Log.e(LOGTAG, "ActivityDay ha venido nulo");
 	    throw new UnsupportedOperationException("ActivityDay ha venido nulo!");
+	}
+    }
+
+    @Override
+    protected void onRestart() {
+	super.onRestart();
+	AppData.setCurrentActivity(this);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+	Log.d(LOGTAG, "onSaveInstanceState");
+	if (pDialog != null) {
+	    pDialog.cancel();
+	    outState.putBoolean("pDialogON", true);
+	    outState.putString("messageDialog", this.messageDialog);
+	}
+	super.onSaveInstanceState(outState);
+    }
+
+    public void closeDialog() {
+	if (pDialog != null) {
+	    pDialog.dismiss();
+	    pDialog = null;
 	}
     }
 
@@ -167,8 +199,7 @@ public class DetailDayActivity extends Activity {
 	} else {
 	    showDialog(DetailDayActionEnum.SAVE);
 	    fillActivityDay();
-	    AsyncTask<DetailDayActionEnum, Integer, Integer> connectionAsyncTask = new SaveRemoveActivityAsyncTask(
-		    this);
+	    AsyncTask<DetailDayActionEnum, Integer, Integer> connectionAsyncTask = new SaveRemoveActivityAsyncTask();
 	    connectionAsyncTask.execute(DetailDayActionEnum.SAVE);
 	}
     }
@@ -197,17 +228,22 @@ public class DetailDayActivity extends Activity {
 
 	showDialog(DetailDayActionEnum.REMOVE);
 
-	AsyncTask<DetailDayActionEnum, Integer, Integer> connectionAsyncTask = new SaveRemoveActivityAsyncTask(
-		this);
+	AsyncTask<DetailDayActionEnum, Integer, Integer> connectionAsyncTask = new SaveRemoveActivityAsyncTask();
 	connectionAsyncTask.execute(DetailDayActionEnum.REMOVE);
     }
 
     private void showDialog(DetailDayActionEnum actionEnum) {
-	String messageDialog = getString(R.string.msgSaving);
+	String message = getString(R.string.msgSaving);
 	if (actionEnum == DetailDayActionEnum.REMOVE) {
-	    messageDialog = getString(R.string.msgRemoving);
+	    message = getString(R.string.msgRemoving);
 	}
-	pDialog = ProgressDialog.show(this, messageDialog, getString(R.string.msgPleaseWait), true);
+	showDialog(message);
+    }
+
+    private void showDialog(String message) {
+	this.messageDialog = message;
+
+	pDialog = ProgressDialog.show(this, message, getString(R.string.msgPleaseWait), true);
     }
 
     @Override
@@ -222,12 +258,7 @@ public class DetailDayActivity extends Activity {
 
     private class SaveRemoveActivityAsyncTask extends AsyncTask<DetailDayActionEnum, Integer, Integer> {
 
-	private Activity activity;
 	private DetailDayActionEnum action;
-
-	public SaveRemoveActivityAsyncTask(Activity activity) {
-	    this.activity = activity;
-	}
 
 	@Override
 	protected Integer doInBackground(DetailDayActionEnum... action) {
@@ -275,8 +306,8 @@ public class DetailDayActivity extends Activity {
 	}
 
 	private void closeDialog() {
-	    pDialog.dismiss();
-	    pDialog = null;
+	    DetailDayActivity activity = (DetailDayActivity) AppData.getCurrentActivity();
+	    activity.closeDialog();
 	}
 
 	@Override
@@ -302,7 +333,7 @@ public class DetailDayActivity extends Activity {
 	}
 
 	private void showToastMessage(String message) {
-	    Toast toast = Toast.makeText(this.activity, message, Toast.LENGTH_LONG);
+	    Toast toast = Toast.makeText(AppData.getCurrentActivity(), message, Toast.LENGTH_LONG);
 	    toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 20);
 	    toast.show();
 	}
