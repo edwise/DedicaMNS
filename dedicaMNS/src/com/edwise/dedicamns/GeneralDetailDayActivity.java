@@ -55,10 +55,9 @@ public class GeneralDetailDayActivity extends Activity {
 	Log.d(LOGTAG, "onCreate");
 	AppData.setCurrentActivity(this);
 
-	restoreDialogs(savedInstanceState);
+	restoreFromChangeOrientation(savedInstanceState);
 
 	this.dayRecord = (DayRecord) getIntent().getSerializableExtra("dayRecord");
-	this.dayModif = false;
 	if (dayRecord != null) {
 	    removeAllButton = (Button) findViewById(R.id.generalRemoveAllButton);
 	    gDayInfoTextView = (TextView) findViewById(R.id.gDayInfoTextView);
@@ -75,13 +74,20 @@ public class GeneralDetailDayActivity extends Activity {
 	}
     }
 
-    private void restoreDialogs(Bundle savedInstanceState) {
-	if (savedInstanceState != null && savedInstanceState.getBoolean("pDialogON")) {
-	    showDialog();
-	} else if (savedInstanceState != null && savedInstanceState.getBoolean("alertDialogON")) {
-	    launchRemoveProcessWithAlertDialog();
+    private void restoreFromChangeOrientation(Bundle savedInstanceState) {
+	if (savedInstanceState != null) {
+	    // Dialogs
+	    if (savedInstanceState.getBoolean("pDialogON")) {
+		showDialog();
+	    } else if (savedInstanceState.getBoolean("alertDialogON")) {
+		launchRemoveProcessWithAlertDialog();
+	    }
+	    // Día modificado
+	    if (savedInstanceState.getSerializable("dayRecordModif") != null) {
+		dayRecord = (DayRecord) savedInstanceState.getSerializable("dayRecordModif");
+		dayModif = true;
+	    }
 	}
-
     }
 
     @Override
@@ -93,12 +99,17 @@ public class GeneralDetailDayActivity extends Activity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
 	Log.d(LOGTAG, "onSaveInstanceState");
+	// Dialogs
 	if (pDialog != null) {
 	    pDialog.cancel();
 	    outState.putBoolean("pDialogON", true);
 	} else if (alertDialogActive) {
 	    alertDialog.dismiss();
 	    outState.putBoolean("alertDialogON", true);
+	}
+	// Día modificado
+	if (dayModif) {
+	    outState.putSerializable("dayRecordModif", dayRecord);
 	}
 	super.onSaveInstanceState(outState);
     }
