@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,6 +42,8 @@ public class GeneralDetailDayActivity extends Activity {
     private TextView gTotalHoursTextView = null;
     private ListView listView = null;
 
+    private Button removeAllButton = null;
+
     private ProgressDialog pDialog = null;
     private AlertDialog alertDialog = null;
     private boolean alertDialogActive = false;
@@ -57,12 +60,14 @@ public class GeneralDetailDayActivity extends Activity {
 	this.dayRecord = (DayRecord) getIntent().getSerializableExtra("dayRecord");
 	this.dayModif = false;
 	if (dayRecord != null) {
+	    removeAllButton = (Button) findViewById(R.id.generalRemoveAllButton);
 	    gDayInfoTextView = (TextView) findViewById(R.id.gDayInfoTextView);
 	    gDayInfoTextView.setText(dayRecord.getDayNum() + " - " + dayRecord.getDayName());
 	    gTotalHoursTextView = (TextView) findViewById(R.id.gTotalHoursTextView);
 	    gTotalHoursTextView.setText(dayRecord.getHours());
-
 	    listView = (ListView) findViewById(R.id.gListActivities);
+
+	    showORhideRemoveAllButton();
 	    initListView();
 	} else {
 	    Log.e(LOGTAG, "DayRecord ha venido nulo");
@@ -105,13 +110,19 @@ public class GeneralDetailDayActivity extends Activity {
 	}
     }
 
+    private void showORhideRemoveAllButton() {
+	if (this.dayRecord.isEmptyDay()) {
+	    removeAllButton.setVisibility(View.GONE);
+	} else if (removeAllButton.getVisibility() == View.GONE) {
+	    removeAllButton.setVisibility(View.VISIBLE);
+	}
+    }
+
     private void initListView() {
 	listView.setAdapter(new ActivityListAdapter(this, dayRecord.getActivities()));
 
 	listView.setOnItemClickListener(new OnItemClickListener() {
 	    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-		// listState = listView.onSaveInstanceState();
-
 		ActivityDay activityDay = (ActivityDay) listView.getItemAtPosition(position);
 		launchDetailDayActivity(activityDay);
 	    }
@@ -154,6 +165,7 @@ public class GeneralDetailDayActivity extends Activity {
 		ActivityDay activityDay = (ActivityDay) data.getSerializableExtra("activityModif");
 		this.reDrawListActivities(activityDay);
 		this.recalculateTotalHours();
+		showORhideRemoveAllButton();
 	    }
 	}
     }
@@ -162,7 +174,6 @@ public class GeneralDetailDayActivity extends Activity {
 	// Repintado de toda la lista, cambiando la activity que ha cambiado
 	changeActivityInList(activityDay);
 	listView.setAdapter(new ActivityListAdapter(this, dayRecord.getActivities()));
-	// listView.onRestoreInstanceState(listState);
 
 	Log.d(LOGTAG, "changeActivityDataList: done");
     }
@@ -295,7 +306,9 @@ public class GeneralDetailDayActivity extends Activity {
 
 	    this.closeDialog();
 	    if (result == 1) {
-		((GeneralDetailDayActivity) AppData.getCurrentActivity()).emptyListAndRedraw();
+		GeneralDetailDayActivity activity = (GeneralDetailDayActivity) AppData.getCurrentActivity();
+		activity.emptyListAndRedraw();
+		activity.showORhideRemoveAllButton();
 		showToastMessage(getString(R.string.msgRemoveOK));
 	    } else {
 		showToastMessage(ErrorUtils.getMessageError(result));

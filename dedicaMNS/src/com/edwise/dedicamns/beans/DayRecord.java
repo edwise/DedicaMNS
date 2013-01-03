@@ -83,4 +83,8 @@ public class DayRecord implements Serializable {
 	this.activities.clear();
 	this.activities = dayRecord.getActivities();
     }
+
+    public boolean isEmptyDay() {
+	return this.activities == null || this.activities.size() == 0;
+    }
 }
