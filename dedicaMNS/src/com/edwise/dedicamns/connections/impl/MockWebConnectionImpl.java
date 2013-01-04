@@ -43,7 +43,7 @@ public class MockWebConnectionImpl implements WebConnection {
      */
     public Integer connectWeb(String userName, String password) {
 	try {
-	    TimeUnit.SECONDS.sleep(3);
+	    TimeUnit.SECONDS.sleep(5);
 	} catch (InterruptedException e) {
 	    Log.e(MockWebConnectionImpl.class.toString(), "connectWeb: Error en TimeUnit...", e);
 	    e.printStackTrace();

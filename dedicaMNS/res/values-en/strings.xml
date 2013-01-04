@@ -14,7 +14,7 @@
     <string name="title_activity_main_menu">Dedica MNS</string>
     <string name="title_activity_batch_menu">Dedica MNS</string>
     <string name="title_activity_about">About</string>
-    <string name="about_text">\nAndroid application for MediaNet Software Dedicaciones Web.\n</string>
+    <string name="about_text">\nAndroid application for MediaNet Software Dedicaciones Web.\n\n More info in <a href="https://github.com/edwise/DedicaMNS">https://github.com/edwise/DedicaMNS</a>\n</string>
     <string name="batchTitle">Batch Input</string>
     <string name="monthLabelBatch">"Month: "</string>
     <string name="yearLabelBatch">"Year: "</string>

@@ -15,7 +15,7 @@
     <string name="title_activity_main_menu">Dedica MNS</string>
     <string name="title_activity_batch_menu">Dedica MNS</string>
     <string name="title_activity_about">Acerca De</string>
-    <string name="about_text">Aplicación para imputar las horas en las dedicaciones de MediaNet Software. \nAhora admite varios proyectos por día. \n\nDesarrollada para minimizar el tiempo que perdemos en el apasionante mundo de la imputación de horas. \nTodos los accesos se hacen directamente a la web (de ahi el tiempo brutal que tarda en hacer algunas cosas&#8230;). \nEl user y password se guarda internamente de manera segura.\n</string>
+    <string name="about_text">Aplicación para imputar las horas en las dedicaciones de MediaNet Software. \nAdmite varios proyectos por día. \n\nDesarrollada para minimizar el tiempo que perdemos en el apasionante mundo de la imputación de horas. \nTodos los accesos se hacen directamente a la web (de ahi el tiempo brutal que tarda en hacer algunas cosas&#8230;). \nEl user y password se guardan internamente de manera segura.\n\n Más información en <a href="https://github.com/edwise/DedicaMNS">https://github.com/edwise/DedicaMNS</a>\n</string>
     <string name="batchTitle">Imputación en Batch</string>
     <string name="monthLabelBatch">"Mes: "</string>
     <string name="yearLabelBatch">"Año: "</string>
@@ -72,6 +72,6 @@
     <string name="addButton">Añadir</string>
     <string name="removeAllButton">Borrar todas</string>
     <string name="updateButton">Actualizar</string>
-    <string name="msgInputProcessExecuting">Ejecutando imputación en batch&#8230;</string>    
+    <string name="msgInputProcessExecuting">Ejecutando imputación en batch&#8230;</string>
 
 </resources>

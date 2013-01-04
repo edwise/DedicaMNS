@@ -49,12 +49,13 @@ public class LoginActivity extends Activity {
 	if (savedInstanceState != null && savedInstanceState.getBoolean("pDialogON")) {
 	    // El pDialog estaba activo, mostrarlo otra vez
 	    showDialog();
+	} else {
+	    if (!checkIfLogout()) {
+		ConnectionFacade.createWebConnection(this);
+		chargeSavedData();
+	    }
 	}
 
-	if (!checkIfLogout()) {
-	    chargeSavedData();
-	    ConnectionFacade.createWebConnection(this);
-	}
     }
 
     private void initFields() {
@@ -179,6 +180,10 @@ public class LoginActivity extends Activity {
 	if (pDialog != null) {
 	    pDialog.cancel();
 	    outState.putBoolean("pDialogON", true);
+
+	    // outState.putString("user", value);
+	    // outState.putString("pass", value);
+	    // outState.putBoolean("remember", value);
 	}
 	super.onSaveInstanceState(outState);
     }
