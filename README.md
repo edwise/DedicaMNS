@@ -15,14 +15,16 @@ Consideraciones importantes a tener en cuenta:
   - Se carga el listado de proyectos y subproyectos una vez en cada "sesión". Esto se hace la primera vez que accedemos a cualquiera de las 2 opciones. Luego ya se queda cacheado. Por eso el primer acceso puede ser algo lento... (esto se cambiará en futuras versiones)
   - Github ya no permite sección de donwloads, así que ya no puedo subir ahí el apk. Instalatela por google play. También puedes bajarte todo el código, y crearte tu el apk en un entorno con el sdk. (esta última opción es recomendable para los paranoicos que crean que en el apk el código es distinto y en él, me guardo su password de alguna manera rara xD )
  
-Futuras ampliaciones / evolutivos:
-  - Elegir mes y año en listado mensual, para poder consultar otros meses. (HECHO!)
-  - Permitir más de un proyecto por día en el listado mensual y ventana de detalle. (HECHO!)
-  - Permitir introducir la hora en más formatos (ahora solo permite "HH:MI"). (HECHO!)
-  - Adaptar toda la app para "landscape" (actualmente hay pantallas que no salen bien en apaisado) (HECHO!)
+Futuras ampliaciones / evolutivos:  
   - Optimización de carga de proyectos, guardandolos en una bd en el primer login. 
   - Perfiles en la imputación batch.
   - Mostrar informe mensual de horas.
+
+Ampliaciones / evolutivos ya realizados:
+  - Elegir mes y año en listado mensual, para poder consultar otros meses.
+  - Permitir más de un proyecto por día en el listado mensual y ventana de detalle.
+  - Permitir introducir la hora en más formatos (ahora solo permite "HH:MI").
+  - Adaptar toda la app para "landscape" (actualmente hay pantallas que no salen bien en apaisado)
   
   
 
