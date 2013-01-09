@@ -7,7 +7,7 @@ Ya está subida a google play! https://play.google.com/store/apps/details?id=com
 
 El user y password se guardan en las sharedpreferences de la aplicación, si dejamos marcado el check de "recordarme". No se hace nada más con el pass (revisa el código si eres muy paranoico, ahi lo tienes ;) )
 
-La aplicación esta en ya en versión final (¡Ahora sí!).
+La aplicación esta ya en versión final (¡Ahora sí!).
 
 Se agradecen cualquier tipo de sugerencias o aviso de bugs.
 
