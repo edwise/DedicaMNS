@@ -17,14 +17,15 @@ Consideraciones importantes a tener en cuenta:
  
 Futuras ampliaciones / evolutivos:  
   - Optimización de carga de proyectos, guardandolos en una bd en el primer login. 
+  - Opción de compartir el informe mensual.
   - Perfiles en la imputación batch.
-  - Mostrar informe mensual de horas.
-
+  
 Ampliaciones / evolutivos ya realizados:
   - Elegir mes y año en listado mensual, para poder consultar otros meses.
   - Permitir más de un proyecto por día en el listado mensual y ventana de detalle.
   - Permitir introducir la hora en más formatos (ahora solo permite "HH:MI").
   - Adaptar toda la app para "landscape" (actualmente hay pantallas que no salen bien en apaisado)
+  - Mostrar informe mensual de horas.
   
   
 
