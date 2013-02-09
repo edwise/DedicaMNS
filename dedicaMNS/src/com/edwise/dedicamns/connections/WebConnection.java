@@ -7,6 +7,7 @@ import android.app.Activity;
 import com.edwise.dedicamns.beans.ActivityDay;
 import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.beans.MonthListBean;
+import com.edwise.dedicamns.beans.MonthReportBean;
 
 public interface WebConnection {
 
@@ -36,4 +37,6 @@ public interface WebConnection {
 
     List<DayRecord> getListDaysAndActivitiesForMonthAndYear(int month, String year, boolean withActivities)
 	    throws ConnectionException;
+
+    MonthReportBean getMonthReport() throws ConnectionException;
 }

@@ -24,7 +24,7 @@ public class MenuUtils {
 	source.startActivity(intent);
 	source.finish();
     }
-    
+
     public static void doDirectLogout(Activity source) {
 	Intent intent = new Intent(source, LoginActivity.class);
 	intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

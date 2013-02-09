@@ -42,6 +42,8 @@ import android.util.Log;
 import com.edwise.dedicamns.beans.ActivityDay;
 import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.beans.MonthListBean;
+import com.edwise.dedicamns.beans.MonthReportBean;
+import com.edwise.dedicamns.beans.MonthReportRecord;
 import com.edwise.dedicamns.beans.MonthYearBean;
 import com.edwise.dedicamns.beans.ProjectSubprojectBean;
 import com.edwise.dedicamns.connections.ConnectionException;
@@ -64,11 +66,12 @@ public class MNSWebConnectionImpl implements WebConnection {
     private static final String DOMAIN = "medianet2k";
     // private static final String COOKIE_SESSION = "ASP.NET_SessionId";
     private static final String URL_STR = "http://dedicaciones.medianet.es";
-    private static final String URL_ACCOUNTS_STR = "http://dedicaciones.medianet.es/Home/Accounts";
+    private static final String URL_STR_ACCOUNTS = "http://dedicaciones.medianet.es/Home/Accounts";
     private static final String URL_STR_CREATE = "http://dedicaciones.medianet.es/Home/CreateActivity";
     private static final String URL_STR_MODIFY = "http://dedicaciones.medianet.es/Home/EditActivity";
     private static final String URL_STR_DELETE = "http://dedicaciones.medianet.es/Home/DeleteActivity";
     private static final String URL_STR_CHANGE_DATE = "http://dedicaciones.medianet.es/Home/ChangeDate";
+    private static final String URL_STR_MONTH_REPORT = "http://dedicaciones.medianet.es/Home/MonthReport";
 
     private DefaultHttpClient httpClient = null;
     // private String cookie = null;
@@ -160,7 +163,7 @@ public class MNSWebConnectionImpl implements WebConnection {
     }
 
     private void fillProyectsAndSubProyects() throws ConnectionException {
-	String html = this.getHttpContent(URL_ACCOUNTS_STR);
+	String html = this.getHttpContent(URL_STR_ACCOUNTS);
 	Document document = Jsoup.parse(html);
 
 	Elements selectSpansAccounts = document.select("span.Account");
@@ -583,4 +586,54 @@ public class MNSWebConnectionImpl implements WebConnection {
 	return result;
     }
 
+    @Override
+    public MonthReportBean getMonthReport() throws ConnectionException {
+	long beginTime = System.currentTimeMillis();
+
+	String html = this.getHttpContent(URL_STR_MONTH_REPORT);
+	Document document = Jsoup.parse(html);
+
+	Elements optionsMonth = document.select("#month > option[selected]");
+	Element optionMonth = optionsMonth.first();
+	String month = optionMonth.html();
+
+	Elements optionsYear = document.select("#year > option[selected]");
+	Element optionYear = optionsYear.first();
+	String year = optionYear.html();
+
+	MonthReportBean monthReport = new MonthReportBean(month, year);
+
+	Elements listOfAccounts = document.select("#ListOfAccounts");
+	Iterator<Element> accountIterator = listOfAccounts.select(".Account").iterator();
+	while (accountIterator.hasNext()) {
+	    Element accountHours = accountIterator.next();
+	    MonthReportRecord monthReportRecord = createMonthReportRecordFromHtml(accountHours.html());
+	    monthReport.addMonthReportRecord(monthReportRecord);
+	}
+
+	Elements totalHours = document.select(".HoursSum");
+	Element totalHoursElement = totalHours.first();
+	monthReport.setTotal(getTotalHoursFromHtml(totalHoursElement.html()));
+
+	long endTime = System.currentTimeMillis();
+	Log.d(LOGTAG, "Tiempo carga informe mensual: " + (endTime - beginTime));
+
+	return monthReport;
+    }
+
+    private MonthReportRecord createMonthReportRecordFromHtml(String htmlAccount) {
+	// Ejemplo valor htmlAccount -> BBVA68 : 161 horas
+	String[] projectAndHours = htmlAccount.split(":");
+	String[] hours = projectAndHours[1].trim().split("\\s+");
+
+	return new MonthReportRecord(projectAndHours[0].trim(), hours[0]);
+    }
+
+    private String getTotalHoursFromHtml(String htmlTotalHours) {
+	// Ejemplo valor htmlTotalHours -> Total: 161 horas
+	String[] totalAndHours = htmlTotalHours.split(":");
+	String[] hours = totalAndHours[1].trim().split("\\s+");
+
+	return hours[0];
+    }
 }

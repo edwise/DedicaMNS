@@ -13,6 +13,8 @@ import android.util.Log;
 import com.edwise.dedicamns.beans.ActivityDay;
 import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.beans.MonthListBean;
+import com.edwise.dedicamns.beans.MonthReportBean;
+import com.edwise.dedicamns.beans.MonthReportRecord;
 import com.edwise.dedicamns.connections.ConnectionException;
 import com.edwise.dedicamns.connections.WebConnection;
 import com.edwise.dedicamns.utils.DayUtils;
@@ -59,7 +61,7 @@ public class MockWebConnectionImpl implements WebConnection {
 	return years;
     }
 
-    public List<String> getArrayProjects() {	
+    public List<String> getArrayProjects() {
 	return arrayProjects;
     }
 
@@ -83,7 +85,7 @@ public class MockWebConnectionImpl implements WebConnection {
 	    Log.e(MockWebConnectionImpl.class.toString(), "fillListMock: Error en TimeUnit...", e);
 	    e.printStackTrace();
 	}
-	
+
 	arrayProjects = new ArrayList<String>();
 
 	arrayProjects.add("Selecciona proyecto...");
@@ -125,7 +127,8 @@ public class MockWebConnectionImpl implements WebConnection {
 	return monthList;
     }
 
-    public List<DayRecord> getListDaysAndActivitiesForMonthAndYear(int month, String year, boolean withActivities) {
+    public List<DayRecord> getListDaysAndActivitiesForMonthAndYear(int month, String year,
+	    boolean withActivities) {
 	List<DayRecord> list = new ArrayList<DayRecord>();
 
 	fillListMock(list, withActivities);
@@ -140,7 +143,7 @@ public class MockWebConnectionImpl implements WebConnection {
 	    Log.e(MockWebConnectionImpl.class.toString(), "fillListMock: Error en TimeUnit...", e);
 	    e.printStackTrace();
 	}
-	
+
 	for (int i = 1; i < 31; i++) {
 	    DayRecord dayRecord = new DayRecord();
 	    dayRecord.setDayNum(i);
@@ -165,7 +168,7 @@ public class MockWebConnectionImpl implements WebConnection {
 		}
 	    } else if (i == 15) {
 		dayRecord.setHours("16:30");
-		
+
 		if (withActivity) {
 		    ActivityDay activityDay = new ActivityDay();
 		    activityDay.setHours("06:30");
@@ -175,7 +178,7 @@ public class MockWebConnectionImpl implements WebConnection {
 		    activityDay.setUpdate(true);
 		    activityDay.setIdActivity(Math.random() + "");
 		    dayRecord.getActivities().add(activityDay);
-		    
+
 		    ActivityDay activityDay2 = new ActivityDay();
 		    activityDay2.setHours("05:00");
 		    activityDay2.setProjectId("BBVA58");
@@ -184,7 +187,7 @@ public class MockWebConnectionImpl implements WebConnection {
 		    activityDay2.setUpdate(true);
 		    activityDay2.setIdActivity(Math.random() + "");
 		    dayRecord.getActivities().add(activityDay2);
-		    
+
 		    ActivityDay activityDay3 = new ActivityDay();
 		    activityDay3.setHours("04:30");
 		    activityDay3.setProjectId("Educared09");
@@ -195,9 +198,9 @@ public class MockWebConnectionImpl implements WebConnection {
 		    activityDay3.setIdActivity(Math.random() + "");
 		    dayRecord.getActivities().add(activityDay3);
 		}
-	    }  else if (i == 16) {
+	    } else if (i == 16) {
 		dayRecord.setHours("23:30");
-		
+
 		if (withActivity) {
 		    ActivityDay activityDay = new ActivityDay();
 		    activityDay.setHours("01:30");
@@ -207,7 +210,7 @@ public class MockWebConnectionImpl implements WebConnection {
 		    activityDay.setUpdate(true);
 		    activityDay.setIdActivity(Math.random() + "");
 		    dayRecord.getActivities().add(activityDay);
-		    
+
 		    ActivityDay activityDay2 = new ActivityDay();
 		    activityDay2.setHours("04:00");
 		    activityDay2.setProjectId("BBVA58");
@@ -216,7 +219,7 @@ public class MockWebConnectionImpl implements WebConnection {
 		    activityDay2.setUpdate(true);
 		    activityDay2.setIdActivity(Math.random() + "");
 		    dayRecord.getActivities().add(activityDay2);
-		    
+
 		    ActivityDay activityDay3 = new ActivityDay();
 		    activityDay3.setHours("04:30");
 		    activityDay3.setProjectId("Educared09");
@@ -226,7 +229,7 @@ public class MockWebConnectionImpl implements WebConnection {
 		    activityDay3.setUpdate(true);
 		    activityDay3.setIdActivity(Math.random() + "");
 		    dayRecord.getActivities().add(activityDay3);
-		    
+
 		    ActivityDay activityDay4 = new ActivityDay();
 		    activityDay4.setHours("03:30");
 		    activityDay4.setProjectId("ISBAN12");
@@ -235,7 +238,7 @@ public class MockWebConnectionImpl implements WebConnection {
 		    activityDay4.setUpdate(true);
 		    activityDay4.setIdActivity(Math.random() + "");
 		    dayRecord.getActivities().add(activityDay4);
-		    
+
 		    ActivityDay activityDay5 = new ActivityDay();
 		    activityDay5.setHours("02:00");
 		    activityDay5.setProjectId("BBVA58");
@@ -244,7 +247,7 @@ public class MockWebConnectionImpl implements WebConnection {
 		    activityDay5.setUpdate(true);
 		    activityDay5.setIdActivity(Math.random() + "");
 		    dayRecord.getActivities().add(activityDay5);
-		    
+
 		    ActivityDay activityDay6 = new ActivityDay();
 		    activityDay6.setHours("01:30");
 		    activityDay6.setProjectId("Educared09");
@@ -254,7 +257,7 @@ public class MockWebConnectionImpl implements WebConnection {
 		    activityDay6.setUpdate(true);
 		    activityDay6.setIdActivity(Math.random() + "");
 		    dayRecord.getActivities().add(activityDay6);
-		    
+
 		    ActivityDay activityDay7 = new ActivityDay();
 		    activityDay7.setHours("03:30");
 		    activityDay7.setProjectId("BBVA58");
@@ -263,7 +266,7 @@ public class MockWebConnectionImpl implements WebConnection {
 		    activityDay7.setUpdate(true);
 		    activityDay7.setIdActivity(Math.random() + "");
 		    dayRecord.getActivities().add(activityDay7);
-		    
+
 		    ActivityDay activityDay8 = new ActivityDay();
 		    activityDay8.setHours("01:00");
 		    activityDay8.setProjectId("BBVA58");
@@ -272,7 +275,7 @@ public class MockWebConnectionImpl implements WebConnection {
 		    activityDay8.setUpdate(true);
 		    activityDay8.setIdActivity(Math.random() + "");
 		    dayRecord.getActivities().add(activityDay8);
-		    
+
 		    ActivityDay activityDay9 = new ActivityDay();
 		    activityDay9.setHours("01:30");
 		    activityDay9.setProjectId("Educared09");
@@ -282,7 +285,7 @@ public class MockWebConnectionImpl implements WebConnection {
 		    activityDay9.setUpdate(true);
 		    activityDay9.setIdActivity(Math.random() + "");
 		    dayRecord.getActivities().add(activityDay9);
-		    
+
 		    ActivityDay activityDay10 = new ActivityDay();
 		    activityDay10.setHours("00:30");
 		    activityDay10.setProjectId("Educared09");
@@ -292,7 +295,7 @@ public class MockWebConnectionImpl implements WebConnection {
 		    activityDay10.setUpdate(true);
 		    activityDay10.setIdActivity(Math.random() + "");
 		    dayRecord.getActivities().add(activityDay10);
-		    
+
 		}
 	    } else {
 		dayRecord.setHours("00:00");
@@ -325,10 +328,10 @@ public class MockWebConnectionImpl implements WebConnection {
 	try {
 	    TimeUnit.SECONDS.sleep(3);
 	} catch (InterruptedException e) {
-	    Log.e(MockWebConnectionImpl.class.toString(), "fillListMock: Error en TimeUnit...", e);
+	    Log.e(MockWebConnectionImpl.class.toString(), "saveDay: Error en TimeUnit...", e);
 	    e.printStackTrace();
 	}
-	
+
 	if (!activityDay.isUpdate()) {
 	    activityDay.setIdActivity(Math.random() + "");
 	}
@@ -339,10 +342,10 @@ public class MockWebConnectionImpl implements WebConnection {
 	try {
 	    TimeUnit.SECONDS.sleep(3);
 	} catch (InterruptedException e) {
-	    Log.e(MockWebConnectionImpl.class.toString(), "fillListMock: Error en TimeUnit...", e);
+	    Log.e(MockWebConnectionImpl.class.toString(), "removeDay: Error en TimeUnit...", e);
 	    e.printStackTrace();
 	}
-	
+
 	return 1;
     }
 
@@ -354,6 +357,54 @@ public class MockWebConnectionImpl implements WebConnection {
 	    e.printStackTrace();
 	}
 	return 1;
+    }
+
+    @Override
+    public MonthReportBean getMonthReport() throws ConnectionException {
+	MonthReportBean monthReport = new MonthReportBean("Febrero", "2013");
+
+	MonthReportRecord record1 = new MonthReportRecord("Educared09", "120");
+	MonthReportRecord record2 = new MonthReportRecord("BBVA58 - Movidotes", "80,5");
+	MonthReportRecord record3 = new MonthReportRecord("ISBAN12", "10,5");
+	MonthReportRecord record4 = new MonthReportRecord("Educared09", "120");
+	MonthReportRecord record5 = new MonthReportRecord("BBVA58 - Movidotes", "80,5");
+	MonthReportRecord record6 = new MonthReportRecord("ISBAN12", "10,5");
+	MonthReportRecord record7 = new MonthReportRecord("Educared09", "120");
+	MonthReportRecord record8 = new MonthReportRecord("BBVA58 - Movidotes", "80,5");
+	MonthReportRecord record9 = new MonthReportRecord("ISBAN12", "10,5");
+	MonthReportRecord record10 = new MonthReportRecord("Educared09", "120");
+	MonthReportRecord record11 = new MonthReportRecord("BBVA58 - Movidotes", "80,5");
+	MonthReportRecord record12 = new MonthReportRecord("ISBAN12", "10,5");
+	MonthReportRecord record13 = new MonthReportRecord("Educared09", "120");
+	MonthReportRecord record14 = new MonthReportRecord("BBVA58 - Movidotes", "80,5");
+	MonthReportRecord record15 = new MonthReportRecord("ISBAN12", "10,5");
+	
+	monthReport.addMonthReportRecord(record1);
+	monthReport.addMonthReportRecord(record2);
+	monthReport.addMonthReportRecord(record3);
+	monthReport.addMonthReportRecord(record4);
+	monthReport.addMonthReportRecord(record5);
+	monthReport.addMonthReportRecord(record6);
+	monthReport.addMonthReportRecord(record7);
+	monthReport.addMonthReportRecord(record8);
+	monthReport.addMonthReportRecord(record9);
+	monthReport.addMonthReportRecord(record10);
+	monthReport.addMonthReportRecord(record11);
+	monthReport.addMonthReportRecord(record12);
+	monthReport.addMonthReportRecord(record13);
+	monthReport.addMonthReportRecord(record14);
+	monthReport.addMonthReportRecord(record15);
+	
+	monthReport.setTotal("211");
+	
+	try {
+	    TimeUnit.SECONDS.sleep(3);
+	} catch (InterruptedException e) {
+	    Log.e(MockWebConnectionImpl.class.toString(), "getMonthReport: Error en TimeUnit...", e);
+	    e.printStackTrace();
+	}
+
+	return monthReport;
     }
 
 }

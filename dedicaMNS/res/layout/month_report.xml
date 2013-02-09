@@ -1,0 +1,51 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/lightCyan"
+    tools:context=".MonthReportActivity"
+    tools:ignore="Overdraw" >
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/MReportTitleTextView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15sp"
+            android:autoLink="web"
+            android:gravity="center_horizontal"
+            android:paddingLeft="9sp"
+            android:paddingRight="9sp"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/MReportAccountsTextView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/MReportTitleTextView"
+            android:layout_marginTop="35sp"
+            android:autoLink="web"
+            android:gravity="left"
+            android:paddingLeft="9sp"
+            android:paddingRight="9sp"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/MReportTotalTextView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/MReportAccountsTextView"
+            android:layout_marginTop="45sp"
+            android:autoLink="web"
+            android:gravity="left"
+            android:paddingLeft="9sp"
+            android:paddingRight="9sp"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+</ScrollView>

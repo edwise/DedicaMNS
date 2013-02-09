@@ -73,5 +73,10 @@
     <string name="removeAllButton">Borrar todas</string>
     <string name="updateButton">Actualizar</string>
     <string name="msgInputProcessExecuting">Ejecutando imputación en batch&#8230;</string>
+    <string name="title_activity_month_report">Informe mensual</string>
+    <string name="hoursReport">horas</string>
+    <string name="msgGettingReportData">Obteniendo datos informe mensual</string>
+    <string name="totalReport">TOTAL: </string>
+    <string name="monthReportTextButton">Informe mensual</string>
 
 </resources>

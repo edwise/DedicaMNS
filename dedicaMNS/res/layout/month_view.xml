@@ -9,30 +9,49 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal" >
 
-        <Spinner
+        <RelativeLayout
+            android:id="@+id/monthInfoSpinners"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal" >
+
+            <Spinner
                 android:id="@+id/listMonthsSpinner"
-                android:layout_width="120dp"
-                android:layout_height="40dp"
-                android:layout_marginRight="3dp"
+                android:layout_width="120sp"
+                android:layout_height="40sp"
+                android:layout_marginRight="3sp"
                 android:textSize="8sp" />
-        <Spinner
+
+            <Spinner
                 android:id="@+id/listYearsSpinner"
-                android:layout_width="100dp"
-                android:layout_height="40dp"
-                android:layout_marginRight="8dp"
+                android:layout_width="100sp"
+                android:layout_height="40sp"
+                android:layout_marginRight="8sp"
                 android:layout_toRightOf="@+id/listMonthsSpinner"
                 android:textSize="8sp" />
-        
+
+            <Button
+                android:id="@+id/updateListButton"
+                android:layout_width="wrap_content"
+                android:layout_height="35sp"
+                android:layout_toRightOf="@+id/listYearsSpinner"
+                android:gravity="center_vertical"
+                android:onClick="doUpdateList"
+                android:text="@string/updateButton"
+                android:textSize="14sp" />
+        </RelativeLayout>
+
         <Button
-            android:id="@+id/updateListButton"
-            android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            android:layout_toRightOf="@+id/listYearsSpinner"
-            android:onClick="doUpdateList"
-            android:textSize="14sp"
-            android:gravity="center_vertical"
-            android:text="@string/updateButton" />
-        
+            android:id="@+id/reportMonthButton"
+            android:layout_width="fill_parent"
+            android:layout_height="40sp"
+            android:layout_below="@+id/monthInfoSpinners"
+            android:layout_marginLeft="55sp"
+            android:layout_marginRight="55sp"
+            android:gravity="center_vertical|center_horizontal"
+            android:onClick="doShowReportMonth"
+            android:text="@string/monthReportTextButton"
+            android:textSize="14sp" />
     </RelativeLayout>
 
     <ListView

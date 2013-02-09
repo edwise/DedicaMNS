@@ -48,6 +48,10 @@
             android:name="com.edwise.dedicamns.GeneralDetailDayActivity"
             android:label="@string/title_activity_general_detail_day" >
         </activity>
+        <activity
+            android:name="com.edwise.dedicamns.MonthReportActivity"
+            android:label="@string/title_activity_month_report" >
+        </activity>
     </application>
 
 </manifest>

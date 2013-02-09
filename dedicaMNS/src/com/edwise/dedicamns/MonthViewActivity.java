@@ -1,5 +1,6 @@
 package com.edwise.dedicamns;
 
+import java.io.Serializable;
 import java.util.List;
 
 import android.app.Activity;
@@ -9,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,13 +20,17 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.edwise.dedicamns.adapters.DayListAdapter;
 import com.edwise.dedicamns.asynctasks.AppData;
 import com.edwise.dedicamns.asynctasks.MonthListAsyncTask;
 import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.beans.MonthListBean;
+import com.edwise.dedicamns.beans.MonthReportBean;
+import com.edwise.dedicamns.connections.ConnectionException;
 import com.edwise.dedicamns.connections.ConnectionFacade;
+import com.edwise.dedicamns.connections.WebConnection;
 import com.edwise.dedicamns.menu.MenuUtils;
 
 public class MonthViewActivity extends Activity {
@@ -38,7 +44,8 @@ public class MonthViewActivity extends Activity {
     private Spinner monthSpinner = null;
     private Spinner yearSpinner = null;
 
-    private ProgressDialog pDialog = null;
+    private ProgressDialog pDialogMonthCharge = null;
+    private ProgressDialog pDialogReportCharge = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,9 +55,11 @@ public class MonthViewActivity extends Activity {
 	setContentView(R.layout.month_view);
 	AppData.setCurrentActivity(this);
 
-	restoreFromChangeOrientation(savedInstanceState);
-
-	monthList = (MonthListBean) getIntent().getSerializableExtra("monthList");
+	if (savedInstanceState != null) {
+	    restoreFromChangeOrientation(savedInstanceState);
+	} else {
+	    monthList = (MonthListBean) getIntent().getSerializableExtra("monthList");
+	}
 
 	List<String> listMonths = ConnectionFacade.getWebConnection().getMonths();
 	List<String> listYears = ConnectionFacade.getWebConnection().getYears();
@@ -64,12 +73,13 @@ public class MonthViewActivity extends Activity {
     }
 
     private void restoreFromChangeOrientation(Bundle savedInstanceState) {
-	if (savedInstanceState != null) {
-	    if (savedInstanceState.getBoolean("pDialogON")) {
-		showDialog(getString(R.string.msgGettingMonthData));
-	    }
-	    listState = savedInstanceState.getParcelable("listState");
+	if (savedInstanceState.getBoolean("pDialogMonthChargeON")) { //
+	    showDialogMonthCharge(getString(R.string.msgGettingMonthData));
+	} else if (savedInstanceState.getBoolean("pDialogReportChargeON")) {
+	    showDialogReportCharge(getString(R.string.msgGettingReportData));
 	}
+	listState = savedInstanceState.getParcelable("listState");
+	monthList = (MonthListBean) savedInstanceState.getSerializable("monthList");
     }
 
     @Override
@@ -81,11 +91,15 @@ public class MonthViewActivity extends Activity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
 	Log.d(LOGTAG, "onSaveInstanceState");
-	if (pDialog != null) {
-	    pDialog.cancel();
-	    outState.putBoolean("pDialogON", true);
-	}
 
+	if (pDialogMonthCharge != null) {
+	    pDialogMonthCharge.cancel();
+	    outState.putBoolean("pDialogMonthChargeON", true);
+	} else if (pDialogReportCharge != null) {
+	    pDialogReportCharge.cancel();
+	    outState.putBoolean("pDialogReportChargeON", true);
+	}
+	outState.putSerializable("monthList", monthList);
 	if (listState != null) {
 	    outState.putParcelable("listState", listState);
 	}
@@ -94,9 +108,12 @@ public class MonthViewActivity extends Activity {
     }
 
     public void closeDialog() {
-	if (pDialog != null) {
-	    pDialog.dismiss();
-	    pDialog = null;
+	if (pDialogMonthCharge != null) {
+	    pDialogMonthCharge.dismiss();
+	    pDialogMonthCharge = null;
+	} else if (pDialogReportCharge != null) {
+	    pDialogReportCharge.dismiss();
+	    pDialogReportCharge = null;
 	}
     }
 
@@ -184,7 +201,7 @@ public class MonthViewActivity extends Activity {
 
     public void doUpdateList(View view) {
 	Log.d(LOGTAG, "doUpdateList: Click en actualizar...");
-	showDialog(getString(R.string.msgGettingMonthData));
+	showDialogMonthCharge(getString(R.string.msgGettingMonthData));
 
 	Integer month = this.monthSpinner.getSelectedItemPosition() + 1;
 	Integer year = Integer.valueOf((String) this.yearSpinner.getSelectedItem());
@@ -193,8 +210,21 @@ public class MonthViewActivity extends Activity {
 	monthListAsyncTask.execute(new Integer[] { month, year, MonthListAsyncTask.IS_UPDATE_LIST });
     }
 
-    private void showDialog(String message) {
-	pDialog = ProgressDialog.show(this, message, getString(R.string.msgPleaseWait), true);
+    public void doShowReportMonth(View view) {
+	Log.d(LOGTAG, "doShowReportMonth: Click en mostrar informe mensual...");
+
+	showDialogReportCharge(getString(R.string.msgGettingReportData));
+	AsyncTask<Integer, Integer, Integer> monthReportAsyncTask = new MonthReportAsyncTask();
+	monthReportAsyncTask.execute(1);
+    }
+
+    private void showDialogMonthCharge(String message) {
+	this.pDialogMonthCharge = ProgressDialog.show(this, message, getString(R.string.msgPleaseWait), true);
+    }
+
+    private void showDialogReportCharge(String message) {
+	this.pDialogReportCharge = ProgressDialog
+		.show(this, message, getString(R.string.msgPleaseWait), true);
     }
 
     @Override
@@ -236,4 +266,57 @@ public class MonthViewActivity extends Activity {
 	initListView();
     }
 
+    private class MonthReportAsyncTask extends AsyncTask<Integer, Integer, Integer> {
+
+	private MonthReportBean monthReport = null;
+
+	@Override
+	protected Integer doInBackground(Integer... params) {
+	    Log.d(MonthReportAsyncTask.class.toString(), "doInBackground...");
+
+	    WebConnection webConnection = ConnectionFacade.getWebConnection();
+	    Integer result = 1;
+	    try {
+		monthReport = webConnection.getMonthReport();
+	    } catch (ConnectionException e) {
+		Log.e(LOGTAG, "Error al obtener el informe de horas", e);
+		result = -1;
+	    }
+
+	    return result;
+	}
+
+	@Override
+	protected void onPostExecute(Integer result) {
+	    Log.d(MonthReportAsyncTask.class.toString(), "onPostExecute...");
+	    super.onPostExecute(result);
+
+	    if (result == 1) {
+		this.launchMonthReportActivity();
+		this.closeDialog();
+	    } else {
+		this.closeDialog();
+		showToastMessage(getString(R.string.msgWebError));
+	    }
+	}
+
+	private void closeDialog() {
+	    MonthViewActivity activity = (MonthViewActivity) AppData.getCurrentActivity();
+	    activity.closeDialog();
+	}
+
+	private void launchMonthReportActivity() {
+	    Intent intent = new Intent(AppData.getCurrentActivity(), MonthReportActivity.class);
+	    intent.putExtra("monthReport", (Serializable) monthReport);
+
+	    AppData.getCurrentActivity().startActivity(intent);
+	}
+
+	private void showToastMessage(String message) {
+	    Toast toast = Toast.makeText(AppData.getCurrentActivity(), message, Toast.LENGTH_LONG);
+	    toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 20);
+	    toast.show();
+	}
+
+    }
 }
