@@ -43,12 +43,10 @@
 
         <Button
             android:id="@+id/reportMonthButton"
-            android:layout_width="fill_parent"
-            android:layout_height="40sp"
+            android:layout_width="wrap_content"
+            android:layout_height="35sp"
             android:layout_below="@+id/monthInfoSpinners"
-            android:layout_marginLeft="55sp"
-            android:layout_marginRight="55sp"
-            android:gravity="center_vertical|center_horizontal"
+            android:layout_centerHorizontal="true"
             android:onClick="doShowReportMonth"
             android:text="@string/monthReportTextButton"
             android:textSize="14sp" />
