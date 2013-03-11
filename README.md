@@ -18,6 +18,7 @@ Consideraciones importantes a tener en cuenta:
 Futuras ampliaciones / evolutivos:  
   - Optimización de carga de proyectos, guardandolos en una bd en el primer login. 
   - Opción de compartir el informe mensual.
+  - Nueva opción de imputación batch, más personalizable: entre dos fechas dadas, y con horas personalizables.
   - Perfiles en la imputación batch.
   
 Ampliaciones / evolutivos ya realizados:
