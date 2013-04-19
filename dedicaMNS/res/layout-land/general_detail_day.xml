@@ -17,6 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:gravity="center_horizontal"
+            android:textIsSelectable="true"
             android:textSize="24sp" >
         </TextView>
 
@@ -38,6 +39,7 @@
             android:layout_marginRight="2dp"
             android:layout_toRightOf="@+id/gTotalHoursLabel"
             android:gravity="right"
+            android:textIsSelectable="true"
             android:textSize="14sp" >
         </TextView>
     </RelativeLayout>

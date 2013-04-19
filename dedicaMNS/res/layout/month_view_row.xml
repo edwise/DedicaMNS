@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content" >
 
     <TextView
         android:id="@+id/dayNum"
@@ -10,6 +10,7 @@
         android:background="@drawable/back"
         android:gravity="right"
         android:padding="5sp"
+        android:textIsSelectable="true"
         android:textSize="20sp" >
     </TextView>
 
@@ -21,6 +22,7 @@
         android:gravity="bottom"
         android:paddingLeft="6sp"
         android:paddingTop="9sp"
+        android:textIsSelectable="true"
         android:textSize="14sp" >
     </TextView>
 
@@ -31,6 +33,7 @@
         android:layout_toLeftOf="@+id/hours"
         android:gravity="center_vertical|right"
         android:paddingTop="9sp"
+        android:textIsSelectable="true"
         android:textSize="16sp" >
     </TextView>
 
@@ -41,6 +44,7 @@
         android:layout_alignParentRight="true"
         android:gravity="right"
         android:padding="5sp"
+        android:textIsSelectable="true"
         android:textSize="20sp" />
 
 </RelativeLayout>

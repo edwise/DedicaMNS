@@ -10,6 +10,7 @@
         android:gravity="left|center_vertical"
         android:paddingLeft="5sp"
         android:paddingTop="3sp"
+        android:textIsSelectable="true"
         android:textSize="16sp" />
 
     <TextView
@@ -20,6 +21,7 @@
         android:gravity="right|center_vertical"
         android:paddingRight="5sp"
         android:paddingTop="3sp"
+        android:textIsSelectable="true"
         android:textSize="16sp" >
     </TextView>
 
@@ -31,6 +33,7 @@
         android:gravity="right|center_vertical"
         android:paddingRight="5sp"
         android:paddingTop="3sp"
+        android:textIsSelectable="true"
         android:textSize="16sp" >
     </TextView>
 
@@ -42,6 +45,7 @@
         android:gravity="right|center_vertical"
         android:paddingRight="5sp"
         android:paddingTop="3sp"
+        android:textIsSelectable="true"
         android:textSize="16sp" >
     </TextView>
 
