@@ -56,584 +56,578 @@ import com.edwise.dedicamns.utils.DayUtils;
  */
 public class MNSWebConnectionImpl implements WebConnection {
 
-    private static final String LOGTAG = MNSWebConnectionImpl.class.toString();
+	private static final String LOGTAG = MNSWebConnectionImpl.class.toString();
 
-    private static final int TIMEOUT_GETDATA = 60000;
-    private static final int TIMEOUT_CONNECTION = 30000;
+	private static final int TIMEOUT_GETDATA = 60000;
+	private static final int TIMEOUT_CONNECTION = 30000;
 
-    private static final int FIRST_YEAR = 2004;
+	private static final int FIRST_YEAR = 2004;
 
-    private static final String DOMAIN = "medianet2k";
-    // private static final String COOKIE_SESSION = "ASP.NET_SessionId";
-    private static final String URL_STR = "http://dedicaciones.medianet.es";
-    private static final String URL_STR_ACCOUNTS = "http://dedicaciones.medianet.es/Home/Accounts";
-    private static final String URL_STR_CREATE = "http://dedicaciones.medianet.es/Home/CreateActivity";
-    private static final String URL_STR_MODIFY = "http://dedicaciones.medianet.es/Home/EditActivity";
-    private static final String URL_STR_DELETE = "http://dedicaciones.medianet.es/Home/DeleteActivity";
-    private static final String URL_STR_CHANGE_DATE = "http://dedicaciones.medianet.es/Home/ChangeDate";
-    private static final String URL_STR_MONTH_REPORT = "http://dedicaciones.medianet.es/Home/MonthReport";
+	private static final String DOMAIN = "medianet2k";
+	// private static final String COOKIE_SESSION = "ASP.NET_SessionId";
+	private static final String URL_STR = "http://dedicaciones.medianet.es";
+	private static final String URL_STR_ACCOUNTS = "http://dedicaciones.medianet.es/Home/Accounts";
+	private static final String URL_STR_CREATE = "http://dedicaciones.medianet.es/Home/CreateActivity";
+	private static final String URL_STR_MODIFY = "http://dedicaciones.medianet.es/Home/EditActivity";
+	private static final String URL_STR_DELETE = "http://dedicaciones.medianet.es/Home/DeleteActivity";
+	private static final String URL_STR_CHANGE_DATE = "http://dedicaciones.medianet.es/Home/ChangeDate";
+	private static final String URL_STR_MONTH_REPORT = "http://dedicaciones.medianet.es/Home/MonthReport";
 
-    private DefaultHttpClient httpClient = null;
-    // private String cookie = null;
-    private MonthYearBean monthYears = null;
-    private ProjectSubprojectBean projects = null;
+	private DefaultHttpClient httpClient = null;
+	// private String cookie = null;
+	private MonthYearBean monthYears = null;
+	private ProjectSubprojectBean projects = null;
 
-    public boolean isOnline(Activity activity) {
-	boolean online = false;
-	ConnectivityManager cm = (ConnectivityManager) activity
-		.getSystemService(Context.CONNECTIVITY_SERVICE);
-	NetworkInfo netInfo = cm.getActiveNetworkInfo();
-	if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-	    online = true;
+	public boolean isOnline(Activity activity) {
+		boolean online = false;
+		ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo netInfo = cm.getActiveNetworkInfo();
+		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+			online = true;
+		}
+
+		return online;
 	}
 
-	return online;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.edwise.dedicamns.connections.WebConnection#connectWeb()
-     */
-    public Integer connectWeb(String userName, String password) throws ConnectionException {
-	int responseCode;
-	try {
-	    Log.d(LOGTAG, "connectWeb... inicio...");
-	    responseCode = doLoginAndGetCookie(URL_STR, DOMAIN, userName, password);
-	    Log.d(LOGTAG, "connectWeb... fin...");
-	} catch (Exception e) {
-	    Log.e(LOGTAG, "Error en el acceso web", e);
-	    throw new ConnectionException(e);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.edwise.dedicamns.connections.WebConnection#connectWeb()
+	 */
+	public Integer connectWeb(String userName, String password) throws ConnectionException {
+		int responseCode;
+		try {
+			Log.d(LOGTAG, "connectWeb... inicio...");
+			responseCode = doLoginAndGetCookie(URL_STR, DOMAIN, userName, password);
+			Log.d(LOGTAG, "connectWeb... fin...");
+		} catch (Exception e) {
+			Log.e(LOGTAG, "Error en el acceso web", e);
+			throw new ConnectionException(e);
+		}
+		return responseCode;
 	}
-	return responseCode;
-    }
 
-    private int doLoginAndGetCookie(final String urlStr, final String domain, final String userName,
-	    final String password) throws ClientProtocolException, IOException, URISyntaxException {
-	long beginTime = System.currentTimeMillis();
+	private int doLoginAndGetCookie(final String urlStr, final String domain, final String userName,
+			final String password) throws ClientProtocolException, IOException, URISyntaxException {
+		long beginTime = System.currentTimeMillis();
 
-	URL url = new URL(urlStr);
-	createHttpClient();
-	NTLM.setNTLM(httpClient, userName, password, domain, null, -1);
-	HttpGet get = new HttpGet(url.toURI());
+		URL url = new URL(urlStr);
+		createHttpClient();
+		NTLM.setNTLM(httpClient, userName, password, domain, null, -1);
+		HttpGet get = new HttpGet(url.toURI());
 
-	HttpResponse resp = httpClient.execute(get);
-	Log.d(LOGTAG, "StatusCode: " + resp.getStatusLine().getStatusCode() + " StatusLine: "
-		+ resp.getStatusLine().getReasonPhrase());
+		HttpResponse resp = httpClient.execute(get);
+		Log.d(LOGTAG, "StatusCode: " + resp.getStatusLine().getStatusCode() + " StatusLine: "
+				+ resp.getStatusLine().getReasonPhrase());
 
-	long endTime = System.currentTimeMillis();
-	Log.d(LOGTAG, "Tiempo login: " + (endTime - beginTime));
+		long endTime = System.currentTimeMillis();
+		Log.d(LOGTAG, "Tiempo login: " + (endTime - beginTime));
 
-	// 200 OK. 401 error
-	return resp.getStatusLine().getStatusCode();
-    }
-
-    private void createHttpClient() {
-	httpClient = new DefaultHttpClient();
-	HttpParams params = httpClient.getParams();
-	HttpConnectionParams.setConnectionTimeout(params, TIMEOUT_CONNECTION);
-	HttpConnectionParams.setSoTimeout(params, TIMEOUT_GETDATA);
-    }
-
-    public List<String> getMonths() {
-	return this.monthYears.getMonths();
-    }
-
-    public List<String> getYears() {
-	return this.monthYears.getYears();
-    }
-
-    public List<String> getArrayProjects() {
-	return this.projects.getProjects();
-    }
-
-    public List<String> getArraySubProjects(String projectId) {
-	return this.projects.getSubProjects(projectId);
-    }
-
-    public void fillProyectsAndSubProyectsCached() throws ConnectionException {
-	if (projects == null) {
-	    long beginTime = System.currentTimeMillis();
-
-	    fillProyectsAndSubProyects();
-
-	    long endTime = System.currentTimeMillis();
-	    Log.d(LOGTAG, "Tiempo carga proyectos: " + (endTime - beginTime));
+		// 200 OK. 401 error
+		return resp.getStatusLine().getStatusCode();
 	}
-    }
 
-    private void fillProyectsAndSubProyects() throws ConnectionException {
-	String html = this.getHttpContent(URL_STR_ACCOUNTS);
-	Document document = Jsoup.parse(html);
+	private void createHttpClient() {
+		httpClient = new DefaultHttpClient();
+		HttpParams params = httpClient.getParams();
+		HttpConnectionParams.setConnectionTimeout(params, TIMEOUT_CONNECTION);
+		HttpConnectionParams.setSoTimeout(params, TIMEOUT_GETDATA);
+	}
 
-	Elements selectSpansAccounts = document.select("span.Account");
-	if (selectSpansAccounts != null) {
-	    List<String> projects = new ArrayList<String>();
-	    Map<String, List<String>> projectsAndSubProjects = new HashMap<String, List<String>>();
-	    projects.add(ProjectSubprojectBean.PROJECT_DEFAULT);
-	    projectsAndSubProjects.put(ProjectSubprojectBean.PROJECT_DEFAULT,
-		    ProjectSubprojectBean.createSubProjectsDefault());
-	    Iterator<Element> it = selectSpansAccounts.iterator();
-	    while (it.hasNext()) {
-		Element span = it.next();
-		String projectId = parseStringProjectId(span.html());
-		Element liParent = span.parent();
-		Element nextLiOrUl = liParent.nextElementSibling();
+	public List<String> getMonths() {
+		return this.monthYears.getMonths();
+	}
 
-		List<String> subProjects = new ArrayList<String>();
-		subProjects.add(ProjectSubprojectBean.SUBPROJECT_DEFAULT);
-		if (nextLiOrUl != null) {
-		    Elements selectSpansSubAccounts = nextLiOrUl.select("span.Subaccount");
-		    if (selectSpansSubAccounts != null) {
-			Iterator<Element> subIt = selectSpansSubAccounts.iterator();
-			while (subIt.hasNext()) {
-			    Element subSpan = subIt.next();
-			    subProjects.add(DayUtils.replaceAcutes(subSpan.html()));
+	public List<String> getYears() {
+		return this.monthYears.getYears();
+	}
+
+	public List<String> getArrayProjects() {
+		return this.projects.getProjects();
+	}
+
+	public List<String> getArraySubProjects(String projectId) {
+		return this.projects.getSubProjects(projectId);
+	}
+
+	public void fillProyectsAndSubProyectsCached() throws ConnectionException {
+		if (projects == null) {
+			long beginTime = System.currentTimeMillis();
+
+			fillProyectsAndSubProyects();
+
+			long endTime = System.currentTimeMillis();
+			Log.d(LOGTAG, "Tiempo carga proyectos: " + (endTime - beginTime));
+		}
+	}
+
+	private void fillProyectsAndSubProyects() throws ConnectionException {
+		String html = this.getHttpContent(URL_STR_ACCOUNTS);
+		Document document = Jsoup.parse(html);
+
+		Elements selectSpansAccounts = document.select("span.Account");
+		if (selectSpansAccounts != null) {
+			List<String> projects = new ArrayList<String>();
+			Map<String, List<String>> projectsAndSubProjects = new HashMap<String, List<String>>();
+			projects.add(ProjectSubprojectBean.PROJECT_DEFAULT);
+			projectsAndSubProjects.put(ProjectSubprojectBean.PROJECT_DEFAULT,
+					ProjectSubprojectBean.createSubProjectsDefault());
+			Iterator<Element> it = selectSpansAccounts.iterator();
+			while (it.hasNext()) {
+				Element span = it.next();
+				String projectId = parseStringProjectId(span.html());
+				Element liParent = span.parent();
+				Element nextLiOrUl = liParent.nextElementSibling();
+
+				List<String> subProjects = new ArrayList<String>();
+				subProjects.add(ProjectSubprojectBean.SUBPROJECT_DEFAULT);
+				if (nextLiOrUl != null) {
+					Elements selectSpansSubAccounts = nextLiOrUl.select("span.Subaccount");
+					if (selectSpansSubAccounts != null) {
+						Iterator<Element> subIt = selectSpansSubAccounts.iterator();
+						while (subIt.hasNext()) {
+							Element subSpan = subIt.next();
+							subProjects.add(DayUtils.replaceAcutes(subSpan.html()));
+						}
+					}
+				}
+
+				projects.add(projectId);
+				projectsAndSubProjects.put(projectId, subProjects);
+
 			}
-		    }
+
+			this.projects = new ProjectSubprojectBean(projects, projectsAndSubProjects);
+		}
+	}
+
+	private String parseStringProjectId(String projectName) {
+		return projectName.trim().substring(0, projectName.indexOf(" -"));
+	}
+
+	public void fillMonthsAndYearsCached() {
+		if (monthYears == null) {
+			fillMonthsAndYears();
+		}
+	}
+
+	private void fillMonthsAndYears() {
+		List<String> months = generateMonthsList();
+		List<String> years = generateYearsList();
+
+		this.monthYears = new MonthYearBean(months, years);
+	}
+
+	private List<String> generateMonthsList() {
+		List<String> monthsList = new ArrayList<String>();
+		monthsList.add("Enero");
+		monthsList.add("Febrero");
+		monthsList.add("Marzo");
+		monthsList.add("Abril");
+		monthsList.add("Mayo");
+		monthsList.add("Junio");
+		monthsList.add("Julio");
+		monthsList.add("Agosto");
+		monthsList.add("Septiembre");
+		monthsList.add("Octubre");
+		monthsList.add("Noviembre");
+		monthsList.add("Diciembre");
+
+		return monthsList;
+	}
+
+	private List<String> generateYearsList() {
+		List<String> yearsList = new ArrayList<String>();
+
+		Calendar today = Calendar.getInstance();
+		int lastYear = today.get(Calendar.YEAR);
+		if (today.get(Calendar.MONTH) == Calendar.DECEMBER) {
+			// Si es diciembre, le añadimos ya el año siguiente, deberia estar ya...
+			lastYear++;
 		}
 
-		projects.add(projectId);
-		projectsAndSubProjects.put(projectId, subProjects);
-
-	    }
-
-	    this.projects = new ProjectSubprojectBean(projects, projectsAndSubProjects);
-	}
-    }
-
-    private String parseStringProjectId(String projectName) {
-	return projectName.trim().substring(0, projectName.indexOf(" -"));
-    }
-
-    public void fillMonthsAndYearsCached() {
-	if (monthYears == null) {
-	    fillMonthsAndYears();
-	}
-    }
-
-    private void fillMonthsAndYears() {
-	List<String> months = generateMonthsList();
-	List<String> years = generateYearsList();
-
-	this.monthYears = new MonthYearBean(months, years);
-    }
-
-    private List<String> generateMonthsList() {
-	List<String> monthsList = new ArrayList<String>();
-	monthsList.add("Enero");
-	monthsList.add("Febrero");
-	monthsList.add("Marzo");
-	monthsList.add("Abril");
-	monthsList.add("Mayo");
-	monthsList.add("Junio");
-	monthsList.add("Julio");
-	monthsList.add("Agosto");
-	monthsList.add("Septiembre");
-	monthsList.add("Octubre");
-	monthsList.add("Noviembre");
-	monthsList.add("Diciembre");
-
-	return monthsList;
-    }
-
-    private List<String> generateYearsList() {
-	List<String> yearsList = new ArrayList<String>();
-
-	Calendar today = Calendar.getInstance();
-	int lastYear = today.get(Calendar.YEAR);
-	if (today.get(Calendar.MONTH) == Calendar.DECEMBER) {
-	    // Si es diciembre, le añadimos ya el año siguiente, deberia estar ya...
-	    lastYear++;
-	}
-
-	for (int i = FIRST_YEAR; i <= lastYear; i++) {
-	    yearsList.add(String.valueOf(i));
-	}
-
-	return yearsList;
-    }
-
-    private String getHttpContent(String url) throws ConnectionException {
-	String html = null;
-	try {
-	    long beginTime = System.currentTimeMillis();
-
-	    URL urlObject = new URL(url);
-	    HttpGet get = new HttpGet(urlObject.toURI());
-	    HttpResponse resp = httpClient.execute(get);
-
-	    Log.d(LOGTAG, "StatusCodeGET: " + resp.getStatusLine().getStatusCode() + " StatusLineGET: "
-		    + resp.getStatusLine().getReasonPhrase());
-
-	    if (resp.getStatusLine().getStatusCode() != 200) {
-		throw new ConnectionException("Error en la conexión, statusCode: "
-			+ resp.getStatusLine().getStatusCode());
-	    }
-
-	    InputStream is = resp.getEntity().getContent();
-	    StringWriter writer = new StringWriter();
-	    IOUtils.copy(is, writer, "UTF-8");
-	    html = writer.toString();
-
-	    long endTime = System.currentTimeMillis();
-	    Log.d(LOGTAG, "Tiempo conexión a " + url + ": " + (endTime - beginTime));
-	} catch (URISyntaxException e) {
-	    Log.d(LOGTAG, "Error de URI en el acceso getHttp a " + url, e);
-	    throw new ConnectionException(e);
-	} catch (IOException e) {
-	    Log.d(LOGTAG, "Error IO en el acceso getHttp a " + url, e);
-	    throw new ConnectionException(e);
-	}
-
-	return html;
-    }
-
-    public MonthListBean getListDaysAndActivitiesForCurrentMonth() throws ConnectionException {
-	long beginTime = System.currentTimeMillis();
-
-	String html = this.getHttpContent(URL_STR);
-	Document document = Jsoup.parse(html);
-
-	Elements optionsMonth = document.select("#month > option[selected]");
-	Element optionMonth = optionsMonth.first();
-	String month = optionMonth.html();
-	String numMonth = optionMonth.val();
-
-	Elements optionsYear = document.select("#year > option[selected]");
-	Element optionYear = optionsYear.first();
-	String year = optionYear.html();
-
-	List<DayRecord> listDays = getListDaysMonth(document, numMonth, year, true);
-
-	MonthListBean monthList = new MonthListBean(month, year, listDays);
-
-	long endTime = System.currentTimeMillis();
-	Log.d(LOGTAG, "Tiempo carga lista mensual: " + (endTime - beginTime));
-
-	return monthList;
-    }
-
-    public List<DayRecord> getListDaysAndActivitiesForMonthAndYear(int month, String year,
-	    boolean withActivities) throws ConnectionException {
-	long beginTime = System.currentTimeMillis();
-
-	String html = doPostChangeDate(month, year);
-	Document document = Jsoup.parse(html);
-
-	List<DayRecord> listDays = getListDaysMonth(document, Integer.toString(month), year, withActivities);
-
-	long endTime = System.currentTimeMillis();
-	Log.d(LOGTAG, "Tiempo carga lista mensual: " + (endTime - beginTime));
-
-	return listDays;
-    }
-
-    private String doPostChangeDate(int month, String year) throws ConnectionException {
-	String html = null;
-	try {
-	    URL urlObject = new URL(URL_STR_CHANGE_DATE);
-	    HttpPost post = new HttpPost(urlObject.toURI());
-	    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-	    nameValuePairs.add(new BasicNameValuePair("IsValidation", "False"));
-	    nameValuePairs.add(new BasicNameValuePair("ActiveView", "Index"));
-	    nameValuePairs.add(new BasicNameValuePair("month", Integer.toString(month)));
-	    nameValuePairs.add(new BasicNameValuePair("year", year));
-
-	    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-	    HttpResponse resp = httpClient.execute(post);
-
-	    if (resp.getStatusLine().getStatusCode() != 200) {
-		throw new ConnectionException("Error en la conexión, statusCode: "
-			+ resp.getStatusLine().getStatusCode());
-	    }
-
-	    InputStream is = resp.getEntity().getContent();
-	    StringWriter writer = new StringWriter();
-	    IOUtils.copy(is, writer, "UTF-8");
-	    html = writer.toString();
-	} catch (URISyntaxException e) {
-	    Log.d(LOGTAG, "Error de URI en el acceso doPostChangeDate a " + URL_STR_CHANGE_DATE, e);
-	    throw new ConnectionException(e);
-	} catch (IOException e) {
-	    Log.d(LOGTAG, "Error IO en el acceso doPostChangeDate a " + URL_STR_CHANGE_DATE, e);
-	    throw new ConnectionException(e);
-	}
-
-	return html;
-    }
-
-    private List<DayRecord> getListDaysMonth(Document document, String numMonth, String year,
-	    boolean withActivities) throws ConnectionException {
-	List<DayRecord> listDays = new ArrayList<DayRecord>();
-	Elements selectUlDays = document.select("#ListOfDays");
-	if (selectUlDays != null) {
-	    Element ulDays = selectUlDays.first();
-	    Elements liDays = ulDays.children();
-	    Iterator<Element> itDays = liDays.iterator();
-	    while (itDays.hasNext()) {
-		Element liDay = itDays.next();
-		Elements spanDayNumbers = liDay.select(".DayNumber");
-		Elements spanDayNInitials = liDay.select(".DayInitials");
-		Elements spanTotalHours = liDay.select(".TotalHours");
-
-		DayRecord dayRecord = new DayRecord();
-		dayRecord.setHours(spanTotalHours.first().html());
-		dayRecord.setIsWeekend("WeekendDay".equals(liDay.className()));
-		dayRecord.setIsHoliday("Holiday".equals(liDay.className()));
-		dayRecord.setDayNum(Integer.valueOf(spanDayNumbers.first().html()));
-		dayRecord.setDayName(DayUtils.replaceAcutes(spanDayNInitials.first().html()));
-		dayRecord.setDateForm(DayUtils.createDateString(dayRecord.getDayNum(), numMonth, year));
-
-		if (withActivities) {
-		    Elements selectUlActivities = liDay.select("ul.Activities");
-		    Element ulActivities = selectUlActivities.first();
-		    Elements liActivities = ulActivities.children();
-		    Iterator<Element> itAct = liActivities.iterator();
-		    while (itAct.hasNext()) {
-			Element liActivity = itAct.next();
-			ActivityDay activityDay = new ActivityDay();
-			activityDay.setIdActivity(liActivity.select("input#id").val());
-			activityDay.setHours(liActivity.select("div.ActivityHours").html());
-			activityDay.setProjectId(liActivity.select("div.ActivityAccount span").html());
-			activityDay.setSubProject("");
-			activityDay.setSubProjectId(liActivity.select("div.ActivitySubaccount span").html());
-			activityDay.setTask(liActivity.select("div.ActivityTask").html());
-			activityDay.setUpdate(true); // Para marcarla como a actualizar, si la modificamos
-
-			dayRecord.getActivities().add(activityDay);
-		    }
+		for (int i = FIRST_YEAR; i <= lastYear; i++) {
+			yearsList.add(String.valueOf(i));
 		}
-		listDays.add(dayRecord);
-	    }
-	} else {
-	    throw new ConnectionException("No existen datos de días en la página recibida!");
-	}
-	return listDays;
-    }
 
-    public Integer saveDay(ActivityDay activityDay, String dateForm, int dayNum) throws ConnectionException {
-	Integer result = 0;
-	String html = null;
-	if (activityDay.isUpdate()) {
-	    html = this.doPostModify(activityDay, dateForm);
-	} else {
-	    html = this.doPostCreate(activityDay, dateForm);
+		return yearsList;
 	}
 
-	Document document = Jsoup.parse(html);
-	Elements errors = document.select(".input-validation-error");
-	if (errors != null && errors.size() > 0) {
-	    result = -3;
-	} else { // Ok
-	    if (!activityDay.isUpdate()) {
-		// Tenemos que obtener en este caso el id
-		activityDay.setIdActivity(getIdFromActivityCreated(dayNum, document, activityDay));
-	    }
+	private String getHttpContent(String url) throws ConnectionException {
+		String html = null;
+		try {
+			long beginTime = System.currentTimeMillis();
 
-	    result = 1;
+			URL urlObject = new URL(url);
+			HttpGet get = new HttpGet(urlObject.toURI());
+			HttpResponse resp = httpClient.execute(get);
+
+			Log.d(LOGTAG, "StatusCodeGET: " + resp.getStatusLine().getStatusCode() + " StatusLineGET: "
+					+ resp.getStatusLine().getReasonPhrase());
+
+			if (resp.getStatusLine().getStatusCode() != 200) {
+				throw new ConnectionException("Error en la conexión, statusCode: "
+						+ resp.getStatusLine().getStatusCode());
+			}
+
+			InputStream is = resp.getEntity().getContent();
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(is, writer, "UTF-8");
+			html = writer.toString();
+
+			long endTime = System.currentTimeMillis();
+			Log.d(LOGTAG, "Tiempo conexión a " + url + ": " + (endTime - beginTime));
+		} catch (URISyntaxException e) {
+			Log.d(LOGTAG, "Error de URI en el acceso getHttp a " + url, e);
+			throw new ConnectionException(e);
+		} catch (IOException e) {
+			Log.d(LOGTAG, "Error IO en el acceso getHttp a " + url, e);
+			throw new ConnectionException(e);
+		}
+
+		return html;
 	}
 
-	return result;
-    }
+	public MonthListBean getListDaysAndActivitiesForCurrentMonth() throws ConnectionException {
+		long beginTime = System.currentTimeMillis();
 
-    private String getIdFromActivityCreated(int dayNum, Document document, ActivityDay activityDay) {
-	Elements divFrm = document.select("div#frmAC" + dayNum);
-	Element divParent = divFrm.first().parent();
-	Elements liActivities = divParent.select("li.Activity");
-	Iterator<Element> it = liActivities.iterator();
-	String id = null;
-	while (it.hasNext()) {
-	    Element liActivity = it.next();
-	    String projectId = liActivity.select("div.ActivityAccount span").html();
-	    String subProjectId = liActivity.select("div.ActivitySubaccount span").html();
-	    String task = liActivity.select("div.ActivityTask").html();
-	    if (activityDay.getProjectId().equals(projectId)
-		    && activityDay.getSubProjectId().equals(subProjectId)
-		    && activityDay.getTask().equals(DayUtils.getTaskNameWithoutNBSP(task))) {
-		// Encontrada, nos quedamos con su id
-		id = liActivity.select("input#id").val();
-		break;
-	    }
+		String html = this.getHttpContent(URL_STR);
+		Document document = Jsoup.parse(html);
 
+		Elements optionsMonth = document.select("#month > option[selected]");
+		Element optionMonth = optionsMonth.first();
+		String month = optionMonth.html();
+		String numMonth = optionMonth.val();
+
+		Elements optionsYear = document.select("#year > option[selected]");
+		Element optionYear = optionsYear.first();
+		String year = optionYear.html();
+
+		List<DayRecord> listDays = getListDaysMonth(document, numMonth, year, true);
+
+		MonthListBean monthList = new MonthListBean(month, year, listDays);
+
+		long endTime = System.currentTimeMillis();
+		Log.d(LOGTAG, "Tiempo carga lista mensual: " + (endTime - beginTime));
+
+		return monthList;
 	}
 
-	return id;
-    }
+	public List<DayRecord> getListDaysAndActivitiesForMonthAndYear(int month, String year, boolean withActivities)
+			throws ConnectionException {
+		long beginTime = System.currentTimeMillis();
 
-    public Integer removeDay(ActivityDay activityDay) throws ConnectionException {
-	return doDelete(activityDay) ? 1 : -4;
-    }
+		String html = doPostChangeDate(month, year);
+		Document document = Jsoup.parse(html);
 
-    private String doPostCreate(ActivityDay activityDay, String dateActivity) throws ConnectionException {
-	String html = null;
+		List<DayRecord> listDays = getListDaysMonth(document, Integer.toString(month), year, withActivities);
 
-	try {
-	    long beginTime = System.currentTimeMillis();
+		long endTime = System.currentTimeMillis();
+		Log.d(LOGTAG, "Tiempo carga lista mensual: " + (endTime - beginTime));
 
-	    URL urlObject = new URL(URL_STR_CREATE);
-	    HttpPost post = new HttpPost(urlObject.toURI());
-	    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-	    nameValuePairs.add(new BasicNameValuePair("Date", dateActivity));
-	    nameValuePairs.add(new BasicNameValuePair("createActivity.Hours", activityDay.getHours()));
-	    nameValuePairs.add(new BasicNameValuePair("createActivity.AccountCode", activityDay
-		    .getProjectId()));
-	    nameValuePairs.add(new BasicNameValuePair("createActivity.SubaccountCode", activityDay
-		    .getSubProjectId()));
-	    nameValuePairs.add(new BasicNameValuePair("createActivity.Task", activityDay.getTask()));
-	    nameValuePairs.add(new BasicNameValuePair("ihScroll20", "0"));
-
-	    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-	    HttpResponse resp = httpClient.execute(post);
-
-	    if (resp.getStatusLine().getStatusCode() != 200) {
-		throw new ConnectionException("Error en la conexión, statusCode: "
-			+ resp.getStatusLine().getStatusCode());
-	    }
-
-	    InputStream is = resp.getEntity().getContent();
-	    StringWriter writer = new StringWriter();
-	    IOUtils.copy(is, writer, "UTF-8");
-	    html = writer.toString();
-
-	    long endTime = System.currentTimeMillis();
-	    Log.d(LOGTAG, "Tiempo conexión a " + URL_STR_CREATE + ": " + (endTime - beginTime));
-	} catch (URISyntaxException e) {
-	    Log.d(LOGTAG, "Error de URI en el acceso doPostCreate a " + URL_STR_CREATE, e);
-	    throw new ConnectionException(e);
-	} catch (IOException e) {
-	    Log.d(LOGTAG, "Error IO en el acceso doPostCreate a " + URL_STR_CREATE, e);
-	    throw new ConnectionException(e);
+		return listDays;
 	}
 
-	return html;
-    }
+	private String doPostChangeDate(int month, String year) throws ConnectionException {
+		String html = null;
+		try {
+			URL urlObject = new URL(URL_STR_CHANGE_DATE);
+			HttpPost post = new HttpPost(urlObject.toURI());
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+			nameValuePairs.add(new BasicNameValuePair("IsValidation", "False"));
+			nameValuePairs.add(new BasicNameValuePair("ActiveView", "Index"));
+			nameValuePairs.add(new BasicNameValuePair("month", Integer.toString(month)));
+			nameValuePairs.add(new BasicNameValuePair("year", year));
 
-    private String doPostModify(ActivityDay activityDay, String dateActivity) throws ConnectionException {
-	String html = null;
+			post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			HttpResponse resp = httpClient.execute(post);
 
-	try {
-	    long beginTime = System.currentTimeMillis();
+			if (resp.getStatusLine().getStatusCode() != 200) {
+				throw new ConnectionException("Error en la conexión, statusCode: "
+						+ resp.getStatusLine().getStatusCode());
+			}
 
-	    URL urlObject = new URL(URL_STR_MODIFY);
-	    HttpPost post = new HttpPost(urlObject.toURI());
-	    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-	    nameValuePairs.add(new BasicNameValuePair("Date", dateActivity));
-	    nameValuePairs.add(new BasicNameValuePair("editActivity.id", activityDay.getIdActivity()));
-	    nameValuePairs.add(new BasicNameValuePair("id", activityDay.getIdActivity()));
-	    nameValuePairs.add(new BasicNameValuePair("editActivity.Hours", activityDay.getHours()));
-	    nameValuePairs
-		    .add(new BasicNameValuePair("editActivity.AccountCode", activityDay.getProjectId()));
-	    nameValuePairs.add(new BasicNameValuePair("editActivity.SubaccountCode", activityDay
-		    .getSubProjectId()));
-	    nameValuePairs.add(new BasicNameValuePair("editActivity.Task", activityDay.getTask()));
-	    nameValuePairs.add(new BasicNameValuePair("ihScroll" + activityDay.getIdActivity(), "0"));
+			InputStream is = resp.getEntity().getContent();
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(is, writer, "UTF-8");
+			html = writer.toString();
+		} catch (URISyntaxException e) {
+			Log.d(LOGTAG, "Error de URI en el acceso doPostChangeDate a " + URL_STR_CHANGE_DATE, e);
+			throw new ConnectionException(e);
+		} catch (IOException e) {
+			Log.d(LOGTAG, "Error IO en el acceso doPostChangeDate a " + URL_STR_CHANGE_DATE, e);
+			throw new ConnectionException(e);
+		}
 
-	    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-	    HttpResponse resp = httpClient.execute(post);
-
-	    if (resp.getStatusLine().getStatusCode() != 200) {
-		throw new ConnectionException("Error en la conexión, statusCode: "
-			+ resp.getStatusLine().getStatusCode());
-	    }
-
-	    InputStream is = resp.getEntity().getContent();
-	    StringWriter writer = new StringWriter();
-	    IOUtils.copy(is, writer, "UTF-8");
-	    html = writer.toString();
-
-	    long endTime = System.currentTimeMillis();
-	    Log.d(LOGTAG, "Tiempo conexión a " + URL_STR_MODIFY + ": " + (endTime - beginTime));
-	} catch (URISyntaxException e) {
-	    Log.d(LOGTAG, "Error de URI en el acceso doPostModify a " + URL_STR_MODIFY, e);
-	    throw new ConnectionException(e);
-	} catch (IOException e) {
-	    Log.d(LOGTAG, "Error IO en el acceso doPostModify a " + URL_STR_MODIFY, e);
-	    throw new ConnectionException(e);
+		return html;
 	}
 
-	return html;
-    }
+	private List<DayRecord> getListDaysMonth(Document document, String numMonth, String year, boolean withActivities)
+			throws ConnectionException {
+		List<DayRecord> listDays = new ArrayList<DayRecord>();
+		Elements selectUlDays = document.select("#ListOfDays");
+		if (selectUlDays != null) {
+			Element ulDays = selectUlDays.first();
+			Elements liDays = ulDays.children();
+			Iterator<Element> itDays = liDays.iterator();
+			while (itDays.hasNext()) {
+				Element liDay = itDays.next();
+				Elements spanDayNumbers = liDay.select(".DayNumber");
+				Elements spanDayNInitials = liDay.select(".DayInitials");
+				Elements spanTotalHours = liDay.select(".TotalHours");
 
-    private boolean doDelete(ActivityDay activityDay) throws ConnectionException {
-	boolean deleted = false;
-	StringBuilder urlWithParams = new StringBuilder();
-	urlWithParams.append(URL_STR_DELETE).append("?id=").append(activityDay.getIdActivity())
-		.append("&ihdScroll").append(activityDay.getIdActivity()).append("=0");
+				DayRecord dayRecord = new DayRecord();
+				dayRecord.setHours(spanTotalHours.first().html());
+				dayRecord.setIsWeekend("WeekendDay".equals(liDay.className()));
+				dayRecord.setIsHoliday("Holiday".equals(liDay.className()));
+				dayRecord.setDayNum(Integer.valueOf(spanDayNumbers.first().html()));
+				dayRecord.setDayName(DayUtils.replaceAcutes(spanDayNInitials.first().html()));
+				dayRecord.setDateForm(DayUtils.createDateString(dayRecord.getDayNum(), numMonth, year));
 
-	String html = this.getHttpContent(urlWithParams.toString());
-	if (html == null || html.length() == 0) {
-	    Log.w(LOGTAG, "No se ha podido borrar correctamente la actividad: " + activityDay.getIdActivity());
-	    deleted = false;
-	} else {
-	    deleted = true;
+				if (withActivities) {
+					Elements selectUlActivities = liDay.select("ul.Activities");
+					Element ulActivities = selectUlActivities.first();
+					Elements liActivities = ulActivities.children();
+					Iterator<Element> itAct = liActivities.iterator();
+					while (itAct.hasNext()) {
+						Element liActivity = itAct.next();
+						ActivityDay activityDay = new ActivityDay();
+						activityDay.setIdActivity(liActivity.select("input#id").val());
+						activityDay.setHours(liActivity.select("div.ActivityHours").html());
+						activityDay.setProjectId(liActivity.select("div.ActivityAccount span").html());
+						activityDay.setSubProject("");
+						activityDay.setSubProjectId(liActivity.select("div.ActivitySubaccount span").html());
+						activityDay.setTask(liActivity.select("div.ActivityTask").html());
+						activityDay.setUpdate(true); // Para marcarla como a actualizar, si la modificamos
+
+						dayRecord.getActivities().add(activityDay);
+					}
+				}
+				listDays.add(dayRecord);
+			}
+		} else {
+			throw new ConnectionException("No existen datos de días en la página recibida!");
+		}
+		return listDays;
 	}
 
-	return deleted;
-    }
+	public Integer saveDay(ActivityDay activityDay, String dateForm, int dayNum) throws ConnectionException {
+		Integer result = 0;
+		String html = null;
+		if (activityDay.isUpdate()) {
+			html = this.doPostModify(activityDay, dateForm);
+		} else {
+			html = this.doPostCreate(activityDay, dateForm);
+		}
 
-    public Integer saveDayBatch(DayRecord dayRecord) throws ConnectionException {
-	Integer result = 0;
-	String html = this.doPostCreate(dayRecord.getActivities().get(0), dayRecord.getDateForm());
-	Document document = Jsoup.parse(html);
-	Elements errors = document.select(".input-validation-error");
-	if (errors != null && errors.size() > 0) {
-	    result = -3;
-	} else { // Ok
-	    result = 1;
+		Document document = Jsoup.parse(html);
+		Elements errors = document.select(".input-validation-error");
+		if (errors != null && errors.size() > 0) {
+			result = -3;
+		} else { // Ok
+			if (!activityDay.isUpdate()) {
+				// Tenemos que obtener en este caso el id
+				activityDay.setIdActivity(getIdFromActivityCreated(dayNum, document, activityDay));
+			}
+
+			result = 1;
+		}
+
+		return result;
 	}
 
-	return result;
-    }
+	private String getIdFromActivityCreated(int dayNum, Document document, ActivityDay activityDay) {
+		Elements divFrm = document.select("div#frmAC" + dayNum);
+		Element divParent = divFrm.first().parent();
+		Elements liActivities = divParent.select("li.Activity");
+		Iterator<Element> it = liActivities.iterator();
+		String id = null;
+		while (it.hasNext()) {
+			Element liActivity = it.next();
+			String projectId = liActivity.select("div.ActivityAccount span").html();
+			String subProjectId = liActivity.select("div.ActivitySubaccount span").html();
+			String task = liActivity.select("div.ActivityTask").html();
+			if (activityDay.getProjectId().equals(projectId) && activityDay.getSubProjectId().equals(subProjectId)
+					&& activityDay.getTask().equals(DayUtils.getTaskNameWithoutNBSP(task))) {
+				// Encontrada, nos quedamos con su id
+				id = liActivity.select("input#id").val();
+				break;
+			}
 
-    @Override
-    public MonthReportBean getMonthReport() throws ConnectionException {
-	long beginTime = System.currentTimeMillis();
+		}
 
-	String html = this.getHttpContent(URL_STR_MONTH_REPORT);
-	Document document = Jsoup.parse(html);
-
-	Elements optionsMonth = document.select("#month > option[selected]");
-	Element optionMonth = optionsMonth.first();
-	String month = optionMonth.html();
-
-	Elements optionsYear = document.select("#year > option[selected]");
-	Element optionYear = optionsYear.first();
-	String year = optionYear.html();
-
-	MonthReportBean monthReport = new MonthReportBean(month, year);
-
-	Elements listOfAccounts = document.select("#ListOfAccounts");
-	Iterator<Element> accountIterator = listOfAccounts.select(".Account").iterator();
-	while (accountIterator.hasNext()) {
-	    Element accountHours = accountIterator.next();
-	    MonthReportRecord monthReportRecord = createMonthReportRecordFromHtml(accountHours.html());
-	    monthReport.addMonthReportRecord(monthReportRecord);
+		return id;
 	}
 
-	Elements totalHours = document.select(".HoursSum");
-	Element totalHoursElement = totalHours.first();
-	monthReport.setTotal(getTotalHoursFromHtml(totalHoursElement.html()));
+	public Integer removeDay(ActivityDay activityDay) throws ConnectionException {
+		return doDelete(activityDay) ? 1 : -4;
+	}
 
-	long endTime = System.currentTimeMillis();
-	Log.d(LOGTAG, "Tiempo carga informe mensual: " + (endTime - beginTime));
+	private String doPostCreate(ActivityDay activityDay, String dateActivity) throws ConnectionException {
+		String html = null;
 
-	return monthReport;
-    }
+		try {
+			long beginTime = System.currentTimeMillis();
 
-    private MonthReportRecord createMonthReportRecordFromHtml(String htmlAccount) {
-	// Ejemplo valor htmlAccount -> BBVA68 : 161 horas
-	String[] projectAndHours = htmlAccount.split(":");
-	String[] hours = projectAndHours[1].trim().split("\\s+");
+			URL urlObject = new URL(URL_STR_CREATE);
+			HttpPost post = new HttpPost(urlObject.toURI());
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+			nameValuePairs.add(new BasicNameValuePair("Date", dateActivity));
+			nameValuePairs.add(new BasicNameValuePair("createActivity.Hours", activityDay.getHours()));
+			nameValuePairs.add(new BasicNameValuePair("createActivity.AccountCode", activityDay.getProjectId()));
+			nameValuePairs.add(new BasicNameValuePair("createActivity.SubaccountCode", activityDay.getSubProjectId()));
+			nameValuePairs.add(new BasicNameValuePair("createActivity.Task", activityDay.getTask()));
+			nameValuePairs.add(new BasicNameValuePair("ihScroll20", "0"));
 
-	return new MonthReportRecord(projectAndHours[0].trim(), hours[0]);
-    }
+			post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			HttpResponse resp = httpClient.execute(post);
 
-    private String getTotalHoursFromHtml(String htmlTotalHours) {
-	// Ejemplo valor htmlTotalHours -> Total: 161 horas
-	String[] totalAndHours = htmlTotalHours.split(":");
-	String[] hours = totalAndHours[1].trim().split("\\s+");
+			if (resp.getStatusLine().getStatusCode() != 200) {
+				throw new ConnectionException("Error en la conexión, statusCode: "
+						+ resp.getStatusLine().getStatusCode());
+			}
 
-	return hours[0];
-    }
+			InputStream is = resp.getEntity().getContent();
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(is, writer, "UTF-8");
+			html = writer.toString();
+
+			long endTime = System.currentTimeMillis();
+			Log.d(LOGTAG, "Tiempo conexión a " + URL_STR_CREATE + ": " + (endTime - beginTime));
+		} catch (URISyntaxException e) {
+			Log.d(LOGTAG, "Error de URI en el acceso doPostCreate a " + URL_STR_CREATE, e);
+			throw new ConnectionException(e);
+		} catch (IOException e) {
+			Log.d(LOGTAG, "Error IO en el acceso doPostCreate a " + URL_STR_CREATE, e);
+			throw new ConnectionException(e);
+		}
+
+		return html;
+	}
+
+	private String doPostModify(ActivityDay activityDay, String dateActivity) throws ConnectionException {
+		String html = null;
+
+		try {
+			long beginTime = System.currentTimeMillis();
+
+			URL urlObject = new URL(URL_STR_MODIFY);
+			HttpPost post = new HttpPost(urlObject.toURI());
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+			nameValuePairs.add(new BasicNameValuePair("Date", dateActivity));
+			nameValuePairs.add(new BasicNameValuePair("editActivity.id", activityDay.getIdActivity()));
+			nameValuePairs.add(new BasicNameValuePair("id", activityDay.getIdActivity()));
+			nameValuePairs.add(new BasicNameValuePair("editActivity.Hours", activityDay.getHours()));
+			nameValuePairs.add(new BasicNameValuePair("editActivity.AccountCode", activityDay.getProjectId()));
+			nameValuePairs.add(new BasicNameValuePair("editActivity.SubaccountCode", activityDay.getSubProjectId()));
+			nameValuePairs.add(new BasicNameValuePair("editActivity.Task", activityDay.getTask()));
+			nameValuePairs.add(new BasicNameValuePair("ihScroll" + activityDay.getIdActivity(), "0"));
+
+			post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			HttpResponse resp = httpClient.execute(post);
+
+			if (resp.getStatusLine().getStatusCode() != 200) {
+				throw new ConnectionException("Error en la conexión, statusCode: "
+						+ resp.getStatusLine().getStatusCode());
+			}
+
+			InputStream is = resp.getEntity().getContent();
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(is, writer, "UTF-8");
+			html = writer.toString();
+
+			long endTime = System.currentTimeMillis();
+			Log.d(LOGTAG, "Tiempo conexión a " + URL_STR_MODIFY + ": " + (endTime - beginTime));
+		} catch (URISyntaxException e) {
+			Log.d(LOGTAG, "Error de URI en el acceso doPostModify a " + URL_STR_MODIFY, e);
+			throw new ConnectionException(e);
+		} catch (IOException e) {
+			Log.d(LOGTAG, "Error IO en el acceso doPostModify a " + URL_STR_MODIFY, e);
+			throw new ConnectionException(e);
+		}
+
+		return html;
+	}
+
+	private boolean doDelete(ActivityDay activityDay) throws ConnectionException {
+		boolean deleted = false;
+		StringBuilder urlWithParams = new StringBuilder();
+		urlWithParams.append(URL_STR_DELETE).append("?id=").append(activityDay.getIdActivity()).append("&ihdScroll")
+				.append(activityDay.getIdActivity()).append("=0");
+
+		String html = this.getHttpContent(urlWithParams.toString());
+		if (html == null || html.length() == 0) {
+			Log.w(LOGTAG, "No se ha podido borrar correctamente la actividad: " + activityDay.getIdActivity());
+			deleted = false;
+		} else {
+			deleted = true;
+		}
+
+		return deleted;
+	}
+
+	public Integer saveDayBatch(DayRecord dayRecord) throws ConnectionException {
+		Integer result = 0;
+		String html = this.doPostCreate(dayRecord.getActivities().get(0), dayRecord.getDateForm());
+		Document document = Jsoup.parse(html);
+		Elements errors = document.select(".input-validation-error");
+		if (errors != null && errors.size() > 0) {
+			result = -3;
+		} else { // Ok
+			result = 1;
+		}
+
+		return result;
+	}
+
+	@Override
+	public MonthReportBean getMonthReport() throws ConnectionException {
+		long beginTime = System.currentTimeMillis();
+
+		String html = this.getHttpContent(URL_STR_MONTH_REPORT);
+		Document document = Jsoup.parse(html);
+
+		Elements optionsMonth = document.select("#month > option[selected]");
+		Element optionMonth = optionsMonth.first();
+		String month = optionMonth.html();
+
+		Elements optionsYear = document.select("#year > option[selected]");
+		Element optionYear = optionsYear.first();
+		String year = optionYear.html();
+
+		MonthReportBean monthReport = new MonthReportBean(month, year);
+
+		Elements listOfAccounts = document.select("#ListOfAccounts");
+		Iterator<Element> accountIterator = listOfAccounts.select(".Account").iterator();
+		while (accountIterator.hasNext()) {
+			Element accountHours = accountIterator.next();
+			MonthReportRecord monthReportRecord = createMonthReportRecordFromHtml(accountHours.html());
+			monthReport.addMonthReportRecord(monthReportRecord);
+		}
+
+		Elements totalHours = document.select(".HoursSum");
+		Element totalHoursElement = totalHours.first();
+		monthReport.setTotal(getTotalHoursFromHtml(totalHoursElement.html()));
+
+		long endTime = System.currentTimeMillis();
+		Log.d(LOGTAG, "Tiempo carga informe mensual: " + (endTime - beginTime));
+
+		return monthReport;
+	}
+
+	private MonthReportRecord createMonthReportRecordFromHtml(String htmlAccount) {
+		// Ejemplo valor htmlAccount -> BBVA68 : 161 horas
+		String[] projectAndHours = htmlAccount.split(":");
+		String[] hours = projectAndHours[1].trim().split("\\s+");
+
+		return new MonthReportRecord(projectAndHours[0].trim(), hours[0]);
+	}
+
+	private String getTotalHoursFromHtml(String htmlTotalHours) {
+		// Ejemplo valor htmlTotalHours -> Total: 161 horas
+		String[] totalAndHours = htmlTotalHours.split(":");
+		String[] hours = totalAndHours[1].trim().split("\\s+");
+
+		return hours[0];
+	}
 }

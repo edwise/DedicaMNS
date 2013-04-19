@@ -11,32 +11,32 @@ import com.edwise.dedicamns.beans.MonthReportBean;
 
 public interface WebConnection {
 
-    boolean isOnline(Activity activity);
+	boolean isOnline(Activity activity);
 
-    Integer connectWeb(String userName, String password) throws ConnectionException;
+	Integer connectWeb(String userName, String password) throws ConnectionException;
 
-    List<String> getMonths();
+	List<String> getMonths();
 
-    List<String> getYears();
+	List<String> getYears();
 
-    List<String> getArrayProjects();
+	List<String> getArrayProjects();
 
-    List<String> getArraySubProjects(String projectId);
+	List<String> getArraySubProjects(String projectId);
 
-    void fillProyectsAndSubProyectsCached() throws ConnectionException;
+	void fillProyectsAndSubProyectsCached() throws ConnectionException;
 
-    void fillMonthsAndYearsCached();
+	void fillMonthsAndYearsCached();
 
-    MonthListBean getListDaysAndActivitiesForCurrentMonth() throws ConnectionException;
+	MonthListBean getListDaysAndActivitiesForCurrentMonth() throws ConnectionException;
 
-    Integer saveDay(ActivityDay activityDay, String dateForm, int dayNum) throws ConnectionException;
+	Integer saveDay(ActivityDay activityDay, String dateForm, int dayNum) throws ConnectionException;
 
-    Integer saveDayBatch(DayRecord dayRecord) throws ConnectionException;
+	Integer saveDayBatch(DayRecord dayRecord) throws ConnectionException;
 
-    Integer removeDay(ActivityDay activityDay) throws ConnectionException;
+	Integer removeDay(ActivityDay activityDay) throws ConnectionException;
 
-    List<DayRecord> getListDaysAndActivitiesForMonthAndYear(int month, String year, boolean withActivities)
-	    throws ConnectionException;
+	List<DayRecord> getListDaysAndActivitiesForMonthAndYear(int month, String year, boolean withActivities)
+			throws ConnectionException;
 
-    MonthReportBean getMonthReport() throws ConnectionException;
+	MonthReportBean getMonthReport() throws ConnectionException;
 }

@@ -10,51 +10,51 @@ import android.widget.TextView;
 import com.edwise.dedicamns.asynctasks.AppData;
 
 public class AboutActivity extends Activity {
-    private static final String LOGTAG = AboutActivity.class.toString();
+	private static final String LOGTAG = AboutActivity.class.toString();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-	Log.d(LOGTAG, "onCreate");
-	super.onCreate(savedInstanceState);
-	setContentView(R.layout.about);
-	AppData.setCurrentActivity(this);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		Log.d(LOGTAG, "onCreate");
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.about);
+		AppData.setCurrentActivity(this);
 
-	fillTextViewVersion();
-    }
-
-    private void fillTextViewVersion() {
-	String versionName = getVersionNameApp();
-
-	if (versionName != null) {
-	    TextView textViewAbout = (TextView) findViewById(R.id.AboutVersionTextView);
-	    textViewAbout.setText("Dedica MNS: " + versionName + " Version");
+		fillTextViewVersion();
 	}
-    }
 
-    private String getVersionNameApp() {
-	String versionName = null;
-	PackageInfo pinfo;
-	try {
-	    pinfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-	    versionName = pinfo.versionName;
-	} catch (NameNotFoundException e) {
-	    Log.e(LOGTAG, "Error al obtener la versión de la app!", e);
+	private void fillTextViewVersion() {
+		String versionName = getVersionNameApp();
+
+		if (versionName != null) {
+			TextView textViewAbout = (TextView) findViewById(R.id.AboutVersionTextView);
+			textViewAbout.setText("Dedica MNS: " + versionName + " Version");
+		}
 	}
-	return versionName;
-    }
 
-    @Override
-    public void onBackPressed() {
-	Log.d(LOGTAG, "onBackPressed");
-	super.onBackPressed();
+	private String getVersionNameApp() {
+		String versionName = null;
+		PackageInfo pinfo;
+		try {
+			pinfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+			versionName = pinfo.versionName;
+		} catch (NameNotFoundException e) {
+			Log.e(LOGTAG, "Error al obtener la versión de la app!", e);
+		}
+		return versionName;
+	}
 
-	finish();
-    }
+	@Override
+	public void onBackPressed() {
+		Log.d(LOGTAG, "onBackPressed");
+		super.onBackPressed();
 
-    @Override
-    protected void onRestart() {
-	super.onRestart();
-	AppData.setCurrentActivity(this);
-    }
+		finish();
+	}
+
+	@Override
+	protected void onRestart() {
+		super.onRestart();
+		AppData.setCurrentActivity(this);
+	}
 
 }

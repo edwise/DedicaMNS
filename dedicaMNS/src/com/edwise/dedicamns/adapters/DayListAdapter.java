@@ -16,72 +16,72 @@ import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.utils.DayUtils;
 
 public class DayListAdapter extends ArrayAdapter<DayRecord> {
-    private final Activity context;
-    private final List<DayRecord> days;
+	private final Activity context;
+	private final List<DayRecord> days;
 
-    private static int SDK_VERSION = android.os.Build.VERSION.SDK_INT;
-    private static int JELLYBEAN_VERSION = android.os.Build.VERSION_CODES.JELLY_BEAN;
+	private static int SDK_VERSION = android.os.Build.VERSION.SDK_INT;
+	private static int JELLYBEAN_VERSION = android.os.Build.VERSION_CODES.JELLY_BEAN;
 
-    static class ViewHolder {
-	public TextView dayNum;
-	public TextView dayName;
-	public TextView hours;
-	public TextView projectId;
-    }
-
-    public DayListAdapter(Activity context, List<DayRecord> days) {
-	super(context, R.layout.month_view_row, days);
-	this.context = context;
-	this.days = days;
-    }
-
-    @SuppressWarnings("deprecation")
-    @SuppressLint("NewApi")
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-	View rowView = convertView;
-	if (rowView == null) {
-	    LayoutInflater inflater = context.getLayoutInflater();
-	    rowView = inflater.inflate(R.layout.month_view_row, null);
-	    ViewHolder viewHolder = new ViewHolder();
-	    viewHolder.dayNum = (TextView) rowView.findViewById(R.id.dayNum);
-	    viewHolder.dayName = (TextView) rowView.findViewById(R.id.dayName);
-	    viewHolder.hours = (TextView) rowView.findViewById(R.id.hours);
-	    viewHolder.projectId = (TextView) rowView.findViewById(R.id.projectId);
-	    rowView.setTag(viewHolder);
+	static class ViewHolder {
+		public TextView dayNum;
+		public TextView dayName;
+		public TextView hours;
+		public TextView projectId;
 	}
 
-	ViewHolder holder = (ViewHolder) rowView.getTag();
-	DayRecord record = days.get(position);
-	holder.dayNum.setText(String.valueOf(record.getDayNum()));
-	holder.dayName.setText(record.getDayName());
-	holder.hours.setText(record.getHours());
-	holder.projectId.setText(DayUtils.getSomeProjectIds(record.getActivities()));
-
-	Drawable drawable = null;
-	if (record.getIsHoliday()) {
-	    // Sky Blue
-	    drawable = rowView.getResources().getDrawable(R.drawable.selector_holiday);
-	} else if (record.getIsWeekend()) {
-	    // Light Sky Blue
-	    drawable = rowView.getResources().getDrawable(R.drawable.selector_weekend);
-	} else {
-	    if (record.getActivities().size() == 0) {
-		// Azure
-		drawable = rowView.getResources().getDrawable(R.drawable.selector_blank);
-	    } else {
-		// Light Cyan
-		drawable = rowView.getResources().getDrawable(R.drawable.selector_filled);
-	    }
+	public DayListAdapter(Activity context, List<DayRecord> days) {
+		super(context, R.layout.month_view_row, days);
+		this.context = context;
+		this.days = days;
 	}
 
-	if (SDK_VERSION < JELLYBEAN_VERSION) {
-	    rowView.setBackgroundDrawable(drawable);
-	} else {
-	    rowView.setBackground(drawable);
-	}
+	@SuppressWarnings("deprecation")
+	@SuppressLint("NewApi")
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		View rowView = convertView;
+		if (rowView == null) {
+			LayoutInflater inflater = context.getLayoutInflater();
+			rowView = inflater.inflate(R.layout.month_view_row, null);
+			ViewHolder viewHolder = new ViewHolder();
+			viewHolder.dayNum = (TextView) rowView.findViewById(R.id.dayNum);
+			viewHolder.dayName = (TextView) rowView.findViewById(R.id.dayName);
+			viewHolder.hours = (TextView) rowView.findViewById(R.id.hours);
+			viewHolder.projectId = (TextView) rowView.findViewById(R.id.projectId);
+			rowView.setTag(viewHolder);
+		}
 
-	return rowView;
-    }
+		ViewHolder holder = (ViewHolder) rowView.getTag();
+		DayRecord record = days.get(position);
+		holder.dayNum.setText(String.valueOf(record.getDayNum()));
+		holder.dayName.setText(record.getDayName());
+		holder.hours.setText(record.getHours());
+		holder.projectId.setText(DayUtils.getSomeProjectIds(record.getActivities()));
+
+		Drawable drawable = null;
+		if (record.getIsHoliday()) {
+			// Sky Blue
+			drawable = rowView.getResources().getDrawable(R.drawable.selector_holiday);
+		} else if (record.getIsWeekend()) {
+			// Light Sky Blue
+			drawable = rowView.getResources().getDrawable(R.drawable.selector_weekend);
+		} else {
+			if (record.getActivities().size() == 0) {
+				// Azure
+				drawable = rowView.getResources().getDrawable(R.drawable.selector_blank);
+			} else {
+				// Light Cyan
+				drawable = rowView.getResources().getDrawable(R.drawable.selector_filled);
+			}
+		}
+
+		if (SDK_VERSION < JELLYBEAN_VERSION) {
+			rowView.setBackgroundDrawable(drawable);
+		} else {
+			rowView.setBackground(drawable);
+		}
+
+		return rowView;
+	}
 
 }
