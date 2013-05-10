@@ -1,10 +1,12 @@
 package com.edwise.dedicamns;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import com.edwise.dedicamns.asynctasks.AppData;
@@ -14,6 +16,10 @@ import com.edwise.dedicamns.menu.MenuUtils;
 
 public class MonthReportActivity extends Activity {
 	private static final String LOGTAG = MonthReportActivity.class.toString();
+
+	private static final String STRING_SPACE = " ";
+	private static final String STRING_TEXT_PLAIN = "text/plain";
+	private static final String STRING_DOUBLE_ENTER = "\n\n";
 
 	private MonthReportBean monthReport;
 
@@ -37,21 +43,30 @@ public class MonthReportActivity extends Activity {
 		accountsList = (TextView) findViewById(R.id.MReportAccountsTextView);
 		totalHours = (TextView) findViewById(R.id.MReportTotalTextView);
 
-		title.setText(monthReport.getMonthName() + " " + monthReport.getYear());
+		title.setText(monthReport.getMonthName() + STRING_SPACE + monthReport.getYear());
 
 		fillAccountListTextView();
 		fillTotalHoursTextView();
 	}
 
 	private void fillTotalHoursTextView() {
-		totalHours.setText(getString(R.string.totalReport) + " " + monthReport.getTotal() + " "
-				+ getString(R.string.hoursReport));
+		StringBuilder totalHoursSB = new StringBuilder();
+		totalHoursSB.append(getString(R.string.totalReport)).append(STRING_SPACE);
+		totalHoursSB.append(monthReport.getTotal()).append(STRING_SPACE);
+		totalHoursSB.append(getString(R.string.hoursReport));
+
+		totalHours.setText(totalHoursSB.toString());
 	}
 
 	private void fillAccountListTextView() {
 		for (MonthReportRecord record : monthReport.getMonthReportRecords()) {
-			accountsList.setText(accountsList.getText() + "\n - " + record.getProjectId() + ": " + record.getHours()
-					+ " " + getString(R.string.hoursReport));
+			StringBuilder textAccount = new StringBuilder();
+			textAccount.append(accountsList.getText()).append("\n - ");
+			textAccount.append(record.getProjectId()).append(": ");
+			textAccount.append(record.getHours()).append(STRING_SPACE);
+			textAccount.append(getString(R.string.hoursReport));
+
+			accountsList.setText(textAccount.toString());
 		}
 	}
 
@@ -99,4 +114,19 @@ public class MonthReportActivity extends Activity {
 		super.onSaveInstanceState(outState);
 	}
 
+	public void doShareMonthReport(View view) {
+		Intent sendIntent = new Intent();
+		sendIntent.setAction(Intent.ACTION_SEND);
+		sendIntent.putExtra(Intent.EXTRA_TEXT, getDataReport());
+		sendIntent.setType(STRING_TEXT_PLAIN);
+		startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.shareIn)));
+	}
+
+	private String getDataReport() {
+		StringBuilder dataReport = new StringBuilder();
+		dataReport.append(title.getText()).append(STRING_DOUBLE_ENTER).append(accountsList.getText())
+				.append(STRING_DOUBLE_ENTER).append(totalHours.getText());
+
+		return dataReport.toString();
+	}
 }

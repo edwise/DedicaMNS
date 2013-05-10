@@ -12,26 +12,35 @@
 
         <TextView
             android:id="@+id/MReportTitleTextView"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15sp"
+            android:layout_marginTop="15dp"
             android:autoLink="web"
-            android:gravity="center_horizontal"
-            android:paddingLeft="9sp"
-            android:paddingRight="9sp"
+            android:paddingLeft="9dp"
             android:textIsSelectable="true"
             android:textSize="22sp" />
+
+        <ImageButton
+            android:id="@+id/MReportShareImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="15dp"
+            android:contentDescription="@string/shareIn"
+            android:onClick="doShareMonthReport"
+            android:src="@android:drawable/ic_menu_share" />
 
         <TextView
             android:id="@+id/MReportAccountsTextView"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/MReportTitleTextView"
-            android:layout_marginTop="35sp"
+            android:layout_marginTop="35dp"
             android:autoLink="web"
             android:gravity="left"
-            android:paddingLeft="9sp"
-            android:paddingRight="9sp"
+            android:paddingLeft="9dp"
+            android:paddingRight="9dp"
             android:textIsSelectable="true"
             android:textSize="16sp" />
 
@@ -40,11 +49,11 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/MReportAccountsTextView"
-            android:layout_marginTop="45sp"
+            android:layout_marginTop="45dp"
             android:autoLink="web"
             android:gravity="left"
-            android:paddingLeft="9sp"
-            android:paddingRight="9sp"
+            android:paddingLeft="9dp"
+            android:paddingRight="9dp"
             android:textIsSelectable="true"
             android:textSize="16sp" />
     </RelativeLayout>

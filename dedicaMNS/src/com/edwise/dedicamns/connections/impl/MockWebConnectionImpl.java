@@ -45,7 +45,7 @@ public class MockWebConnectionImpl implements WebConnection {
 	 */
 	public Integer connectWeb(String userName, String password) {
 		try {
-			TimeUnit.SECONDS.sleep(5);
+			TimeUnit.SECONDS.sleep(3);
 		} catch (InterruptedException e) {
 			Log.e(MockWebConnectionImpl.class.toString(), "connectWeb: Error en TimeUnit...", e);
 			e.printStackTrace();
@@ -80,7 +80,7 @@ public class MockWebConnectionImpl implements WebConnection {
 
 	public void fillProyectsAndSubProyectsCached() {
 		try {
-			TimeUnit.SECONDS.sleep(3);
+			TimeUnit.SECONDS.sleep(2);
 		} catch (InterruptedException e) {
 			Log.e(MockWebConnectionImpl.class.toString(), "fillListMock: Error en TimeUnit...", e);
 			e.printStackTrace();
@@ -137,7 +137,7 @@ public class MockWebConnectionImpl implements WebConnection {
 
 	private void fillListMock(List<DayRecord> list, boolean withActivity) {
 		try {
-			TimeUnit.SECONDS.sleep(3);
+			TimeUnit.SECONDS.sleep(2);
 		} catch (InterruptedException e) {
 			Log.e(MockWebConnectionImpl.class.toString(), "fillListMock: Error en TimeUnit...", e);
 			e.printStackTrace();
@@ -325,7 +325,7 @@ public class MockWebConnectionImpl implements WebConnection {
 
 	public Integer saveDay(ActivityDay activityDay, String dateForm, int dayNum) {
 		try {
-			TimeUnit.SECONDS.sleep(3);
+			TimeUnit.SECONDS.sleep(2);
 		} catch (InterruptedException e) {
 			Log.e(MockWebConnectionImpl.class.toString(), "saveDay: Error en TimeUnit...", e);
 			e.printStackTrace();
@@ -339,7 +339,7 @@ public class MockWebConnectionImpl implements WebConnection {
 
 	public Integer removeDay(ActivityDay activityDay) {
 		try {
-			TimeUnit.SECONDS.sleep(3);
+			TimeUnit.SECONDS.sleep(2);
 		} catch (InterruptedException e) {
 			Log.e(MockWebConnectionImpl.class.toString(), "removeDay: Error en TimeUnit...", e);
 			e.printStackTrace();
@@ -397,7 +397,7 @@ public class MockWebConnectionImpl implements WebConnection {
 		monthReport.setTotal("211");
 
 		try {
-			TimeUnit.SECONDS.sleep(3);
+			TimeUnit.SECONDS.sleep(2);
 		} catch (InterruptedException e) {
 			Log.e(MockWebConnectionImpl.class.toString(), "getMonthReport: Error en TimeUnit...", e);
 			e.printStackTrace();

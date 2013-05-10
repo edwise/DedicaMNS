@@ -77,5 +77,6 @@
     <string name="msgGettingReportData">Getting month report data</string>
     <string name="totalReport">TOTAL: </string>
     <string name="monthReportTextButton">Month report</string>
+    <string name="shareIn">Share in&#8230;</string>
 
 </resources>
