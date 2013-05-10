@@ -17,7 +17,6 @@ Consideraciones importantes a tener en cuenta:
  
 Futuras ampliaciones / evolutivos:  
   - Optimización de carga de proyectos, guardandolos en una bd en el primer login. 
-  - Opción de compartir el informe mensual.
   - Nueva opción de imputación batch, más personalizable: entre dos fechas dadas, y con horas personalizables.
   - Perfiles en la imputación batch.
   
@@ -27,6 +26,7 @@ Ampliaciones / evolutivos ya realizados:
   - Permitir introducir la hora en más formatos (ahora solo permite "HH:MI").
   - Adaptar toda la app para "landscape" (actualmente hay pantallas que no salen bien en apaisado)
   - Mostrar informe mensual de horas.
+  - Opción de compartir el informe mensual.
   
   
 
