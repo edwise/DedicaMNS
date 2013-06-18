@@ -12,7 +12,7 @@ La aplicación esta ya en versión final (¡Ahora sí!).
 Se agradecen cualquier tipo de sugerencias o aviso de bugs.
 
 Consideraciones importantes a tener en cuenta:
-  - Se carga el listado de proyectos y subproyectos una vez en cada "sesión". Esto se hace la primera vez que accedemos a cualquiera de las 2 opciones. Luego ya se queda cacheado. Por eso el primer acceso puede ser algo lento... (esto se cambiará en futuras versiones)
+  - El listado de proyectos y subproyectos se carga la primera vez que te logas en la app, y se guarda en una base de datos. El listado puede "actualizarse" con la opción "Recarga de proyectos".
   - Github ya no permite sección de donwloads, así que ya no puedo subir ahí el apk. Instalatela por google play. También puedes bajarte todo el código, y crearte tu el apk en un entorno con el sdk. (esta última opción es recomendable para los paranoicos que crean que en el apk el código es distinto y en él, me guardo su password de alguna manera rara xD )
  
 Futuras ampliaciones / evolutivos:    
