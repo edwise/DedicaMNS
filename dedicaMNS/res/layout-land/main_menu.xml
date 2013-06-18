@@ -10,12 +10,13 @@
         android:gravity="center_vertical"
         android:orientation="vertical"
         android:paddingBottom="10sp"
-        android:paddingRight="25sp" >
+        android:paddingRight="20sp" >
 
         <ImageButton
             android:id="@+id/imageButtonListMonth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:contentDescription="@string/monthListTitle"
             android:onClick="doShowListMonth"
             android:src="@drawable/calendar_img" />
@@ -24,6 +25,7 @@
             android:id="@+id/ListMonthTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:text="@string/inputAndCheckByDayButton"
             android:textSize="12sp" />
     </LinearLayout>
@@ -34,12 +36,13 @@
         android:gravity="center_vertical"
         android:orientation="vertical"
         android:paddingBottom="10sp"
-        android:paddingLeft="25sp" >
+        android:paddingLeft="20sp" >
 
         <ImageButton
             android:id="@+id/imageButtonBatch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:contentDescription="@string/batchInputButton"
             android:onClick="doShowBatchMenu"
             android:src="@drawable/batch_img" />
@@ -48,7 +51,34 @@
             android:id="@+id/BatchTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:text="@string/monthBatchInputButton"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingBottom="10sp"
+        android:paddingLeft="20sp" >
+
+        <ImageButton
+            android:id="@+id/imageButtonReloadBD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/reloadBDButton"
+            android:onClick="doReloadBD"
+            android:src="@android:drawable/ic_popup_sync" />
+
+        <TextView
+            android:id="@+id/ReloadBDTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/reloadProjectsButton"
             android:textSize="12sp" />
     </LinearLayout>
 

@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:contentDescription="@string/monthListTitle"
         android:onClick="doShowListMonth"
         android:src="@drawable/calendar_img" />
@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/ListMonthTextView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="35dp"
         android:contentDescription="@string/batchInputButton"
         android:onClick="doShowBatchMenu"
         android:src="@drawable/batch_img" />
@@ -41,6 +41,26 @@
         android:layout_below="@+id/imageButtonBatch"
         android:layout_centerHorizontal="true"
         android:text="@string/monthBatchInputButton"
+        android:textSize="12sp" />
+
+    <ImageButton
+        android:id="@+id/imageButtonReloadBD"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/BatchTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:contentDescription="@string/reloadBDButton"
+        android:onClick="doReloadBD"
+        android:src="@android:drawable/ic_popup_sync" />
+
+    <TextView
+        android:id="@+id/ReloadBDTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageButtonReloadBD"
+        android:layout_centerHorizontal="true"
+        android:text="@string/reloadProjectsButton"
         android:textSize="12sp" />
 
 </RelativeLayout>

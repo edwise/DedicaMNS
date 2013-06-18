@@ -10,10 +10,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import net.maxters.android.ntlm.NTLM;
 
@@ -39,6 +37,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.edwise.dedicamns.R;
+import com.edwise.dedicamns.asynctasks.AppData;
 import com.edwise.dedicamns.beans.ActivityDay;
 import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.beans.MonthListBean;
@@ -48,6 +48,7 @@ import com.edwise.dedicamns.beans.MonthYearBean;
 import com.edwise.dedicamns.beans.ProjectSubprojectBean;
 import com.edwise.dedicamns.connections.ConnectionException;
 import com.edwise.dedicamns.connections.WebConnection;
+import com.edwise.dedicamns.db.DatabaseHelper;
 import com.edwise.dedicamns.utils.DayUtils;
 
 /**
@@ -55,7 +56,6 @@ import com.edwise.dedicamns.utils.DayUtils;
  * 
  */
 public class MNSWebConnectionImpl implements WebConnection {
-
 	private static final String LOGTAG = MNSWebConnectionImpl.class.toString();
 
 	private static final int TIMEOUT_GETDATA = 60000;
@@ -78,6 +78,7 @@ public class MNSWebConnectionImpl implements WebConnection {
 	private MonthYearBean monthYears = null;
 	private ProjectSubprojectBean projects = null;
 
+	@Override
 	public boolean isOnline(Activity activity) {
 		boolean online = false;
 		ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -89,11 +90,7 @@ public class MNSWebConnectionImpl implements WebConnection {
 		return online;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.edwise.dedicamns.connections.WebConnection#connectWeb()
-	 */
+	@Override
 	public Integer connectWeb(String userName, String password) throws ConnectionException {
 		int responseCode;
 		try {
@@ -134,44 +131,53 @@ public class MNSWebConnectionImpl implements WebConnection {
 		HttpConnectionParams.setSoTimeout(params, TIMEOUT_GETDATA);
 	}
 
+	@Override
 	public List<String> getMonths() {
 		return this.monthYears.getMonths();
 	}
 
+	@Override
 	public List<String> getYears() {
 		return this.monthYears.getYears();
 	}
 
+	@Override
 	public List<String> getArrayProjects() {
 		return this.projects.getProjects();
 	}
 
+	@Override
 	public List<String> getArraySubProjects(String projectId) {
 		return this.projects.getSubProjects(projectId);
 	}
 
+	@Override
+	public void populateDBProjectsAndSubprojects() throws ConnectionException {
+		long beginTime = System.currentTimeMillis();
+
+		this.projects = null;
+		fillDBProyectsAndSubProyects();
+
+		long endTime = System.currentTimeMillis();
+		Log.d(LOGTAG, "Tiempo carga proyectos: " + (endTime - beginTime));
+	}
+
+	@Override
 	public void fillProyectsAndSubProyectsCached() throws ConnectionException {
-		if (projects == null) {
-			long beginTime = System.currentTimeMillis();
-
-			fillProyectsAndSubProyects();
-
-			long endTime = System.currentTimeMillis();
-			Log.d(LOGTAG, "Tiempo carga proyectos: " + (endTime - beginTime));
+		if (this.projects == null) {
+			this.projects = AppData.getDatabaseHelper().getAllProjectsAndSubProjects();
 		}
 	}
 
-	private void fillProyectsAndSubProyects() throws ConnectionException {
+	private void fillDBProyectsAndSubProyects() throws ConnectionException {
 		String html = this.getHttpContent(URL_STR_ACCOUNTS);
 		Document document = Jsoup.parse(html);
 
+		DatabaseHelper db = AppData.getDatabaseHelper();
+		String defaultSubProject = AppData.getCurrentActivity().getString(R.string.defaultSubProject);
+
 		Elements selectSpansAccounts = document.select("span.Account");
 		if (selectSpansAccounts != null) {
-			List<String> projects = new ArrayList<String>();
-			Map<String, List<String>> projectsAndSubProjects = new HashMap<String, List<String>>();
-			projects.add(ProjectSubprojectBean.PROJECT_DEFAULT);
-			projectsAndSubProjects.put(ProjectSubprojectBean.PROJECT_DEFAULT,
-					ProjectSubprojectBean.createSubProjectsDefault());
 			Iterator<Element> it = selectSpansAccounts.iterator();
 			while (it.hasNext()) {
 				Element span = it.next();
@@ -180,7 +186,7 @@ public class MNSWebConnectionImpl implements WebConnection {
 				Element nextLiOrUl = liParent.nextElementSibling();
 
 				List<String> subProjects = new ArrayList<String>();
-				subProjects.add(ProjectSubprojectBean.SUBPROJECT_DEFAULT);
+				subProjects.add(defaultSubProject);
 				if (nextLiOrUl != null) {
 					Elements selectSpansSubAccounts = nextLiOrUl.select("span.Subaccount");
 					if (selectSpansSubAccounts != null) {
@@ -192,12 +198,9 @@ public class MNSWebConnectionImpl implements WebConnection {
 					}
 				}
 
-				projects.add(projectId);
-				projectsAndSubProjects.put(projectId, subProjects);
-
+				db.insertProject(projectId, (String[]) subProjects.toArray(new String[subProjects.size()]));
 			}
 
-			this.projects = new ProjectSubprojectBean(projects, projectsAndSubProjects);
 		}
 	}
 
@@ -205,6 +208,7 @@ public class MNSWebConnectionImpl implements WebConnection {
 		return projectName.trim().substring(0, projectName.indexOf(" -"));
 	}
 
+	@Override
 	public void fillMonthsAndYearsCached() {
 		if (monthYears == null) {
 			fillMonthsAndYears();
@@ -278,16 +282,17 @@ public class MNSWebConnectionImpl implements WebConnection {
 			long endTime = System.currentTimeMillis();
 			Log.d(LOGTAG, "Tiempo conexión a " + url + ": " + (endTime - beginTime));
 		} catch (URISyntaxException e) {
-			Log.d(LOGTAG, "Error de URI en el acceso getHttp a " + url, e);
+			Log.e(LOGTAG, "Error de URI en el acceso getHttp a " + url, e);
 			throw new ConnectionException(e);
 		} catch (IOException e) {
-			Log.d(LOGTAG, "Error IO en el acceso getHttp a " + url, e);
+			Log.e(LOGTAG, "Error IO en el acceso getHttp a " + url, e);
 			throw new ConnectionException(e);
 		}
 
 		return html;
 	}
 
+	@Override
 	public MonthListBean getListDaysAndActivitiesForCurrentMonth() throws ConnectionException {
 		long beginTime = System.currentTimeMillis();
 
@@ -313,6 +318,7 @@ public class MNSWebConnectionImpl implements WebConnection {
 		return monthList;
 	}
 
+	@Override
 	public List<DayRecord> getListDaysAndActivitiesForMonthAndYear(int month, String year, boolean withActivities)
 			throws ConnectionException {
 		long beginTime = System.currentTimeMillis();
@@ -352,10 +358,10 @@ public class MNSWebConnectionImpl implements WebConnection {
 			IOUtils.copy(is, writer, "UTF-8");
 			html = writer.toString();
 		} catch (URISyntaxException e) {
-			Log.d(LOGTAG, "Error de URI en el acceso doPostChangeDate a " + URL_STR_CHANGE_DATE, e);
+			Log.e(LOGTAG, "Error de URI en el acceso doPostChangeDate a " + URL_STR_CHANGE_DATE, e);
 			throw new ConnectionException(e);
 		} catch (IOException e) {
-			Log.d(LOGTAG, "Error IO en el acceso doPostChangeDate a " + URL_STR_CHANGE_DATE, e);
+			Log.e(LOGTAG, "Error IO en el acceso doPostChangeDate a " + URL_STR_CHANGE_DATE, e);
 			throw new ConnectionException(e);
 		}
 
@@ -411,6 +417,7 @@ public class MNSWebConnectionImpl implements WebConnection {
 		return listDays;
 	}
 
+	@Override
 	public Integer saveDay(ActivityDay activityDay, String dateForm, int dayNum) throws ConnectionException {
 		Integer result = 0;
 		String html = null;
@@ -459,6 +466,7 @@ public class MNSWebConnectionImpl implements WebConnection {
 		return id;
 	}
 
+	@Override
 	public Integer removeDay(ActivityDay activityDay) throws ConnectionException {
 		return doDelete(activityDay) ? 1 : -4;
 	}
@@ -495,10 +503,10 @@ public class MNSWebConnectionImpl implements WebConnection {
 			long endTime = System.currentTimeMillis();
 			Log.d(LOGTAG, "Tiempo conexión a " + URL_STR_CREATE + ": " + (endTime - beginTime));
 		} catch (URISyntaxException e) {
-			Log.d(LOGTAG, "Error de URI en el acceso doPostCreate a " + URL_STR_CREATE, e);
+			Log.e(LOGTAG, "Error de URI en el acceso doPostCreate a " + URL_STR_CREATE, e);
 			throw new ConnectionException(e);
 		} catch (IOException e) {
-			Log.d(LOGTAG, "Error IO en el acceso doPostCreate a " + URL_STR_CREATE, e);
+			Log.e(LOGTAG, "Error IO en el acceso doPostCreate a " + URL_STR_CREATE, e);
 			throw new ConnectionException(e);
 		}
 
@@ -539,10 +547,10 @@ public class MNSWebConnectionImpl implements WebConnection {
 			long endTime = System.currentTimeMillis();
 			Log.d(LOGTAG, "Tiempo conexión a " + URL_STR_MODIFY + ": " + (endTime - beginTime));
 		} catch (URISyntaxException e) {
-			Log.d(LOGTAG, "Error de URI en el acceso doPostModify a " + URL_STR_MODIFY, e);
+			Log.e(LOGTAG, "Error de URI en el acceso doPostModify a " + URL_STR_MODIFY, e);
 			throw new ConnectionException(e);
 		} catch (IOException e) {
-			Log.d(LOGTAG, "Error IO en el acceso doPostModify a " + URL_STR_MODIFY, e);
+			Log.e(LOGTAG, "Error IO en el acceso doPostModify a " + URL_STR_MODIFY, e);
 			throw new ConnectionException(e);
 		}
 
@@ -566,6 +574,7 @@ public class MNSWebConnectionImpl implements WebConnection {
 		return deleted;
 	}
 
+	@Override
 	public Integer saveDayBatch(DayRecord dayRecord) throws ConnectionException {
 		Integer result = 0;
 		String html = this.doPostCreate(dayRecord.getActivities().get(0), dayRecord.getDateForm());

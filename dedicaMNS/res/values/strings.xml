@@ -15,8 +15,8 @@
     <string name="title_activity_main_menu">Dedica MNS</string>
     <string name="title_activity_batch_menu">Dedica MNS</string>
     <string name="title_activity_about">Acerca De</string>
-    <string name="about_text">Aplicación para imputar las horas en las dedicaciones de MediaNet Software. \nAdmite varios proyectos por día. \n\nDesarrollada para minimizar el tiempo que perdemos en el apasionante mundo de la imputación de horas. \nTodos los accesos se hacen directamente a la web (de ahi el tiempo brutal que tarda en hacer algunas cosas&#8230;). \nEl user y password se guardan internamente de manera segura.\n\n Más información en <a href="https://github.com/edwise/DedicaMNS">https://github.com/edwise/DedicaMNS</a>\n</string>
-    <string name="batchTitle">Imputación en Batch</string>
+    <string name="about_text">Aplicación para imputar las horas en las dedicaciones de MediaNet Software. \nAdmite varios proyectos por día. \n\nDesarrollada para minimizar el tiempo que perdemos en el apasionante mundo de la imputación de horas. \nTodos los accesos se hacen directamente a la web (html scraping, no hay servicios&#8230;). \nEl user y password se guardan internamente de manera segura.\n\nLa opción \"recarga de proyectos\" actualiza la base de datos con los proyectos actuales en medianet. Si al ir a imputar no encuentras tu proyecto, realiza la recarga. \n\nMás información en <a href="https://github.com/edwise/DedicaMNS">https://github.com/edwise/DedicaMNS</a>\n</string>
+    <string name="batchTitle">Imputación en Batch mensual</string>
     <string name="monthLabelBatch">"Mes: "</string>
     <string name="yearLabelBatch">"Año: "</string>
     <string name="projectLabelBatch">"Proyecto: "</string>
@@ -79,5 +79,12 @@
     <string name="totalReport">TOTAL: </string>
     <string name="monthReportTextButton">Informe mensual</string>
     <string name="shareIn">Compartir en&#8230;</string>
-
-</resources>
+    <string name="populatingDB">Cargando base de datos de proyectos</string>
+    <string name="msgPopulateDBError">Error al realizar la carga de proyectos en la base de datos. POR FAVOR, DESLOGATE Y VUELVE A LOGARTE</string>
+    <string name="reloadBDButton">Recargar proyectos</string>
+    <string name="reloadProjectsButton">Recarga de proyectos</string>
+    <string name="msgreloadProjectsToExecute">Se va a actualizar el listado de proyectos</string>
+    <string name="msgProjectsReloaded">Lista de proyectos actualizada correctamente</string>
+    <string name="defaultProject">Selecciona proyecto&#8230;</string>
+    <string name="defaultSubProject">0 - Sin subcuenta</string>
+</resources>

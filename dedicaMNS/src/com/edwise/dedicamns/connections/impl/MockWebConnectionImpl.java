@@ -10,13 +10,16 @@ import java.util.concurrent.TimeUnit;
 import android.app.Activity;
 import android.util.Log;
 
+import com.edwise.dedicamns.asynctasks.AppData;
 import com.edwise.dedicamns.beans.ActivityDay;
 import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.beans.MonthListBean;
 import com.edwise.dedicamns.beans.MonthReportBean;
 import com.edwise.dedicamns.beans.MonthReportRecord;
+import com.edwise.dedicamns.beans.ProjectSubprojectBean;
 import com.edwise.dedicamns.connections.ConnectionException;
 import com.edwise.dedicamns.connections.WebConnection;
+import com.edwise.dedicamns.db.DatabaseHelper;
 import com.edwise.dedicamns.utils.DayUtils;
 
 /**
@@ -24,8 +27,9 @@ import com.edwise.dedicamns.utils.DayUtils;
  * 
  */
 public class MockWebConnectionImpl implements WebConnection {
+	private static final String LOGTAG = MockWebConnectionImpl.class.toString();
 
-	private List<String> arrayProjects = null;
+	private ProjectSubprojectBean projects = null;
 	private List<String> months = null;
 	private List<String> years = null;
 
@@ -34,6 +38,7 @@ public class MockWebConnectionImpl implements WebConnection {
 	 * 
 	 * @see com.edwise.dedicamns.connections.WebConnection#isOnline(android.app.Activity )
 	 */
+	@Override
 	public boolean isOnline(Activity activity) {
 		return true;
 	}
@@ -43,6 +48,7 @@ public class MockWebConnectionImpl implements WebConnection {
 	 * 
 	 * @see com.edwise.dedicamns.connections.WebConnection#connectWeb(java.lang.String , java.lang.String)
 	 */
+	@Override
 	public Integer connectWeb(String userName, String password) {
 		try {
 			TimeUnit.SECONDS.sleep(3);
@@ -53,32 +59,37 @@ public class MockWebConnectionImpl implements WebConnection {
 		return 200;
 	}
 
+	@Override
 	public List<String> getMonths() {
 		return months;
 	}
 
+	@Override
 	public List<String> getYears() {
 		return years;
 	}
 
+	@Override
 	public List<String> getArrayProjects() {
-		return arrayProjects;
+		return projects.getProjects();
 	}
 
+	@Override
 	public List<String> getArraySubProjects(String projectId) {
-		List<String> arraySubProjects = new ArrayList<String>();
-		if (projectId != null && projectId.equals("BBVA58")) {
-			arraySubProjects.add("1 - Tarea mierda");
-			arraySubProjects.add("2 - Marronacos");
-			arraySubProjects.add("3 - Calentar silla");
-		} else {
-			arraySubProjects.add("0 - Sin cuenta");
-		}
+		// List<String> arraySubProjects = new ArrayList<String>();
+		// if (projectId != null && projectId.equals("BBVA58")) {
+		// arraySubProjects.add("1 - Tarea mierda");
+		// arraySubProjects.add("2 - Marronacos");
+		// arraySubProjects.add("3 - Calentar silla");
+		// } else {
+		// arraySubProjects.add("0 - Sin cuenta");
+		// }
 
-		return arraySubProjects;
+		return projects.getSubProjects(projectId);
 	}
 
-	public void fillProyectsAndSubProyectsCached() {
+	@Override
+	public void populateDBProjectsAndSubprojects() {
 		try {
 			TimeUnit.SECONDS.sleep(2);
 		} catch (InterruptedException e) {
@@ -86,16 +97,46 @@ public class MockWebConnectionImpl implements WebConnection {
 			e.printStackTrace();
 		}
 
-		arrayProjects = new ArrayList<String>();
+		this.projects = null;
+		DatabaseHelper db = AppData.getDatabaseHelper();
 
-		arrayProjects.add("Selecciona proyecto...");
-		arrayProjects.add("BBVA58");
-		arrayProjects.add("Educared09");
-		arrayProjects.add("BBVA68");
-		arrayProjects.add("NIELHUEVO32");
-		arrayProjects.add("ISBAN12");
+		Log.d(LOGTAG, "(Mock) Populating DB...");
+
+		db.insertProject("BBVA58", new String[] { "1 - Tarea mierda", "2 - Marronacos", "3 - Calentar silla" });
+		db.insertProject("Educared09", new String[] { "0 - Sin subcuenta" });
+		db.insertProject("BBVA68", new String[] { "0 - Sin subcuenta" });
+		db.insertProject("NIELHUEVO32", new String[] { "0 - Sin subcuenta" });
+		db.insertProject("ISBAN12", new String[] { "0 - Sin subcuenta" });
+		db.insertProject("ANDREA99", new String[] { "1 - Media jornada", "2 - Morir" });
+
+		Log.d(LOGTAG, "(Mock) DB Populated.");
 	}
 
+	@Override
+	public void fillProyectsAndSubProyectsCached() throws ConnectionException {
+		// try {
+		// TimeUnit.SECONDS.sleep(2);
+		// } catch (InterruptedException e) {
+		// Log.e(MockWebConnectionImpl.class.toString(), "fillListMock: Error en TimeUnit...", e);
+		// e.printStackTrace();
+		// }
+		//
+		// arrayProjects = new ArrayList<String>();
+		//
+		// arrayProjects.add("Selecciona proyecto...");
+		// arrayProjects.add("BBVA58");
+		// arrayProjects.add("Educared09");
+		// arrayProjects.add("BBVA68");
+		// arrayProjects.add("NIELHUEVO32");
+		// arrayProjects.add("ISBAN12");
+
+		if (this.projects == null) {
+			this.projects = AppData.getDatabaseHelper().getAllProjectsAndSubProjects();
+		}
+
+	}
+
+	@Override
 	public void fillMonthsAndYearsCached() {
 		months = new ArrayList<String>();
 		months.add("Enero");
@@ -117,6 +158,7 @@ public class MockWebConnectionImpl implements WebConnection {
 		years.add("2013");
 	}
 
+	@Override
 	public MonthListBean getListDaysAndActivitiesForCurrentMonth() {
 		List<DayRecord> list = new ArrayList<DayRecord>();
 
@@ -127,6 +169,7 @@ public class MockWebConnectionImpl implements WebConnection {
 		return monthList;
 	}
 
+	@Override
 	public List<DayRecord> getListDaysAndActivitiesForMonthAndYear(int month, String year, boolean withActivities) {
 		List<DayRecord> list = new ArrayList<DayRecord>();
 
@@ -323,6 +366,7 @@ public class MockWebConnectionImpl implements WebConnection {
 		return dayName;
 	}
 
+	@Override
 	public Integer saveDay(ActivityDay activityDay, String dateForm, int dayNum) {
 		try {
 			TimeUnit.SECONDS.sleep(2);
@@ -337,6 +381,7 @@ public class MockWebConnectionImpl implements WebConnection {
 		return 1;
 	}
 
+	@Override
 	public Integer removeDay(ActivityDay activityDay) {
 		try {
 			TimeUnit.SECONDS.sleep(2);
@@ -348,6 +393,7 @@ public class MockWebConnectionImpl implements WebConnection {
 		return 1;
 	}
 
+	@Override
 	public Integer saveDayBatch(DayRecord dayRecord) throws ConnectionException {
 		try {
 			TimeUnit.SECONDS.sleep(1);

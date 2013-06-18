@@ -23,6 +23,8 @@ public interface WebConnection {
 
 	List<String> getArraySubProjects(String projectId);
 
+	void populateDBProjectsAndSubprojects() throws ConnectionException;
+	
 	void fillProyectsAndSubProyectsCached() throws ConnectionException;
 
 	void fillMonthsAndYearsCached();

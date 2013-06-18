@@ -3,7 +3,9 @@ package com.edwise.dedicamns;
 import java.util.Calendar;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,16 +19,23 @@ import android.widget.Toast;
 import com.edwise.dedicamns.asynctasks.AppData;
 import com.edwise.dedicamns.asynctasks.LoginConstants;
 import com.edwise.dedicamns.asynctasks.MonthListAsyncTask;
+import com.edwise.dedicamns.asynctasks.PopulateDBAsyncTask;
 import com.edwise.dedicamns.connections.ConnectionException;
 import com.edwise.dedicamns.connections.ConnectionFacade;
 import com.edwise.dedicamns.connections.WebConnection;
+import com.edwise.dedicamns.db.DatabaseHelper;
 import com.edwise.dedicamns.menu.MenuUtils;
 
 public class MainMenuActivity extends Activity {
 	private static final String LOGTAG = MainMenuActivity.class.toString();
 
+	private static final int NO_DIALOG = 0;
+	private static final int RELOAD_DB_DIALOG = 1;
+
 	private ProgressDialog pDialog = null;
 	private String messageDialog = null;
+	private AlertDialog alertDialog = null;
+	private int alertDialogActiveType = NO_DIALOG;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -34,15 +43,33 @@ public class MainMenuActivity extends Activity {
 		setContentView(R.layout.main_menu);
 		AppData.setCurrentActivity(this);
 
-		if (savedInstanceState != null && savedInstanceState.getBoolean("pDialogON")) {
-			String message = savedInstanceState.getString("messageDialog");
-			showDialog(message);
-		}
+		restoreFromChangeOrientation(savedInstanceState);
 
 		boolean isLogout = getIntent().getBooleanExtra(LoginConstants.IS_LOGOUT_TAG, false);
 		if (isLogout) { // es logout, nos vamos al login, y cerramos esta
 			goToLogout();
 		}
+		else {
+			// No es logout, creamos la bd si no está creada
+			if (AppData.getDatabaseHelper() == null) {
+				initDB();
+			}
+		}
+	}
+
+	private void initDB() {
+		DatabaseHelper dbHelper = new DatabaseHelper(this);
+		AppData.setDatabaseHelper(dbHelper);
+
+		if (dbHelper.isEmptyDB()) {
+			reloadProjects();
+		}
+	}
+
+	private void reloadProjects() {
+		showDialog(getString(R.string.populatingDB));
+		AsyncTask<Integer, Integer, Integer> populateDBAsyncTask = new PopulateDBAsyncTask();
+		populateDBAsyncTask.execute(1);
 	}
 
 	@Override
@@ -51,6 +78,19 @@ public class MainMenuActivity extends Activity {
 		AppData.setCurrentActivity(this);
 	}
 
+	private void restoreFromChangeOrientation(Bundle savedInstanceState) {
+		if (savedInstanceState != null) {
+			if (savedInstanceState.getBoolean("pDialogON")) {
+				String message = savedInstanceState.getString("messageDialog");
+				showDialog(message);
+			}
+			int alertDialogType = savedInstanceState.getInt("alertDialogType");
+			if (alertDialogType != NO_DIALOG) {
+				launchReloadDB();
+			}
+		}
+	}
+	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		Log.d(LOGTAG, "onSaveInstanceState");
@@ -58,6 +98,9 @@ public class MainMenuActivity extends Activity {
 			pDialog.cancel();
 			outState.putBoolean("pDialogON", true);
 			outState.putString("messageDialog", this.messageDialog);
+		} else if (alertDialogActiveType != NO_DIALOG) {
+			alertDialog.dismiss();
+			outState.putInt("alertDialogType", alertDialogActiveType);
 		}
 		super.onSaveInstanceState(outState);
 	}
@@ -103,7 +146,7 @@ public class MainMenuActivity extends Activity {
 	}
 
 	public void doShowListMonth(View view) {
-		Log.d(MainMenuActivity.class.toString(), "doShowListMonth");
+		Log.d(LOGTAG, "doShowListMonth");
 		showDialog(getString(R.string.msgGettingMonthData));
 		Calendar today = Calendar.getInstance();
 
@@ -112,11 +155,36 @@ public class MainMenuActivity extends Activity {
 	}
 
 	public void doShowBatchMenu(View view) {
-		Log.d(MainMenuActivity.class.toString(), "doShowBatchMenu");
+		Log.d(LOGTAG, "doShowBatchMenu");
 
 		showDialog(getString(R.string.msgGettingData));
 		AsyncTask<Integer, Integer, Integer> batchMenuAsyncTask = new BatchMenuAsyncTask();
 		batchMenuAsyncTask.execute(1);
+	}
+
+	public void doReloadBD(View view) {
+		Log.d(LOGTAG, "doReloadBD");
+
+		launchReloadDB();
+	}
+
+	private void launchReloadDB() {
+		this.alertDialogActiveType = RELOAD_DB_DIALOG;
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		alertDialogBuilder.setTitle(getString(R.string.msgreloadProjectsToExecute));
+		alertDialogBuilder.setMessage(getString(R.string.msgContinue));
+		alertDialogBuilder.setPositiveButton(getString(R.string.msgAlertOK), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				MainMenuActivity.this.alertDialogActiveType = NO_DIALOG;
+				reloadProjects();
+			}
+		});
+		alertDialogBuilder.setNegativeButton(getString(R.string.msgAlertCancel), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				MainMenuActivity.this.alertDialogActiveType = NO_DIALOG;
+			}
+		});
+		alertDialog = alertDialogBuilder.show();
 	}
 
 	private void showDialog(String message) {
@@ -137,7 +205,8 @@ public class MainMenuActivity extends Activity {
 				webConnection.fillProyectsAndSubProyectsCached();
 				webConnection.fillMonthsAndYearsCached();
 			} catch (ConnectionException e) {
-				Log.e(LOGTAG, "Error al obtener datos de cacheo (proyectos, meses y años)", e);
+				Log.e(BatchMenuAsyncTask.class.toString(),
+						"Error al obtener datos de cacheo (proyectos, meses y años)", e);
 				result = -1;
 			}
 

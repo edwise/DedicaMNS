@@ -96,7 +96,7 @@ public class ConnectionAsyncTask extends AsyncTask<Map<String, String>, Integer,
 	private void showToastConnected() {
 		Toast toast = Toast.makeText(AppData.getCurrentActivity(),
 				AppData.getCurrentActivity().getString(R.string.msgConnected), Toast.LENGTH_LONG);
-		toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 20);
+		toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 90);
 		toast.show();
 	}
 

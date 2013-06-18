@@ -15,7 +15,7 @@
     <string name="title_activity_batch_menu">Dedica MNS</string>
     <string name="title_activity_about">About</string>
     <string name="about_text">\nAndroid application for MediaNet Software Dedicaciones Web.\n\n More info in <a href="https://github.com/edwise/DedicaMNS">https://github.com/edwise/DedicaMNS</a>\n</string>
-    <string name="batchTitle">Batch Input</string>
+    <string name="batchTitle">Batch Input monthly</string>
     <string name="monthLabelBatch">"Month: "</string>
     <string name="yearLabelBatch">"Year: "</string>
     <string name="projectLabelBatch">"Project: "</string>
@@ -78,5 +78,13 @@
     <string name="totalReport">TOTAL: </string>
     <string name="monthReportTextButton">Month report</string>
     <string name="shareIn">Share in&#8230;</string>
+    <string name="populatingDB">Populating projects database</string>
+    <string name="msgPopulateDBError">Error populating DB projects database. PLEASE, DO LOGOUT AND NEXT, DO LOGIN AGAIN</string>
+    <string name="reloadBDButton">Projects reload</string>
+    <string name="reloadProjectsButton">Projects reload</string>
+    <string name="msgreloadProjectsToExecute">Projects reload is going to execute</string>
+    <string name="msgProjectsReloaded">Projects list updated successfully</string>
+    <string name="defaultProject">Select project&#8230;</string>
+    <string name="defaultSubProject">0 - Sin subcuenta</string>
 
 </resources>
