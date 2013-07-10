@@ -17,7 +17,6 @@ Consideraciones importantes a tener en cuenta:
  
 Futuras ampliaciones / evolutivos:    
   - Nueva opción de imputación batch, más personalizable: entre dos fechas dadas, y con horas personalizables.
-  - Opción de menu contextual en el listado mensual, para poder copiar o borrar días.
   - Perfiles en la imputación batch.
   
 Ampliaciones / evolutivos ya realizados:
@@ -28,6 +27,7 @@ Ampliaciones / evolutivos ya realizados:
   - Mostrar informe mensual de horas.
   - Opción de compartir el informe mensual.
   - Optimización de carga de proyectos, guardandolos en una bd en el primer login. 
+  - Opción de menu contextual en el listado mensual, para poder copiar o borrar días.
   
   
 
