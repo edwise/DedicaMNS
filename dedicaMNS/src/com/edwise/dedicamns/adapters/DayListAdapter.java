@@ -22,6 +22,8 @@ public class DayListAdapter extends ArrayAdapter<DayRecord> {
 	private static int SDK_VERSION = android.os.Build.VERSION.SDK_INT;
 	private static int JELLYBEAN_VERSION = android.os.Build.VERSION_CODES.JELLY_BEAN;
 
+	private int currentSelection;
+
 	static class ViewHolder {
 		public TextView dayNum;
 		public TextView dayName;
@@ -82,6 +84,14 @@ public class DayListAdapter extends ArrayAdapter<DayRecord> {
 		}
 
 		return rowView;
+	}
+
+	public int getCurrentSelection() {
+		return currentSelection;
+	}
+
+	public void setCurrentSelection(int currentSelection) {
+		this.currentSelection = currentSelection;
 	}
 
 }

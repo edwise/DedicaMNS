@@ -86,5 +86,15 @@
     <string name="msgProjectsReloaded">Projects list updated successfully</string>
     <string name="defaultProject">Select project&#8230;</string>
     <string name="defaultSubProject">0 - Sin subcuenta</string>
-
+	<string name="msgRemovingDay">Removing day</string>
+	<string name="msgCopingDay">Coping day</string>
+	<string name="msgDayNotCopied">First you have to copy a day with work hours</string>
+    <string name="msgDayEqualToCopied">You can\'t copy the same day itself, idiot&#8230;</string>
+    <string name="msgCopiedOK">Copied successful hour record</string>
+    <string name="msgDayYetEmpty">There aren\'t records to remove in this day</string>
+    <string name="copy">Copy</string>
+    <string name="paste">Paste</string>
+    <string name="delete">Delete</string>
+    <string name="optionsMenu">Options</string>
+    
 </resources>

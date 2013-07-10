@@ -157,7 +157,7 @@ public class MainMenuActivity extends Activity {
 	public void doShowBatchMenu(View view) {
 		Log.d(LOGTAG, "doShowBatchMenu");
 
-		showDialog(getString(R.string.msgGettingData));
+		showDialog(getString(R.string.msgGettingData)); 
 		AsyncTask<Integer, Integer, Integer> batchMenuAsyncTask = new BatchMenuAsyncTask();
 		batchMenuAsyncTask.execute(1);
 	}

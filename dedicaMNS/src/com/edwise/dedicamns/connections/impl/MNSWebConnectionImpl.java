@@ -577,13 +577,16 @@ public class MNSWebConnectionImpl implements WebConnection {
 	@Override
 	public Integer saveDayBatch(DayRecord dayRecord) throws ConnectionException {
 		Integer result = 0;
-		String html = this.doPostCreate(dayRecord.getActivities().get(0), dayRecord.getDateForm());
-		Document document = Jsoup.parse(html);
-		Elements errors = document.select(".input-validation-error");
-		if (errors != null && errors.size() > 0) {
-			result = -3;
-		} else { // Ok
-			result = 1;
+		for (ActivityDay activityDay : dayRecord.getActivities()) {
+			String html = this.doPostCreate(activityDay, dayRecord.getDateForm());
+			Document document = Jsoup.parse(html);
+			Elements errors = document.select(".input-validation-error");
+			if (errors != null && errors.size() > 0) {
+				result = -3;
+				break;
+			} else { // Ok
+				result = 1;
+			}
 		}
 
 		return result;

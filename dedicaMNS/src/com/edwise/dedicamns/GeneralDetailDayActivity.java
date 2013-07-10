@@ -272,8 +272,8 @@ public class GeneralDetailDayActivity extends Activity {
 				GeneralDetailDayActivity.this.alertDialogActive = false;
 				showDialog();
 				GeneralDetailDayActivity.this.dayModif = true;
-				AsyncTask<Integer, Integer, Integer> connectionAsyncTask = new RemoveAllActivitiesAsyncTask();
-				connectionAsyncTask.execute(1);
+				AsyncTask<Integer, Integer, Integer> removeAllActivitiesAsyncTask = new RemoveAllActivitiesAsyncTask();
+				removeAllActivitiesAsyncTask.execute(1);
 			}
 		});
 		alertDialogBuilder.setNegativeButton(getString(R.string.msgAlertCancel), new DialogInterface.OnClickListener() {

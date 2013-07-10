@@ -85,6 +85,16 @@
     <string name="reloadProjectsButton">Recarga de proyectos</string>
     <string name="msgreloadProjectsToExecute">Se va a actualizar el listado de proyectos</string>
     <string name="msgProjectsReloaded">Lista de proyectos actualizada correctamente</string>
-    <string name="defaultProject">Selecciona proyecto&#8230;</string>
+    <string name="defaultProject">Selecciona proyecto</string>
     <string name="defaultSubProject">0 - Sin subcuenta</string>
+    <string name="msgRemovingDay">Borrando día</string>
+    <string name="msgCopingDay">Copiando día</string>
+    <string name="msgDayNotCopied">Primero debes copiar un día con horas imputadas</string>
+    <string name="msgDayEqualToCopied">No puedes copiar un día sobre si mismo, pringao&#8230;</string>
+    <string name="msgCopiedOK">Copiado registro de horas correctamente</string>
+    <string name="msgDayYetEmpty">No hay registros que borrar para ese día</string>
+    <string name="copy">Copiar</string>
+    <string name="paste">Pegar</string>
+    <string name="delete">Borrar</string>
+    <string name="optionsMenu">Opciones</string>
 </resources>

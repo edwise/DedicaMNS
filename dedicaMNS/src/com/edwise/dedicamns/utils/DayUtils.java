@@ -21,9 +21,10 @@ public class DayUtils {
 
 	public static final int MAX_SIZE_STRING = 15;
 
-	public static final String[] TYPE_HOURS = new String[] { "8:30 de L a J y 6:00 V", "8:00 L a V" };
-	public static final int TYPE_COOL_FRIDAY = 0; // 8:30 de L a J y 6:00 V
-	public static final int TYPE_BAD_FRIDAY = 1; // 8:00 L a V
+	public static final String[] TYPE_HOURS = new String[] { "8:30 de L a J y 6:00 V", "8:00 L a V", "7:00 L a V" };
+	private static final int TYPE_COOL_FRIDAY = 0; // 8:30 de L a J y 6:00 V
+	private static final int TYPE_BAD_FRIDAY = 1; // 8:00 L a V
+	private static final int TYPE_SUMMER_TIME = 2; // 7:00 L a V
 
 	private static final SparseArray<String> MONTH_NAMES = new SparseArray<String>();
 	static {
@@ -94,6 +95,7 @@ public class DayUtils {
 		ActivityDay activityDayNormal = createActivityFromBatchData(batchData, "8:00");
 		ActivityDay activityDayCool = createActivityFromBatchData(batchData, "8:30");
 		ActivityDay activityDayCoolFriday = createActivityFromBatchData(batchData, "6:00");
+		ActivityDay activityDaySummerTime = createActivityFromBatchData(batchData, "7:00");
 
 		for (DayRecord day : listDays) {
 			if (!day.getIsWeekend() && !day.getIsHoliday()) {
@@ -105,6 +107,9 @@ public class DayUtils {
 					} else {
 						day.getActivities().add(activityDayCool);
 					}
+					break;
+				case TYPE_SUMMER_TIME:
+					day.getActivities().add(activityDaySummerTime);
 					break;
 				case TYPE_BAD_FRIDAY:
 				default:

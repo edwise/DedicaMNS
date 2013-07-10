@@ -10,8 +10,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,6 +27,7 @@ import android.widget.Toast;
 import com.edwise.dedicamns.adapters.DayListAdapter;
 import com.edwise.dedicamns.asynctasks.AppData;
 import com.edwise.dedicamns.asynctasks.MonthListAsyncTask;
+import com.edwise.dedicamns.beans.ActivityDay;
 import com.edwise.dedicamns.beans.DayRecord;
 import com.edwise.dedicamns.beans.MonthListBean;
 import com.edwise.dedicamns.beans.MonthReportBean;
@@ -32,6 +35,7 @@ import com.edwise.dedicamns.connections.ConnectionException;
 import com.edwise.dedicamns.connections.ConnectionFacade;
 import com.edwise.dedicamns.connections.WebConnection;
 import com.edwise.dedicamns.menu.MenuUtils;
+import com.edwise.dedicamns.utils.ErrorUtils;
 
 public class MonthViewActivity extends Activity {
 	private static final String LOGTAG = MonthViewActivity.class.toString();
@@ -44,6 +48,8 @@ public class MonthViewActivity extends Activity {
 	private Spinner monthSpinner = null;
 	private Spinner yearSpinner = null;
 
+	private ProgressDialog pDialogRemovingDay = null;
+	private ProgressDialog pDialogCopingDay = null;
 	private ProgressDialog pDialogMonthCharge = null;
 	private ProgressDialog pDialogReportCharge = null;
 
@@ -73,13 +79,18 @@ public class MonthViewActivity extends Activity {
 	}
 
 	private void restoreFromChangeOrientation(Bundle savedInstanceState) {
-		if (savedInstanceState.getBoolean("pDialogMonthChargeON")) { //
+		if (savedInstanceState.getBoolean("pDialogRemovingDayON")) {
+			showDialogRemovingDay();
+		} else if (savedInstanceState.getBoolean("pDialogCopingDayON")) {
+			showDialogCopingDay();
+		} else if (savedInstanceState.getBoolean("pDialogMonthChargeON")) { //
 			showDialogMonthCharge(getString(R.string.msgGettingMonthData));
 		} else if (savedInstanceState.getBoolean("pDialogReportChargeON")) {
 			showDialogReportCharge(getString(R.string.msgGettingReportData));
-		}
+		} 
 		listState = savedInstanceState.getParcelable("listState");
 		monthList = (MonthListBean) savedInstanceState.getSerializable("monthList");
+		dayToCopy = (DayRecord) savedInstanceState.getSerializable("dayToCopy");
 	}
 
 	@Override
@@ -92,33 +103,49 @@ public class MonthViewActivity extends Activity {
 	protected void onSaveInstanceState(Bundle outState) {
 		Log.d(LOGTAG, "onSaveInstanceState");
 
-		if (pDialogMonthCharge != null) {
+		if (pDialogRemovingDay != null) {
+			pDialogRemovingDay.cancel();
+			pDialogRemovingDay = null;
+			outState.putBoolean("pDialogRemovingDayON", true);
+		} else if (pDialogCopingDay != null) {
+			pDialogCopingDay.cancel();
+			pDialogCopingDay = null;
+			outState.putBoolean("pDialogCopingDayON", true);
+		} else if (pDialogMonthCharge != null) {
 			pDialogMonthCharge.cancel();
 			outState.putBoolean("pDialogMonthChargeON", true);
 		} else if (pDialogReportCharge != null) {
 			pDialogReportCharge.cancel();
 			outState.putBoolean("pDialogReportChargeON", true);
-		}
+		} 
 		outState.putSerializable("monthList", monthList);
 		if (listState != null) {
 			outState.putParcelable("listState", listState);
 		}
+		outState.putSerializable("dayToCopy", dayToCopy);
 
 		super.onSaveInstanceState(outState);
 	}
 
 	public void closeDialog() {
-		if (pDialogMonthCharge != null) {
+		if (pDialogRemovingDay != null) {
+			pDialogRemovingDay.dismiss();
+			pDialogRemovingDay = null;
+		} else if (pDialogCopingDay != null) {
+			pDialogCopingDay.dismiss();
+			pDialogCopingDay = null;
+		} else if (pDialogMonthCharge != null) {
 			pDialogMonthCharge.dismiss();
 			pDialogMonthCharge = null;
 		} else if (pDialogReportCharge != null) {
 			pDialogReportCharge.dismiss();
 			pDialogReportCharge = null;
-		}
+		} 		
 	}
 
 	private void initListView() {
 		listView.setAdapter(new DayListAdapter(this, monthList.getListDays()));
+		
 
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -130,6 +157,19 @@ public class MonthViewActivity extends Activity {
 				startActivityForResult(intent, DAY_REQUEST);
 			}
 
+		});
+
+		listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+				Log.d(LOGTAG, "Long click");				
+				listState = listView.onSaveInstanceState();
+				
+				((DayListAdapter)listView.getAdapter()).setCurrentSelection(position);		
+				startActionMode(mActionModeCallback);
+				view.setSelected(true);
+				
+				return true;
+			}
 		});
 	}
 
@@ -223,6 +263,16 @@ public class MonthViewActivity extends Activity {
 	private void showDialogReportCharge(String message) {
 		this.pDialogReportCharge = ProgressDialog.show(this, message, getString(R.string.msgPleaseWait), true);
 	}
+	
+	private void showDialogRemovingDay() {
+		this.pDialogRemovingDay = ProgressDialog.show(this, getString(R.string.msgRemovingDay),
+				getString(R.string.msgPleaseWait), true);
+	}
+	
+	private void showDialogCopingDay() {
+		this.pDialogCopingDay = ProgressDialog.show(this, getString(R.string.msgCopingDay),
+				getString(R.string.msgPleaseWait), true);
+	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -262,6 +312,24 @@ public class MonthViewActivity extends Activity {
 		this.monthList = monthListBean;
 		initListView();
 	}
+	
+	private void showToastMessage(String message) {
+		Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+		toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 20);
+		toast.show();
+	}
+	
+	private void removeDay(DayRecord selected) {
+		showDialogRemovingDay();
+		AsyncTask<DayRecord, Integer, Integer> removeDayAsyncTask = new RemoveDayRecordsAsyncTask();
+		removeDayAsyncTask.execute(selected);
+	}
+	
+	private void copyDay(DayRecord selected) {
+		showDialogCopingDay();
+		AsyncTask<DayRecord, Integer, Integer> copyDayAsyncTask = new CopyDayRecordsAsyncTask();
+		copyDayAsyncTask.execute(selected);
+	}
 
 	private class MonthReportAsyncTask extends AsyncTask<Integer, Integer, Integer> {
 
@@ -285,7 +353,7 @@ public class MonthViewActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(Integer result) {
-			Log.d(MonthReportAsyncTask.class.toString(), "onPostExecute...");
+			Log.d(LOGTAG, "onPostExecute...");
 			super.onPostExecute(result);
 
 			if (result == 1) {
@@ -307,13 +375,202 @@ public class MonthViewActivity extends Activity {
 			intent.putExtra("monthReport", (Serializable) monthReport);
 
 			AppData.getCurrentActivity().startActivity(intent);
-		}
-
-		private void showToastMessage(String message) {
-			Toast toast = Toast.makeText(AppData.getCurrentActivity(), message, Toast.LENGTH_LONG);
-			toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 20);
-			toast.show();
-		}
+		}		
 
 	}
+	
+	private class RemoveDayRecordsAsyncTask extends AsyncTask<DayRecord, Integer, Integer> {
+
+		private DayRecord dayToRemove = null;
+		
+		@Override
+		protected Integer doInBackground(DayRecord... param) {
+			Log.d(RemoveDayRecordsAsyncTask.class.toString(), "doInBackground...");
+			WebConnection webConnection = ConnectionFacade.getWebConnection();
+
+			this.dayToRemove = param[0];			
+			Integer result = 1;
+			for (ActivityDay activityDay : dayToRemove.getActivities()) {
+				try {
+					result = webConnection.removeDay(activityDay);
+				} catch (ConnectionException e) {
+					Log.e(LOGTAG, "Error al borrar datos de una actividad", e);
+					result = -2;
+				}
+
+				if (result != 1) {
+					break;
+				}
+
+			}		
+			this.dayToRemove.clearDay();
+
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(Integer result) {
+			Log.d(RemoveDayRecordsAsyncTask.class.toString(), "onPostExecute...");
+
+			this.closeDialog();			
+			if (result == 1) {
+				reDrawList(this.dayToRemove);
+				showToastMessage(getString(R.string.msgRemoveOK));				
+			} else {
+				showToastMessage(ErrorUtils.getMessageError(result));
+			}
+		}
+		
+		private void closeDialog() {
+			MonthViewActivity activity = (MonthViewActivity) AppData.getCurrentActivity();
+			activity.closeDialog();			
+		}
+	}
+	
+	private class CopyDayRecordsAsyncTask extends AsyncTask<DayRecord, Integer, Integer> {
+
+		private DayRecord dayToBeOverwrited = null;
+		
+		@Override
+		protected Integer doInBackground(DayRecord... param) {
+			Log.d(RemoveDayRecordsAsyncTask.class.toString(), "doInBackground...");
+			WebConnection webConnection = ConnectionFacade.getWebConnection();
+			this.dayToBeOverwrited = param[0];			
+			
+			Integer result = removeDayRecord(webConnection);
+			if (result == 1) {
+				result = copyDayRecord(webConnection);
+			}
+
+			return result;
+		}
+
+		private Integer removeDayRecord(WebConnection webConnection) {
+			Integer result = 1;
+			for (ActivityDay activityDay : dayToBeOverwrited.getActivities()) {
+				try {
+					result = webConnection.removeDay(activityDay);
+				} catch (ConnectionException e) {
+					Log.e(LOGTAG, "Error al borrar datos de una actividad", e);
+					result = -2;
+				}
+
+				if (result != 1) {
+					break;
+				}
+
+			}		
+			this.dayToBeOverwrited.clearDay();
+			
+			return result;
+		}
+		
+		private Integer copyDayRecord(WebConnection webConnection) {
+			Integer result = 1;
+			
+			this.dayToBeOverwrited.copyDayDataCloned(dayToCopy);
+			try {
+				result = webConnection.saveDayBatch(this.dayToBeOverwrited);
+			} catch (ConnectionException e) {
+				Log.e(LOGTAG, "Error al copiar datos de un día a otro", e);
+				result = -2;
+			}
+			
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(Integer result) {
+			Log.d(LOGTAG, "onPostExecute...");
+
+			this.closeDialog();			
+			if (result == 1) {
+				reDrawList(this.dayToBeOverwrited);
+				showToastMessage(getString(R.string.msgCopiedOK));				
+			} else {
+				showToastMessage(ErrorUtils.getMessageError(result));
+			}
+		}
+		
+		private void closeDialog() {
+			MonthViewActivity activity = (MonthViewActivity) AppData.getCurrentActivity();
+			activity.closeDialog();			
+		}
+	}
+	
+	private DayRecord dayToCopy = null;
+	
+	private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+		
+		
+		@Override
+		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+			Log.d(LOGTAG, "onCreateActionMode...");
+			MenuInflater inflater = mode.getMenuInflater();
+			mode.setTitle(getString(R.string.optionsMenu));
+			inflater.inflate(R.menu.month_context_menu, menu);
+			return true;
+		}
+
+		@Override
+		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+			return false;
+		}
+
+		@Override
+		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+			Log.d(LOGTAG, "onActionItemClicked...");
+			DayRecord selected = (DayRecord) listView.getItemAtPosition(((DayListAdapter) listView.getAdapter())
+					.getCurrentSelection());
+			switch (item.getItemId()) {
+			case R.id.copy:
+				dayToCopy = selected;
+				unselectItem();
+				mode.finish(); 
+				return true;
+			case R.id.paste:
+				if (dayToCopy == null || dayToCopy.getActivities().size() == 0) {
+					showToastMessage(getString(R.string.msgDayNotCopied));
+				}
+				else {
+					if (selected.equals(dayToCopy)) {
+						showToastMessage(getString(R.string.msgDayEqualToCopied));
+					}
+					else {
+						copyDay(selected);
+					}
+				}
+				
+				unselectItem();
+				mode.finish(); 
+				return true;
+			case R.id.delete:
+				if (selected.getActivities().size() == 0) {
+					showToastMessage(getString(R.string.msgDayYetEmpty));
+				}
+				else {
+					removeDay(selected);
+				}
+				
+				unselectItem();
+				mode.finish(); 				
+				return true;
+			default:
+				return false;
+			}
+		}		
+
+		@Override
+		public void onDestroyActionMode(ActionMode mode) {
+			Log.d(LOGTAG, "onDestroyActionMode...");	
+		}
+		
+		private void unselectItem() {
+			listView.clearChoices(); 
+			listView.requestLayout();
+		}
+		
+		
+	};
 }
+
