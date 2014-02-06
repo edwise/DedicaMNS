@@ -64,7 +64,6 @@ public class MNSWebConnectionImpl implements WebConnection {
 	private static final int FIRST_YEAR = 2004;
 
 	private static final String DOMAIN = "medianet2k";
-	// private static final String COOKIE_SESSION = "ASP.NET_SessionId";
 	private static final String URL_STR = "http://dedicaciones.medianet.es";
 	private static final String URL_STR_ACCOUNTS = "http://dedicaciones.medianet.es/Home/Accounts";
 	private static final String URL_STR_CREATE = "http://dedicaciones.medianet.es/Home/CreateActivity";
@@ -74,7 +73,6 @@ public class MNSWebConnectionImpl implements WebConnection {
 	private static final String URL_STR_MONTH_REPORT = "http://dedicaciones.medianet.es/Home/MonthReport";
 
 	private DefaultHttpClient httpClient = null;
-	// private String cookie = null;
 	private MonthYearBean monthYears = null;
 	private ProjectSubprojectBean projects = null;
 
