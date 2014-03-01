@@ -88,7 +88,11 @@ public class DayRecord implements Serializable {
 	
 	public void copyDayDataCloned(DayRecord dayRecord) {
 		this.totalHours = dayRecord.getHours();
-		this.activities = new ArrayList<ActivityDay>(dayRecord.getActivities());
+		// TODO Issue #15 Probar este cambio, ahora esta bien clonado todo.
+		for (ActivityDay activityDay: dayRecord.getActivities()) {
+			ActivityDay clonedActivityDay = new ActivityDay(activityDay);
+			this.activities.add(clonedActivityDay);
+		}
 	}
 
 	public boolean isEmptyDay() {

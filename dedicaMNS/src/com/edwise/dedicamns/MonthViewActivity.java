@@ -433,10 +433,11 @@ public class MonthViewActivity extends Activity {
 		
 		@Override
 		protected Integer doInBackground(DayRecord... param) {
-			Log.d(RemoveDayRecordsAsyncTask.class.toString(), "doInBackground...");
+			Log.d(CopyDayRecordsAsyncTask.class.toString(), "doInBackground...");
 			WebConnection webConnection = ConnectionFacade.getWebConnection();
 			this.dayToBeOverwrited = param[0];			
 			
+			// Borramos primero el día a machacar
 			Integer result = removeDayRecord(webConnection);
 			if (result == 1) {
 				result = copyDayRecord(webConnection);

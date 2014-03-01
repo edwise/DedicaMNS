@@ -458,7 +458,6 @@ public class MNSWebConnectionImpl implements WebConnection {
 				id = liActivity.select("input#id").val();
 				break;
 			}
-
 		}
 
 		return id;
@@ -576,6 +575,11 @@ public class MNSWebConnectionImpl implements WebConnection {
 	public Integer saveDayBatch(DayRecord dayRecord) throws ConnectionException {
 		Integer result = 0;
 		for (ActivityDay activityDay : dayRecord.getActivities()) {
+		    // TODO Issue #15 esto es incorrecto, deberiamos llamar a saveDay, refactorizandolo antes. Necesitamos hacer
+			// un setIdActivity al guardar cada actividad!!! 
+			// Si lo hacemos de esa manera nueva, quizá sea más lento... revisarlo bien. 
+			// ES NECESARIO hacerlo: el idactivity lo necesitamos para modificar o borrar, debemos tenerlo.
+			// Y OJO!!! este metodo se llama desde el batch mensual!!!
 			String html = this.doPostCreate(activityDay, dayRecord.getDateForm());
 			Document document = Jsoup.parse(html);
 			Elements errors = document.select(".input-validation-error");

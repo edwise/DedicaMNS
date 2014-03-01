@@ -28,6 +28,13 @@ public class ActivityDay implements Serializable {
 	private boolean isUpdate;
 	private boolean toRemove;
 
+	public ActivityDay() {
+	}
+
+	public ActivityDay(ActivityDay copyActivityDay) {
+		this.copyActivityDayData(copyActivityDay);
+	}
+
 	public String getIdActivity() {
 		return idActivity;
 	}
@@ -98,7 +105,6 @@ public class ActivityDay implements Serializable {
 		this.subProjectId = activityDay.getSubProjectId();
 		this.subProject = activityDay.getSubProject();
 		this.task = activityDay.getTask();
-
 	}
 
 }
