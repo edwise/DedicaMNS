@@ -25,8 +25,8 @@ public class ActivityDay implements Serializable {
 	private String task;
 
 	private String idActivity;
-	private boolean isUpdate;
-	private boolean toRemove;
+	private boolean isUpdate = false;
+	private boolean toRemove = false;
 
 	public ActivityDay() {
 	}

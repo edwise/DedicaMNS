@@ -425,6 +425,8 @@ public class MNSWebConnectionImpl implements WebConnection {
 			html = this.doPostCreate(activityDay, dateForm);
 		}
 
+		// TODO refactorizar esto, ver como hacerlo (leer TODO del saveDayBatch)
+		
 		Document document = Jsoup.parse(html);
 		Elements errors = document.select(".input-validation-error");
 		if (errors != null && errors.size() > 0) {
