@@ -367,7 +367,7 @@ public class MockWebConnectionImpl implements WebConnection {
 	}
 
 	@Override
-	public Integer saveDay(ActivityDay activityDay, String dateForm, int dayNum) {
+	public Integer saveDay(ActivityDay activityDay, String dateForm, int dayNum, boolean isBatchMontly) {
 		try {
 			TimeUnit.SECONDS.sleep(2);
 		} catch (InterruptedException e) {
@@ -394,7 +394,7 @@ public class MockWebConnectionImpl implements WebConnection {
 	}
 
 	@Override
-	public Integer saveDayBatch(DayRecord dayRecord) throws ConnectionException {
+	public Integer saveDayBatch(DayRecord dayRecord, boolean isBatchMontly) throws ConnectionException {
 		try {
 			TimeUnit.SECONDS.sleep(1);
 		} catch (InterruptedException e) {

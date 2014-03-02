@@ -416,7 +416,8 @@ public class MNSWebConnectionImpl implements WebConnection {
 	}
 
 	@Override
-	public Integer saveDay(ActivityDay activityDay, String dateForm, int dayNum) throws ConnectionException {
+	public Integer saveDay(ActivityDay activityDay, String dateForm, int dayNum, boolean isBatchMontly)
+			throws ConnectionException {
 		Integer result = 0;
 		String html = null;
 		if (activityDay.isUpdate()) {
@@ -425,14 +426,12 @@ public class MNSWebConnectionImpl implements WebConnection {
 			html = this.doPostCreate(activityDay, dateForm);
 		}
 
-		// TODO refactorizar esto, ver como hacerlo (leer TODO del saveDayBatch)
-		
 		Document document = Jsoup.parse(html);
 		Elements errors = document.select(".input-validation-error");
 		if (errors != null && errors.size() > 0) {
 			result = -3;
 		} else { // Ok
-			if (!activityDay.isUpdate()) {
+			if (!activityDay.isUpdate() || !isBatchMontly) {
 				// Tenemos que obtener en este caso el id
 				activityDay.setIdActivity(getIdFromActivityCreated(dayNum, document, activityDay));
 			}
@@ -574,23 +573,12 @@ public class MNSWebConnectionImpl implements WebConnection {
 	}
 
 	@Override
-	public Integer saveDayBatch(DayRecord dayRecord) throws ConnectionException {
+	public Integer saveDayBatch(DayRecord dayRecord, boolean isBatchMontly) throws ConnectionException {
 		Integer result = 0;
-		for (ActivityDay activityDay : dayRecord.getActivities()) {
-		    // TODO Issue #15 esto es incorrecto, deberiamos llamar a saveDay, refactorizandolo antes. Necesitamos hacer
-			// un setIdActivity al guardar cada actividad!!! 
-			// Si lo hacemos de esa manera nueva, quizá sea más lento... revisarlo bien. 
-			// ES NECESARIO hacerlo: el idactivity lo necesitamos para modificar o borrar, debemos tenerlo.
-			// Y OJO!!! este metodo se llama desde el batch mensual!!!
-			String html = this.doPostCreate(activityDay, dayRecord.getDateForm());
-			Document document = Jsoup.parse(html);
-			Elements errors = document.select(".input-validation-error");
-			if (errors != null && errors.size() > 0) {
-				result = -3;
-				break;
-			} else { // Ok
-				result = 1;
-			}
+		for (ActivityDay activityDay : dayRecord.getActivities()) {			
+			// TODO revisar el cambio, parece que ha jodido algo al borrar desde el detaildayActivity.
+			// Depurar bien los ids que se van creando y demás.
+			result = this.saveDay(activityDay, dayRecord.getDateForm(), dayRecord.getDayNum(), isBatchMontly);
 		}
 
 		return result;

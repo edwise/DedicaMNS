@@ -471,7 +471,7 @@ public class MonthViewActivity extends Activity {
 			
 			this.dayToBeOverwrited.copyDayDataCloned(dayToCopy);
 			try {
-				result = webConnection.saveDayBatch(this.dayToBeOverwrited);
+				result = webConnection.saveDayBatch(this.dayToBeOverwrited, false);
 			} catch (ConnectionException e) {
 				Log.e(LOGTAG, "Error al copiar datos de un día a otro", e);
 				result = -2;

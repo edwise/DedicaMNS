@@ -31,9 +31,9 @@ public interface WebConnection {
 
 	MonthListBean getListDaysAndActivitiesForCurrentMonth() throws ConnectionException;
 
-	Integer saveDay(ActivityDay activityDay, String dateForm, int dayNum) throws ConnectionException;
+	Integer saveDay(ActivityDay activityDay, String dateForm, int dayNum, boolean isBatchMontly) throws ConnectionException;
 
-	Integer saveDayBatch(DayRecord dayRecord) throws ConnectionException;
+	Integer saveDayBatch(DayRecord dayRecord, boolean isBatchMontly) throws ConnectionException;
 
 	Integer removeDay(ActivityDay activityDay) throws ConnectionException;
 

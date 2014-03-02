@@ -267,7 +267,7 @@ public class DetailDayActivity extends Activity {
 			switch (this.action) {
 			case SAVE:
 				try {
-					result = webConnection.saveDay(activityDay, dateForm, dayNum);
+					result = webConnection.saveDay(activityDay, dateForm, dayNum, false);
 				} catch (ConnectionException e) {
 					Log.e(LOGTAG, "Error al guardar datos de una actividad", e);
 					result = -2;

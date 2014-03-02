@@ -391,7 +391,7 @@ public class BatchMenuActivity extends Activity {
 
 				int processed = 0;
 				for (DayRecord day : listDays) {
-					webConnection.saveDayBatch(day);
+					webConnection.saveDayBatch(day, true);
 					processed++;
 					publishProgress(processed);
 				}
