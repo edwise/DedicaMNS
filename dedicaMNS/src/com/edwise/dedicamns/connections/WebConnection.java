@@ -41,4 +41,6 @@ public interface WebConnection {
 			throws ConnectionException;
 
 	MonthReportBean getMonthReport() throws ConnectionException;
+	
+	boolean recreateDBOnStart();
 }

@@ -25,6 +25,7 @@ import com.edwise.dedicamns.connections.ConnectionFacade;
 import com.edwise.dedicamns.connections.WebConnection;
 import com.edwise.dedicamns.db.DatabaseHelper;
 import com.edwise.dedicamns.menu.MenuUtils;
+import com.edwise.dedicamns.utils.PropertiesLoader;
 
 public class MainMenuActivity extends Activity {
 	private static final String LOGTAG = MainMenuActivity.class.toString();
@@ -61,7 +62,8 @@ public class MainMenuActivity extends Activity {
 		DatabaseHelper dbHelper = new DatabaseHelper(this);
 		AppData.setDatabaseHelper(dbHelper);
 
-		if (dbHelper.isEmptyDB()) {
+		if (dbHelper.isEmptyDB()
+				|| Boolean.valueOf(PropertiesLoader.getProperty(PropertiesLoader.REGENERATE_DB_ON_START, this))) {
 			reloadProjects();
 		}
 	}
@@ -90,7 +92,7 @@ public class MainMenuActivity extends Activity {
 			}
 		}
 	}
-	
+
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		Log.d(LOGTAG, "onSaveInstanceState");
@@ -157,7 +159,7 @@ public class MainMenuActivity extends Activity {
 	public void doShowBatchMenu(View view) {
 		Log.d(LOGTAG, "doShowBatchMenu");
 
-		showDialog(getString(R.string.msgGettingData)); 
+		showDialog(getString(R.string.msgGettingData));
 		AsyncTask<Integer, Integer, Integer> batchMenuAsyncTask = new BatchMenuAsyncTask();
 		batchMenuAsyncTask.execute(1);
 	}

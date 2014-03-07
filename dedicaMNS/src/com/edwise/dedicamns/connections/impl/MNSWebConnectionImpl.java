@@ -576,9 +576,8 @@ public class MNSWebConnectionImpl implements WebConnection {
 	public Integer saveDayBatch(DayRecord dayRecord, boolean isBatchMontly) throws ConnectionException {
 		Integer result = 0;
 		for (ActivityDay activityDay : dayRecord.getActivities()) {			
-			// TODO revisar el cambio, parece que ha jodido algo al borrar desde el detaildayActivity.
-			// Depurar bien los ids que se van creando y demás.
 			result = this.saveDay(activityDay, dayRecord.getDateForm(), dayRecord.getDayNum(), isBatchMontly);
+			activityDay.setUpdate(true); // Para si se modifica a partir de ahora
 		}
 
 		return result;
@@ -633,5 +632,10 @@ public class MNSWebConnectionImpl implements WebConnection {
 		String[] hours = totalAndHours[1].trim().split("\\s+");
 
 		return hours[0];
+	}
+
+	@Override
+	public boolean recreateDBOnStart() {
+		return false;
 	}
 }

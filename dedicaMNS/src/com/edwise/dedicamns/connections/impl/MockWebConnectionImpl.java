@@ -76,15 +76,6 @@ public class MockWebConnectionImpl implements WebConnection {
 
 	@Override
 	public List<String> getArraySubProjects(String projectId) {
-		// List<String> arraySubProjects = new ArrayList<String>();
-		// if (projectId != null && projectId.equals("BBVA58")) {
-		// arraySubProjects.add("1 - Tarea mierda");
-		// arraySubProjects.add("2 - Marronacos");
-		// arraySubProjects.add("3 - Calentar silla");
-		// } else {
-		// arraySubProjects.add("0 - Sin cuenta");
-		// }
-
 		return projects.getSubProjects(projectId);
 	}
 
@@ -114,26 +105,9 @@ public class MockWebConnectionImpl implements WebConnection {
 
 	@Override
 	public void fillProyectsAndSubProyectsCached() throws ConnectionException {
-		// try {
-		// TimeUnit.SECONDS.sleep(2);
-		// } catch (InterruptedException e) {
-		// Log.e(MockWebConnectionImpl.class.toString(), "fillListMock: Error en TimeUnit...", e);
-		// e.printStackTrace();
-		// }
-		//
-		// arrayProjects = new ArrayList<String>();
-		//
-		// arrayProjects.add("Selecciona proyecto...");
-		// arrayProjects.add("BBVA58");
-		// arrayProjects.add("Educared09");
-		// arrayProjects.add("BBVA68");
-		// arrayProjects.add("NIELHUEVO32");
-		// arrayProjects.add("ISBAN12");
-
 		if (this.projects == null) {
 			this.projects = AppData.getDatabaseHelper().getAllProjectsAndSubProjects();
 		}
-
 	}
 
 	@Override
@@ -153,9 +127,10 @@ public class MockWebConnectionImpl implements WebConnection {
 		months.add("Diciembre");
 
 		years = new ArrayList<String>();
-		years.add("2011");
-		years.add("2012");
 		years.add("2013");
+		years.add("2014");
+		years.add("2015");
+		
 	}
 
 	@Override
@@ -395,6 +370,12 @@ public class MockWebConnectionImpl implements WebConnection {
 
 	@Override
 	public Integer saveDayBatch(DayRecord dayRecord, boolean isBatchMontly) throws ConnectionException {
+		for (ActivityDay activityDay : dayRecord.getActivities()) {			
+			if (!activityDay.isUpdate() || !isBatchMontly) {
+				activityDay.setIdActivity(String.valueOf(generateRandomNumber(1, 10000)));
+			}
+		}
+		
 		try {
 			TimeUnit.SECONDS.sleep(1);
 		} catch (InterruptedException e) {
@@ -402,6 +383,10 @@ public class MockWebConnectionImpl implements WebConnection {
 			e.printStackTrace();
 		}
 		return 1;
+	}
+
+	private int generateRandomNumber(int min, int  max) {
+		return min + (int)(Math.random() * ((max - min) + 1));
 	}
 
 	@Override
@@ -452,4 +437,8 @@ public class MockWebConnectionImpl implements WebConnection {
 		return monthReport;
 	}
 
+	@Override
+	public boolean recreateDBOnStart() {
+		return true;
+	}
 }

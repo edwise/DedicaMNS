@@ -173,7 +173,6 @@ public class GeneralDetailDayActivity extends Activity {
 		if (requestCode == ACTIVITY_REQUEST) {
 			if (resultCode == RESULT_OK) {
 				this.dayModif = true;
-				// TODO depurar por aqui para la movida esa que he jodido
 				ActivityDay activityDay = (ActivityDay) data.getSerializableExtra("activityModif");
 				this.reDrawListActivities(activityDay);
 				this.recalculateTotalHours();
