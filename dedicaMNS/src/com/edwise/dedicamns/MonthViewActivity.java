@@ -477,7 +477,15 @@ public class MonthViewActivity extends Activity {
 				result = -2;
 			}
 			
+			setActivitiesAsToUpdate();
+			
 			return result;
+		}
+
+		private void setActivitiesAsToUpdate() {
+			for(ActivityDay activityDay: this.dayToBeOverwrited.getActivities()) {
+				activityDay.setUpdate(true);
+			}
 		}
 
 		@Override

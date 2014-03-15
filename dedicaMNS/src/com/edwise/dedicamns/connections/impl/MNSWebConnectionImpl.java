@@ -577,7 +577,6 @@ public class MNSWebConnectionImpl implements WebConnection {
 		Integer result = 0;
 		for (ActivityDay activityDay : dayRecord.getActivities()) {			
 			result = this.saveDay(activityDay, dayRecord.getDateForm(), dayRecord.getDayNum(), isBatchMontly);
-			activityDay.setUpdate(true); // Para si se modifica a partir de ahora
 		}
 
 		return result;
