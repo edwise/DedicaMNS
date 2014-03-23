@@ -129,8 +129,7 @@ public class MockWebConnectionImpl implements WebConnection {
 		years = new ArrayList<String>();
 		years.add("2013");
 		years.add("2014");
-		years.add("2015");
-		
+		years.add("2015");		
 	}
 
 	@Override
@@ -138,7 +137,6 @@ public class MockWebConnectionImpl implements WebConnection {
 		List<DayRecord> list = new ArrayList<DayRecord>();
 
 		fillListMock(list, true);
-
 		MonthListBean monthList = new MonthListBean("Noviembre", "2012", list);
 
 		return monthList;
@@ -317,7 +315,6 @@ public class MockWebConnectionImpl implements WebConnection {
 			} else {
 				dayRecord.setHours("00:00");
 			}
-
 			list.add(dayRecord);
 		}
 	}
@@ -337,7 +334,6 @@ public class MockWebConnectionImpl implements WebConnection {
 				dayName = dayNames[ind - 1];
 			}
 		}
-
 		return dayName;
 	}
 
@@ -364,7 +360,6 @@ public class MockWebConnectionImpl implements WebConnection {
 			Log.e(MockWebConnectionImpl.class.toString(), "removeDay: Error en TimeUnit...", e);
 			e.printStackTrace();
 		}
-
 		return 1;
 	}
 
