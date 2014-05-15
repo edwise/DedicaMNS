@@ -15,4 +15,4 @@ gen/
 #ides and others
 .idea
 .project
-.iml
+*.iml
