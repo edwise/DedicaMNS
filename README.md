@@ -17,7 +17,6 @@ Consideraciones importantes a tener en cuenta:
  
 Futuras ampliaciones / evolutivos:    
   - Nueva opción de imputación batch, más personalizable: entre dos fechas dadas, y con horas personalizables.
-  - Perfiles en la imputación batch.
   
 Ampliaciones / evolutivos ya realizados:
   - Elegir mes y año en listado mensual, para poder consultar otros meses.
