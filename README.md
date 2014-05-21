@@ -1,6 +1,12 @@
 DedicaMNS
 =========
 
+**IMPORTANTE: La aplicación ha dejado de funcionar definitivamente (da siempre error 404 al conectar) debido a que la web de dedicaciones ya no está operativa (y no va a volver a estarlo).**
+
+**Gracias a todos los que me remitieron sugerencias, errores, etc, y a los que la usaron en general. Espero que os fuera util mientras duró. :)**
+
+--------------------------------------------------------------------------------------------------------------
+
 Aplicación android para la imputación de horas en Media Net Software, a traves de la web de dedicaciones corporativa: http://dedicaciones.medianet.es
 
 Disponible en Google Play: https://play.google.com/store/apps/details?id=com.edwise.dedicamns
