@@ -27,6 +27,7 @@ import com.edwise.dedicamns.asynctasks.ConnectionAsyncTask;
 import com.edwise.dedicamns.asynctasks.LoginConstants;
 import com.edwise.dedicamns.connections.ConnectionFacade;
 import com.edwise.dedicamns.menu.MenuUtils;
+import com.edwise.dedicamns.utils.PropertiesLoader;
 
 public class LoginActivity extends Activity {
 	private static final String LOGTAG = LoginActivity.class.toString();
@@ -55,7 +56,6 @@ public class LoginActivity extends Activity {
 				chargeSavedData();
 			}
 		}
-
 	}
 
 	private void initFields() {
@@ -107,14 +107,29 @@ public class LoginActivity extends Activity {
 	public void doLogin(View view) {
 		Log.d(LOGTAG, "doLogin: Click en conectar...");
 
+		if (checkIfAppIsSupported()) {
+			loginIntoWebCheckingFields();
+		} else {
+			showToastMessage(getString(R.string.msgWebLocked));
+		}
+	}
+
+	private void loginIntoWebCheckingFields() {
 		if (checkFieldsFilled()) {
 			accesWebWithLoginData();
 		} else {
-			Toast toast = Toast.makeText(this, getString(R.string.msgUserPassError), Toast.LENGTH_LONG);
-			toast.setGravity(Gravity.CENTER, 0, 100);
-			toast.show();
-
+			showToastMessage(getString(R.string.msgUserPassError));
 		}
+	}
+
+	private boolean checkIfAppIsSupported() {
+		return Boolean.valueOf(PropertiesLoader.getProperty(PropertiesLoader.APP_SUPPORTED, this));
+	}
+
+	private void showToastMessage(String msg) {
+		Toast toast = Toast.makeText(this, msg, Toast.LENGTH_LONG);
+		toast.setGravity(Gravity.CENTER, 0, 100);
+		toast.show();
 	}
 
 	private void accesWebWithLoginData() {
@@ -180,10 +195,6 @@ public class LoginActivity extends Activity {
 		if (pDialog != null) {
 			pDialog.cancel();
 			outState.putBoolean("pDialogON", true);
-
-			// outState.putString("user", value);
-			// outState.putString("pass", value);
-			// outState.putBoolean("remember", value);
 		}
 		super.onSaveInstanceState(outState);
 	}

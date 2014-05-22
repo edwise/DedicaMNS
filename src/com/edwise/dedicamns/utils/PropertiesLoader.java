@@ -22,6 +22,7 @@ public class PropertiesLoader {
 	
 	public static final String MOCK_ACTIVATED = "app.mockActivated";
 	public static final String REGENERATE_DB_ON_START = "app.regenerateDBOnStart";
+	public static final String APP_SUPPORTED = "app.suppported";
 	
 	private static Properties properties;
 

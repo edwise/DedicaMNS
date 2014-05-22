@@ -14,7 +14,7 @@
     <string name="title_activity_main_menu">Dedica MNS</string>
     <string name="title_activity_batch_menu">Dedica MNS</string>
     <string name="title_activity_about">About</string>
-    <string name="about_text">\nAndroid application for MediaNet Software Dedicaciones Web.\n\n More info in <a href="https://github.com/edwise/DedicaMNS">https://github.com/edwise/DedicaMNS</a>\n</string>
+    <string name="about_text">IMPORTANT: The application is no longer working because the new web. Thank you for all this time of use :)\n\n --------------------------------------------------------- \n\nAndroid application for MediaNet Software Dedicaciones Web.\n\n More info in <a href="https://github.com/edwise/DedicaMNS">https://github.com/edwise/DedicaMNS</a>\n</string>
     <string name="batchTitle">Batch Input monthly</string>
     <string name="monthLabelBatch">"Month: "</string>
     <string name="yearLabelBatch">"Year: "</string>
@@ -96,5 +96,6 @@
     <string name="paste">Paste</string>
     <string name="delete">Delete</string>
     <string name="optionsMenu">Options</string>
+    <string name="msgWebLocked">The site is no longer supported. Sorry :(</string>
     
 </resources>
