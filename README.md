@@ -1,7 +1,7 @@
 DedicaMNS
 =========
 
-**IMPORTANTE: La aplicación ha dejado de funcionar definitivamente (da siempre error 404 al conectar) debido a que la web de dedicaciones ya no está operativa (y no va a volver a estarlo).**
+**IMPORTANTE: La aplicación ha dejado de funcionar definitivamente debido a que ya no es compatible con la nueva versión de la web.**
 
 **Gracias a todos los que me remitieron sugerencias, errores, etc, y a los que la usaron en general. Espero que os fuera util mientras duró. :)**
 
